@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#081523">
+  <meta name="description" content="Cajero Virtual de demostración con cuentas de ahorro, créditos, desembolsos, cuotas y abonos simulados.">
+  <title>Cajero Virtual | Sistema Bancario y Créditos</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <main id="loginView" class="login-shell">
+    <section class="login-brand" aria-label="Presentación del cajero">
+      <div class="brand-lockup">
+        <div class="brand-mark"><span class="brand-mark-core">$</span></div>
+        <div>
+          <p class="eyebrow">SISTEMA BANCARIO</p>
+          <h1>Cajero<span>Virtual</span></h1>
+        </div>
+      </div>
+      <div class="brand-message">
+        <p class="eyebrow accent">TU DINERO, BAJO CONTROL</p>
+        <h2>Operaciones simples.<br><span>Control total.</span></h2>
+        <p>Consulta saldos, administra movimientos y transfiere entre cuentas desde una interfaz clara y segura para demostración.</p>
+      </div>
+      <div class="brand-footer">
+        <span class="status-dot"></span>
+        <span>Entorno local de demostración</span>
+      </div>
+      <div class="brand-orbit orbit-one" aria-hidden="true"></div>
+      <div class="brand-orbit orbit-two" aria-hidden="true"></div>
+      <div class="brand-grid" aria-hidden="true"></div>
+    </section>
+
+    <section class="login-panel">
+      <div class="mobile-brand brand-lockup">
+        <div class="brand-mark"><span class="brand-mark-core">$</span></div>
+        <div><p class="eyebrow">SISTEMA BANCARIO</p><h1>Cajero<span>Virtual</span></h1></div>
+      </div>
+      <div class="login-heading">
+        <p class="eyebrow">ACCESO A TU CUENTA</p>
+        <h2>Bienvenido</h2>
+        <p>Ingresa tus datos para comenzar.</p>
+      </div>
+      <form id="loginForm" class="form-stack" autocomplete="off">
+        <label class="field-label" for="accountSelect">Número de cuenta</label>
+        <div class="input-wrap select-wrap">
+          <span class="input-icon" aria-hidden="true">▦</span>
+          <select id="accountSelect" name="account" required>
+            <option value="1">Ahorros · •••• 6247 · Edwin Ocampo</option>
+            <option value="2">Ahorros · •••• 5704 · Pedro Ocampo</option>
+            <option value="3">Ahorros · •••• 7083 · Reinel Ocampo</option>
+          </select>
+          <span class="select-chevron" aria-hidden="true">⌄</span>
+        </div>
+        <label class="field-label" for="pinInput">PIN de seguridad</label>
+        <div class="input-wrap">
+          <span class="input-icon" aria-hidden="true">▣</span>
+          <input id="pinInput" name="pin" type="password" inputmode="numeric" pattern="[0-9]{4}" minlength="4" maxlength="4" placeholder="••••" required aria-describedby="pinHelp" title="Ingresa exactamente 4 dígitos">
+          <button id="togglePin" class="reveal-button" type="button" aria-label="Mostrar PIN">Ver</button>
+        </div>
+        <p id="pinHelp" class="field-help">Ingresa los 4 dígitos del PIN de tu cuenta de ahorros.</p>
+        <p id="loginError" class="form-message error-message" role="alert" hidden></p>
+        <button class="button button-primary button-wide" type="submit"><span>Ingresar a mi cuenta</span><span class="button-arrow" aria-hidden="true">↗</span></button>
+      </form>
+      <button id="reviewerAccessButton" class="button button-secondary button-wide reviewer-entry-button" type="button">Acceso de analista de créditos <span aria-hidden="true">↗</span></button>
+      <details class="demo-access">
+        <summary><span class="summary-icon" aria-hidden="true">i</span> Credenciales para probar el sistema</summary>
+        <div class="credentials-table">
+          <div class="credential-row credential-head"><span>Cuenta</span><span>Titular</span><span>PIN de 4 dígitos</span></div>
+          <div class="credential-row"><span>•••• 6247</span><span>Edwin Ocampo</span><code>5837</code></div>
+          <div class="credential-row"><span>•••• 5704</span><span>Pedro Ocampo</span><code>9146</code></div>
+          <div class="credential-row"><span>•••• 7083</span><span>Reinel Ocampo</span><code>7269</code></div>
+        </div>
+      </details>
+      <p class="login-legal"><span aria-hidden="true">✦</span> Aplicación demostrativa. No uses datos bancarios reales.</p>
+    </section>
+  </main>
+
+  <main id="reviewerLoginView" class="login-shell reviewer-login-shell" hidden>
+    <section class="login-brand" aria-label="Acceso de analista">
+      <div class="brand-lockup">
+        <div class="brand-mark"><span class="brand-mark-core">✓</span></div>
+        <div><p class="eyebrow">GESTIÓN DE CRÉDITOS</p><h1>Panel<span>Analista</span></h1></div>
+      </div>
+      <div class="brand-message">
+        <p class="eyebrow accent">REVISIÓN DE SOLICITUDES</p>
+        <h2>Evalúa cada caso.<br><span>Decide con criterio.</span></h2>
+        <p>Consulta los datos declarados por los solicitantes y registra una decisión de demostración, con una nota de revisión.</p>
+      </div>
+      <div class="brand-footer"><span class="status-dot"></span><span>Panel de revisión de demostración</span></div>
+      <div class="brand-orbit orbit-one" aria-hidden="true"></div><div class="brand-orbit orbit-two" aria-hidden="true"></div><div class="brand-grid" aria-hidden="true"></div>
+    </section>
+    <section class="login-panel">
+      <div class="mobile-brand brand-lockup"><div class="brand-mark"><span class="brand-mark-core">✓</span></div><div><p class="eyebrow">GESTIÓN DE CRÉDITOS</p><h1>Panel<span>Analista</span></h1></div></div>
+      <div class="login-heading"><p class="eyebrow">ACCESO RESTRINGIDO</p><h2>Analista de créditos</h2><p>Ingresa la clave del revisor para abrir la bandeja de solicitudes.</p></div>
+      <form id="reviewerLoginForm" class="form-stack" autocomplete="off">
+        <label class="field-label" for="reviewerPinInput">Clave del analista</label>
+        <div class="input-wrap"><span class="input-icon" aria-hidden="true">▣</span><input id="reviewerPinInput" name="reviewerPin" type="password" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" placeholder="••••••" required aria-describedby="reviewerPinHelp" title="Ingresa los 6 dígitos de la clave de demostración"></div>
+        <p id="reviewerPinHelp" class="field-help">Clave de seis dígitos para el perfil de revisión de esta demostración.</p>
+        <p id="reviewerLoginError" class="form-message error-message" role="alert" hidden></p>
+        <button class="button button-primary button-wide" type="submit">Entrar a revisar solicitudes <span aria-hidden="true">→</span></button>
+      </form>
+      <details class="demo-access"><summary><span class="summary-icon" aria-hidden="true">i</span> Credencial de prueba del analista</summary><div class="reviewer-demo-credential"><span>Analista de créditos</span><code>482917</code></div></details>
+      <button id="backToClientLogin" class="button button-secondary button-wide" type="button">← Volver al acceso de clientes</button>
+      <p class="login-legal"><span aria-hidden="true">✦</span> Acceso de demostración; no equivale a seguridad bancaria real.</p>
+    </section>
+  </main>
+
+  <main id="appView" class="app-shell" hidden>
+    <aside class="sidebar" id="sidebar">
+      <a class="sidebar-brand" href="#inicio" aria-label="Cajero Virtual, inicio">
+        <div class="brand-mark small-mark"><span class="brand-mark-core">$</span></div>
+        <div><span class="sidebar-brand-name">Cajero<span>Virtual</span></span><span class="sidebar-brand-tag">BANCA PERSONAL</span></div>
+      </a>
+      <div class="sidebar-caption">MENÚ PRINCIPAL</div>
+      <nav class="side-nav" aria-label="Menú principal">
+        <button class="nav-item active" data-view="overview" type="button"><span class="nav-icon">▦</span><span>Resumen</span><span class="nav-indicator"></span></button>
+        <button class="nav-item" data-view="history" type="button"><span class="nav-icon">↻</span><span>Movimientos</span></button>
+        <button class="nav-item" data-view="credits" type="button"><span class="nav-icon">▤</span><span>Créditos</span></button>
+      </nav>
+      <div class="sidebar-card">
+        <div class="sidebar-card-icon">⌁</div>
+        <p class="sidebar-card-title">Tu cuenta, a tu ritmo</p>
+        <p class="sidebar-card-copy">Todas las operaciones en un mismo lugar.</p>
+        <div class="mini-wave" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+      <div class="sidebar-bottom">
+        <div class="local-status"><span class="status-dot"></span><span>Modo local activo</span></div>
+        <button id="resetDataButton" class="text-button reset-button" type="button">Restablecer datos de prueba</button>
+        <p class="sidebar-version">CAJERO VIRTUAL <span>v9.0</span></p>
+      </div>
+    </aside>
+
+    <section class="workspace">
+      <header class="topbar">
+        <button id="mobileMenuButton" class="mobile-menu-button" type="button" aria-label="Abrir menú">☰</button>
+        <div class="breadcrumb"><span>Mi espacio</span><span class="breadcrumb-slash">/</span><strong id="breadcrumbCurrent">Resumen</strong></div>
+        <div class="topbar-right">
+          <div class="secure-label"><span class="secure-icon">✓</span><span>Sesión iniciada</span></div>
+          <button id="profileButton" class="profile-chip" type="button" aria-label="Cerrar sesión">
+            <span id="profileInitials" class="avatar">EO</span>
+            <span class="profile-text"><strong id="profileName">Edwin Ocampo</strong><small id="profileAccount">Cuenta 01</small></span>
+            <span class="profile-chevron">⌄</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="page-content">
+        <section id="overviewView" class="content-view">
+          <div class="welcome-row">
+            <div><p class="eyebrow">TU RESUMEN FINANCIERO</p><h2 id="welcomeTitle">Hola, Edwin <span class="wave-emoji">✦</span></h2><p class="subheading">Aquí tienes el estado actual de tu cuenta de ahorros.</p></div>
+            <div class="date-pill"><span class="date-icon">◷</span><span id="currentDate"></span></div>
+          </div>
+
+          <section class="balance-card" aria-label="Saldo disponible">
+            <div class="balance-card-top"><div class="balance-label"><span class="balance-icon">$</span><span id="balanceAccountType">Cuenta de ahorros</span></div><span class="account-number-pill" id="balanceAccountNumber">N.º 7184 3059 6247</span></div>
+            <div class="balance-main"><span id="balanceAmount" class="balance-amount">$ 2.000</span><span class="balance-currency">COP</span></div>
+            <div class="balance-card-bottom"><span><span class="balance-live-dot"></span><span id="balanceAccountHolder">Edwin Ocampo</span></span><span id="balanceUpdated">Cuenta activa</span></div>
+            <div class="balance-decoration decoration-a" aria-hidden="true"></div><div class="balance-decoration decoration-b" aria-hidden="true"></div>
+          </section>
+
+          <div class="stats-grid">
+            <article class="stat-card">
+              <div class="stat-card-top"><span>Retiros de hoy</span><span class="stat-icon withdraw-icon">↗</span></div>
+              <div id="withdrawnAmount" class="stat-value">$ 0</div>
+              <div class="stat-note"><span class="note-dot"></span>Acumulado de movimientos del día</div>
+              <div class="stat-foot"><span id="withdrawnCaption">Acumulado de hoy</span><strong id="withdrawLimitText">Máx. 3.000.000 por retiro</strong></div>
+            </article>
+            <article class="stat-card">
+              <div class="stat-card-top"><span>Movimientos registrados</span><span class="stat-icon history-icon">↻</span></div>
+              <div id="movementCount" class="stat-value">0</div>
+              <div class="stat-note"><span class="note-dot"></span>En el historial de tu cuenta</div>
+              <button class="inline-link" data-go-view="history" type="button">Ver historial <span aria-hidden="true">→</span></button>
+            </article>
+          </div>
+
+          <section class="section-block">
+            <div class="section-heading"><div><p class="eyebrow">OPERACIONES</p><h3>¿Qué deseas hacer?</h3></div><span class="section-subtitle">Elige una acción</span></div>
+            <div class="actions-grid">
+              <button class="action-card action-deposit" data-action="deposit" type="button"><span class="action-icon">＋</span><span class="action-title">Depositar</span><span class="action-desc">Añade dinero a tu cuenta</span><span class="action-arrow">↗</span></button>
+              <button class="action-card action-withdraw" data-action="withdraw" type="button"><span class="action-icon">↗</span><span class="action-title">Retirar</span><span class="action-desc">Retira saldo disponible</span><span class="action-arrow">↗</span></button>
+              <button class="action-card action-transfer" data-action="transfer" type="button"><span class="action-icon">⇄</span><span class="action-title">Transferir</span><span class="action-desc">Envía dinero a otra cuenta</span><span class="action-arrow">↗</span></button>
+              <button class="action-card action-balance" data-action="balance" type="button"><span class="action-icon">◉</span><span class="action-title">Consultar saldo</span><span class="action-desc">Revisa tu dinero disponible</span><span class="action-arrow">↗</span></button>
+              <button class="action-card action-credit" data-go-view="credits" type="button"><span class="action-icon">▤</span><span class="action-title">Solicitar crédito</span><span class="action-desc">Simula tu cuota y envía una solicitud de prueba</span><span class="action-arrow">↗</span></button>
+            </div>
+          </section>
+
+          <section class="section-block recent-section">
+            <div class="section-heading"><div><p class="eyebrow">ACTIVIDAD RECIENTE</p><h3>Últimos movimientos</h3></div><button class="inline-link" data-go-view="history" type="button">Ver todos <span aria-hidden="true">→</span></button></div>
+            <div id="recentMovements" class="movement-list"></div>
+          </section>
+          <footer class="page-footer"><span>© <span id="footerYear"></span> Cajero Virtual</span><span><span class="footer-dot"></span> Aplicación local de demostración</span></footer>
+        </section>
+
+        <section id="historyView" class="content-view" hidden>
+          <div class="welcome-row history-welcome"><div><p class="eyebrow">REGISTRO DE CUENTA</p><h2>Movimientos</h2><p class="subheading">Consulta los depósitos, retiros y transferencias registrados.</p></div><button class="button button-secondary" data-go-view="overview" type="button">← Volver al resumen</button></div>
+          <div class="history-summary-grid"><div class="history-summary-card"><span>Total de movimientos</span><strong id="historyTotal">0</strong></div><div class="history-summary-card"><span>Saldo actual</span><strong id="historyBalance">$ 0</strong></div><div class="history-summary-card"><span>Retiros de hoy</span><strong id="historyWithdrawals">$ 0</strong></div></div>
+          <section class="history-panel"><div class="history-panel-heading"><div><h3>Historial de la cuenta</h3><p>Los movimientos más recientes aparecen primero.</p></div><label class="filter-wrap"><span aria-hidden="true">⌕</span><select id="historyFilter" aria-label="Filtrar movimientos"><option value="all">Todos</option><option value="deposit">Depósitos</option><option value="withdraw">Retiros</option><option value="transfer">Transferencias</option><option value="credit">Créditos y pagos</option></select></label></div><div id="allMovements" class="movement-list full-movement-list"></div><div id="emptyHistory" class="empty-state" hidden><span class="empty-icon">↻</span><strong>No hay movimientos todavía</strong><p>Cuando realices una operación, aparecerá aquí.</p></div></section>
+          <footer class="page-footer"><span>© <span id="historyFooterYear"></span> Cajero Virtual</span><span><span class="footer-dot"></span> Aplicación local de demostración</span></footer>
+        </section>
+
+        <section id="creditsView" class="content-view" hidden>
+          <div class="welcome-row history-welcome">
+            <div><p class="eyebrow">FINANCIACIÓN PERSONAL</p><h2>Solicitar un crédito</h2><p class="subheading">Completa tus datos y revisa una estimación de la cuota mensual antes de enviar la solicitud.</p></div>
+            <button class="button button-secondary" data-go-view="overview" type="button">← Volver al resumen</button>
+          </div>
+
+          <div class="credit-layout">
+            <section class="credit-panel">
+              <div class="credit-panel-heading"><div class="credit-panel-symbol">＋</div><div><h3>Datos de la solicitud</h3><p>Los campos marcados son obligatorios.</p></div></div>
+              <form id="creditForm" class="credit-form" autocomplete="off">
+                <div class="credit-field">
+                  <label for="creditAmountInput">¿Cuánto dinero necesitas?</label>
+                  <div class="input-wrap amount-input-wrap"><span class="currency-prefix">$</span><input id="creditAmountInput" name="creditAmount" type="number" inputmode="numeric" min="100000" max="100000000" step="1" value="5000000" required></div>
+                  <small>Monto de prueba entre $100.000 y $100.000.000 COP.</small>
+                </div>
+                <div class="credit-inline-grid">
+                  <div class="credit-field">
+                    <label for="creditTermSelect">Plazo de pago</label>
+                    <select id="creditTermSelect" name="termMonths" required>
+                      <option value="6">6 meses</option><option value="12">12 meses</option><option value="18">18 meses</option><option value="24">24 meses</option><option value="36">36 meses</option><option value="48">48 meses</option><option value="60" selected>60 meses</option>
+                    </select>
+                  </div>
+                  <div class="credit-field">
+                    <label for="creditEmploymentSelect">Situación laboral</label>
+                    <select id="creditEmploymentSelect" name="employment" required>
+                      <option value="Empleado">Empleado</option><option value="Independiente">Independiente</option><option value="Pensionado">Pensionado</option><option value="Otro">Otra situación</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="credit-field">
+                  <label for="creditIncomeInput">Ingresos mensuales aproximados</label>
+                  <div class="input-wrap amount-input-wrap"><span class="currency-prefix">$</span><input id="creditIncomeInput" name="monthlyIncome" type="number" inputmode="numeric" min="1" step="1" placeholder="Ej. 2500000" required></div>
+                  <small>Ingresa el total mensual en pesos enteros, sin decimales.</small>
+                </div>
+                <div class="credit-field">
+                  <label for="creditPurposeSelect">Destino del crédito</label>
+                  <select id="creditPurposeSelect" name="purpose" required>
+                    <option value="Libre inversión">Libre inversión</option><option value="Estudio">Estudio</option><option value="Vivienda o mejoras">Vivienda o mejoras</option><option value="Vehículo">Vehículo</option><option value="Consolidación de deudas">Consolidación de deudas</option><option value="Emergencia personal">Emergencia personal</option><option value="Otro">Otro</option>
+                  </select>
+                </div>
+                <p id="creditError" class="form-message error-message" role="alert" hidden></p>
+                <button class="button button-primary button-wide" type="submit">Enviar solicitud de crédito <span aria-hidden="true">→</span></button>
+                <p class="credit-disclaimer">Tu solicitud quedará pendiente hasta que el analista de créditos registre una decisión. Esta demostración no consulta centrales de riesgo ni representa una aprobación bancaria real.</p>
+              </form>
+            </section>
+
+            <aside class="credit-panel credit-simulation-panel">
+              <div class="credit-panel-heading"><div class="credit-panel-symbol gold-symbol">≈</div><div><h3>Simulador de cuotas</h3><p>Estimación ilustrativa, no una oferta bancaria.</p></div></div>
+              <div class="credit-sim-highlight"><span>Cuota mensual estimada</span><strong id="creditMonthlyPayment">$ 0</strong><small>Durante <span id="creditSelectedTerm">60</span> meses</small></div>
+              <div class="credit-sim-lines"><div><span>Monto solicitado</span><strong id="creditSimAmount">$ 5.000.000</strong></div><div><span>Tasa ilustrativa mensual</span><strong>2,13 %</strong></div><div><span>Total estimado por pagar</span><strong id="creditTotalPayable">$ 0</strong></div><div><span>Intereses estimados</span><strong id="creditTotalInterest">$ 0</strong></div></div>
+              <div class="credit-sim-note"><span class="hint-icon">i</span><span>La simulación usa una tasa ilustrativa fija del 2,13 % mensual y cuotas constantes. La tasa real, seguros, cargos, estudio y aprobación no están incluidos ni representados.</span></div>
+            </aside>
+          </div>
+
+          <section class="section-block loan-account-section">
+            <div class="section-heading"><div><p class="eyebrow">ADMINISTRACIÓN DEL PRÉSTAMO</p><h3>Mis créditos y cuotas</h3></div><span class="section-subtitle">Pagos descontados de tu cuenta de ahorros</span></div>
+            <div id="loansList" class="loans-list"></div>
+            <div id="emptyLoans" class="empty-state"><span class="empty-icon">▤</span><strong>No tienes créditos desembolsados</strong><p>Cuando el analista apruebe una solicitud, el desembolso llegará a tu cuenta y aquí podrás pagar cuotas y realizar abonos a capital.</p></div>
+          </section>
+
+          <section class="section-block credit-applications-section">
+            <div class="section-heading"><div><p class="eyebrow">SEGUIMIENTO</p><h3>Mis solicitudes</h3></div><span class="section-subtitle">Estados y decisiones de revisión</span></div>
+            <div id="creditApplicationsList" class="credit-applications-list"></div>
+            <div id="emptyCreditApplications" class="empty-state"><span class="empty-icon">▤</span><strong>Todavía no has solicitado un crédito</strong><p>Cuando envíes una solicitud de prueba, podrás consultar aquí su resumen y estado.</p></div>
+          </section>
+          <footer class="page-footer"><span>© <span id="creditsFooterYear"></span> Cajero Virtual</span><span><span class="footer-dot"></span> Simulación financiera de demostración</span></footer>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <main id="reviewerView" class="reviewer-dashboard" hidden>
+    <header class="reviewer-topbar">
+      <a class="sidebar-brand reviewer-brand" href="#revision" aria-label="Panel de analista">
+        <div class="brand-mark small-mark"><span class="brand-mark-core">✓</span></div>
+        <div><span class="sidebar-brand-name">Panel<span>Analista</span></span><span class="sidebar-brand-tag">REVISIÓN DE CRÉDITOS</span></div>
+      </a>
+      <div class="reviewer-session"><span class="status-dot"></span><span>Analista de créditos</span><button id="reviewerLogoutButton" class="button button-secondary" type="button">Cerrar sesión</button></div>
+    </header>
+    <div class="reviewer-content">
+      <div class="reviewer-welcome"><div><p class="eyebrow">BANDEJA DE SOLICITUDES</p><h1>Revisión de créditos</h1><p class="subheading">Revisa la información declarada, registra una nota y decide si apruebas o rechazas cada solicitud.</p></div><span class="reviewer-demo-tag">MODO DEMOSTRACIÓN</span></div>
+      <section class="reviewer-kpi-grid" aria-label="Resumen de solicitudes">
+        <article class="reviewer-kpi"><span>Total de solicitudes</span><strong id="reviewerCountAll">0</strong><small>Registradas en este navegador</small></article>
+        <article class="reviewer-kpi pending-kpi"><span>Pendientes</span><strong id="reviewerCountPending">0</strong><small>Esperan decisión</small></article>
+        <article class="reviewer-kpi approved-kpi"><span>Aprobadas</span><strong id="reviewerCountApproved">0</strong><small>Decisión registrada</small></article>
+        <article class="reviewer-kpi rejected-kpi"><span>Rechazadas</span><strong id="reviewerCountRejected">0</strong><small>Decisión registrada</small></article>
+      </section>
+      <section class="reviewer-inbox">
+        <div class="reviewer-inbox-heading"><div><p class="eyebrow">CASOS Y DECISIONES</p><h2>Solicitudes de crédito</h2></div><label class="reviewer-filter-label" for="reviewerFilter">Mostrar<select id="reviewerFilter"><option value="all">Todas las solicitudes</option><option value="pending">Pendientes</option><option value="approved">Aprobadas</option><option value="rejected">Rechazadas</option></select></label></div>
+        <div id="reviewerApplicationsList" class="reviewer-applications-list"></div>
+        <div id="reviewerEmptyState" class="empty-state"><span class="empty-icon">▤</span><strong>No hay solicitudes para revisar</strong><p>Cuando un cliente solicite un crédito en este mismo navegador, aparecerá aquí para su evaluación.</p></div>
+      </section>
+      <div class="reviewer-disclaimer"><strong>Flujo de demostración:</strong> al aprobar, el sistema abona el crédito a la cuenta del cliente, registra el desembolso y activa el plan de cuotas. Los pagos y abonos se descuentan de los ahorros. No consulta centrales de riesgo ni verifica documentos reales; los datos existen en este navegador.</div>
+      <footer class="page-footer"><span>© <span id="reviewerFooterYear"></span> Cajero Virtual</span><span><span class="footer-dot"></span> Panel de análisis de demostración</span></footer>
+    </div>
+  </main>
+
+  <div id="modalOverlay" class="modal-overlay" hidden>
+    <section id="operationModal" class="operation-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button id="closeModalButton" class="modal-close" type="button" aria-label="Cerrar ventana">×</button>
+      <div id="modalIcon" class="modal-icon">＋</div>
+      <p id="modalEyebrow" class="eyebrow">OPERACIÓN DE CUENTA</p>
+      <h2 id="modalTitle">Depositar dinero</h2>
+      <p id="modalDescription" class="modal-description">Ingresa el monto que deseas depositar.</p>
+      <form id="operationForm" class="form-stack modal-form">
+        <div id="destinationField" hidden><label class="field-label" for="destinationSelect">Cuenta destino</label><div class="input-wrap select-wrap"><span class="input-icon" aria-hidden="true">▦</span><select id="destinationSelect" name="destination"></select><span class="select-chevron" aria-hidden="true">⌄</span></div></div>
+        <label id="amountLabel" class="field-label" for="amountInput">Monto a depositar</label>
+        <div class="input-wrap amount-input-wrap"><span class="currency-prefix">$</span><input id="amountInput" name="amount" type="number" inputmode="numeric" min="1" step="1" placeholder="0" required></div>
+        <div id="quickAmounts" class="quick-amounts" aria-label="Cantidades rápidas" hidden></div>
+        <div id="operationHint" class="operation-hint"><span class="hint-icon">i</span><span>El monto debe ser mayor que cero.</span></div>
+        <p id="operationError" class="form-message error-message" role="alert" hidden></p>
+        <button id="confirmOperationButton" class="button button-primary button-wide" type="submit">Confirmar operación <span aria-hidden="true">→</span></button>
+      </form>
+      <div class="modal-bottom-note"><span class="secure-icon">✓</span> Operación registrada en este dispositivo</div>
+    </section>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden><span id="toastIcon" class="toast-icon">✓</span><span id="toastMessage">Operación realizada.</span></div>
+  <script src="js/app.js"></script>
+</body>
+</html>
