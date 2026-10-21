@@ -20,7 +20,7 @@
       <div class="sidebar-bottom">
         <div class="local-status"><span class="status-dot"></span><span>Modo local activo</span></div>
         <button id="resetDataButton" data-reset-data class="text-button reset-button" type="button"><span class="reset-button-icon" aria-hidden="true">⌫</span><span>Borrar todos los datos del sistema</span></button>
-        <p class="sidebar-version">CAJERO VIRTUAL <span>v23.0</span></p>
+        <p class="sidebar-version">CAJERO VIRTUAL <span>v26.0</span></p>
       </div>
     </aside>
 
@@ -30,6 +30,14 @@
         <div class="breadcrumb"><span>Mi espacio</span><span class="breadcrumb-slash">/</span><strong id="breadcrumbCurrent">Resumen</strong></div>
         <div class="topbar-right">
           <div class="secure-label"><span class="secure-icon">✓</span><span>Sesión iniciada</span></div>
+          <div class="quick-account-switch" title="Cambia de cuenta solo en esta pestaña. Duplica la pestaña para mantener varias cuentas abiertas.">
+            <label for="quickAccountSelect">Cambiar cuenta</label>
+            <select id="quickAccountSelect" aria-label="Cambiar cuenta en esta pestaña">
+              <option value="1">Edwin · 6247</option>
+              <option value="2">Pedro · 5704</option>
+              <option value="3">Reinel · 7083</option>
+            </select>
+          </div>
           <button id="profileButton" class="profile-chip" type="button" aria-label="Cerrar sesión">
             <span id="profileInitials" class="avatar">EO</span>
             <span class="profile-text"><strong id="profileName">Edwin Ocampo</strong><small id="profileAccount">Cuenta 01</small></span>

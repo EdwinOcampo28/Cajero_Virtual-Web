@@ -1,7 +1,7 @@
   const STORAGE_KEY = 'cajero_virtual_savings_v15_clean';
   const LEGACY_STORAGE_KEY = 'cajero_virtual_savings_v1';
   const MAX_WITHDRAWAL_AMOUNT = 3000000;
-  const MAX_DEPOSIT_AMOUNT = 3000000;
+  const MAX_DEPOSIT_AMOUNT = 10000000;
   const MAX_ACCOUNT_BALANCE = 100000000;
   const MAX_CARD_FUNDS = 100000000;
   const ADVANCE_FEE = 15000;
@@ -17,7 +17,7 @@
   const REVIEWER_NAME = 'Analista de créditos';
   const VALID_CREDIT_TERMS = [6, 12, 18, 24, 36, 48, 60];
   const QUICK_WITHDRAW_AMOUNTS = [50000, 100000, 200000, 500000, 1000000, 1500000, 2000000, 3000000];
-  const QUICK_DEPOSIT_AMOUNTS = [100000, 250000, 500000, 1000000, 1500000, 2000000, 2500000, 3000000];
+  const QUICK_DEPOSIT_AMOUNTS = [100000, 250000, 500000, 1000000, 2000000, 3000000, 5000000, 7500000, 10000000];
   const ACCOUNT_SEED = [
     null,
     { id: 1, name: 'Edwin Ocampo', accountNumber: '7184 3059 6247', cardNumber: '5412 8043 1000 1045', accountType: 'Cuenta de ahorros', pin: '5837', balance: 0, withdrawnToday: 0, withdrawalDate: '', history: [] },

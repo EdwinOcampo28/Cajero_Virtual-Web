@@ -36,12 +36,13 @@
       const details = document.createElement('div');
       details.className = 'reviewer-detail-grid';
       const relatedLoan = findLoanForApplication(item.id);
+      const isLimitIncreaseDisbursement = item.origin === 'Aumento de cupo';
       const detailRows = [
-        ['Ingresos mensuales declarados', money(item.monthlyIncome || 0)],
+        [isLimitIncreaseDisbursement ? 'Tipo de operación' : 'Ingresos mensuales declarados', isLimitIncreaseDisbursement ? 'Desembolso automático por aumento de cupo' : money(item.monthlyIncome || 0)],
         ['Cuota estimada', money(item.monthlyPayment || 0)],
         ['Plazo', `${item.termMonths || 0} meses`],
         ['Tasa mensual de la solicitud', `${((Number(item.monthlyRate) || ILLUSTRATIVE_MONTHLY_RATE) * 100).toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %`],
-        ['Situación laboral', item.employment || 'No indicada'],
+        ...(!isLimitIncreaseDisbursement ? [['Situación laboral', item.employment || 'No indicada']] : []),
         ['Destino', item.purpose || 'No indicado'],
         ['Total estimado', money(item.totalPayable || 0)],
         ['Fecha de solicitud', shortDateTime(item.date)],

@@ -1,4 +1,4 @@
-# Cajero Virtual v24 · Modularización profunda
+# Cajero Virtual v26 · Desembolso automático por aumento de cupo y copias de seguridad
 
 ## Abrir el cajero
 
@@ -8,11 +8,14 @@
 
 ## Qué se cambió en esta versión
 
-- Eliminé el `js/app.js` de 115 KB que duplicaba todos los módulos JS fuente. La aplicación carga ahora **38 archivos JavaScript independientes** directamente, en orden, mediante etiquetas de script clásicas compatibles con `file://`.
-- Dividí las reglas visuales en **28 hojas CSS** de menos de 3,6 KB cada una.
-- Organicé el contenido en **20 fragmentos HTML** de origen, separados por pantalla o componente.
+- La aplicación conserva los módulos HTML, CSS y JavaScript separados y carga los **40 archivos JavaScript independientes** directamente, sin un bundle `js/app.js` duplicado.
+- Los estilos están divididos en **30 hojas CSS** pequeñas por componente, incluidas las reglas del selector de cuenta por pestaña.
+- El contenido está organizado en **20 fragmentos HTML** por pantalla y componente.
 - `index.html` es una entrada generada y compacta de una línea para que siga funcionando con doble clic. El código HTML editable está en `src/html/`; no se debe modificar manualmente el `index.html` generado.
-- Quité una declaración CSS responsive redundante; no encontré funciones de nivel superior duplicadas en los módulos JavaScript.
+- Añadí un selector de cambio rápido de cuenta; la sesión de cada cuenta se guarda en `sessionStorage`, de manera que las pestañas duplicadas pueden conservar titular distinto. Las operaciones siguen compartiendo la base de datos local y se actualizan entre pestañas mediante el evento `storage`.
+- El depósito máximo por operación es de **$10.000.000**; se mantiene la comisión de $10.000 y el límite de saldo de ahorros de $100.000.000.
+- Al aprobar una solicitud de aumento de cupo, el sistema desembolsa automáticamente la diferencia entre el cupo anterior y el nuevo directamente a los fondos de la tarjeta. El importe se integra a la deuda unificada a 60 meses y al 2,13 % mensual; está sujeto al capital disponible del analista y al nuevo cupo.
+- El panel del analista incluye **Exportar copia de seguridad** e **Importar copia de seguridad** en formato JSON. La restauración valida la estructura, avisa antes de reemplazar los datos y permite conservar las copias en un lugar seguro. Las copias contienen saldos y credenciales de prueba; no las compartas.
 - La carga de datos se inicializa al final, después de cargar las funciones, para permitir scripts separados sin generar un bundle.
 
 ## Dónde editar
@@ -58,7 +61,9 @@ La lógica ejecutable también está en `src/js/`; **no existe un bundle `js/app
 - `07-card-view-and-helpers-*` y `08-card-operations-and-credit-forms-*`: vistas, avances, pagos de tarjeta y formularios de crédito/cupo.
 - `09-account-operations-and-dialogs-*`: depósitos, retiros, transferencias, modales, confirmaciones y avisos.
 - `10-system-reset.js`: borrado del sistema con confirmación.
-- `11-event-wiring-*` a `15-event-wiring-*`: inicialización final y eventos de la interfaz.
+- `11-event-wiring-*` a `15-event-wiring-*`: inicialización y eventos de la interfaz.
+- `16-tab-session-and-account-switch.js`: sesión aislada por pestaña, cambio rápido de titular y sincronización de datos entre pestañas.
+- `17-backup-export-import.js`: exportación e importación de copias JSON con validación y confirmación.
 
 Al editar JavaScript, guarda los archivos y recarga `index.html`; no hace falta reconstruir un bundle ni ejecutar Python.
 
@@ -67,3 +72,12 @@ Al editar JavaScript, guarda los archivos y recarga `index.html`; no hace falta 
 El constructor comprueba referencias CSS/JS locales, cantidad de scripts enlazados e identificadores HTML únicos. En esta versión también se revisó la sintaxis de los módulos por separado y en conjunto para confirmar que pueden compartir el ámbito de los scripts clásicos sin declaraciones duplicadas.
 
 El sistema continúa siendo una simulación local. No usa un servidor bancario ni procesa dinero real.
+
+## Cambiar de cuenta en pestañas duplicadas
+
+1. Inicia sesión en una cuenta.
+2. Duplica la pestaña desde el menú contextual de la pestaña del navegador.
+3. En la pestaña duplicada, usa el selector **Cambiar cuenta** de la barra superior para elegir otro titular sin volver a introducir el PIN.
+4. La cuenta activa queda independiente en cada pestaña. Los saldos, los movimientos y los créditos siguen siendo datos compartidos entre pestañas.
+
+Esta función es una comodidad para esta simulación local: no es adecuada como mecanismo de autenticación para información bancaria real. Al cerrar sesión se elimina la selección recordada de esa pestaña.

@@ -16,3 +16,12 @@
         <article class="reviewer-capital-card reviewer-capital-fees"><span>Comisiones por avances</span><strong id="reviewerFundFees">$ 0</strong><small>Costos de avance cobrados</small></article>
         <article class="reviewer-capital-card reviewer-capital-fees"><span>Comisiones de operaciones</span><strong id="reviewerFundOperationFees">$ 0</strong><small>Depósitos, retiros y transferencias</small></article>
       </section>
+      <section class="reviewer-inbox reviewer-backup-panel" aria-label="Copias de seguridad del sistema">
+        <div class="reviewer-inbox-heading"><div><p class="eyebrow">RESPALDO LOCAL</p><h2>Copias de seguridad</h2><p class="subheading">Exporta los datos actuales o restaura una copia anterior del cajero.</p></div></div>
+        <div class="reviewer-backup-actions">
+          <button id="exportBackupButton" class="button button-secondary" type="button">Exportar copia de seguridad</button>
+          <button id="importBackupButton" class="button button-primary" type="button">Importar copia de seguridad</button>
+          <input id="importBackupFile" class="backup-file-input" type="file" accept=".json,application/json" aria-label="Seleccionar archivo de copia de seguridad" hidden>
+        </div>
+        <p class="reviewer-backup-warning">La copia incluye saldos, cuentas de prueba, operaciones, créditos, solicitudes y registros financieros. Guárdala en un lugar seguro; importar una copia reemplaza los datos actuales de este navegador.</p>
+      </section>

@@ -37,6 +37,7 @@
       return;
     }
     activeAccountId = accountId;
+    persistTabSession('client', accountId);
     resetDailyWithdrawalIfNeeded(selected);
     saveDatabase();
     loginError.hidden = true;
@@ -48,12 +49,14 @@
     reviewerSession = false;
     appView.hidden = false;
     renderApp();
+    syncQuickAccountSelector();
     showView('overview');
     showToast(`Bienvenido, ${selected.name.split(' ')[0]}.`);
   }
 
   function logout() {
     closeModal();
+    clearTabSession();
     activeAccountId = null;
     loginView.hidden = false;
     reviewerLoginView.hidden = true;

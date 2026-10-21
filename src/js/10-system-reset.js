@@ -19,6 +19,7 @@
     }
     db = freshDatabase();
     saveDatabase();
+    clearTabSession();
     activeAccountId = null;
     reviewerSession = false;
     closeModal();

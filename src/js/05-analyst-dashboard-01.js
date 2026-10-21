@@ -28,6 +28,7 @@
       return;
     }
     reviewerSession = true;
+    persistTabSession('analyst', null);
     reviewerLoginView.hidden = true;
     loginView.hidden = true;
     appView.hidden = true;
@@ -39,6 +40,7 @@
   }
 
   function logoutReviewer() {
+    clearTabSession();
     reviewerSession = false;
     reviewerView.hidden = true;
     reviewerLoginView.hidden = true;

@@ -23,7 +23,7 @@
       heading.append(applicant, status);
       const details = document.createElement('div');
       details.className = 'reviewer-detail-grid';
-      [[ 'Cupo actual', money(request.previousLimit) ], [ 'Cupo solicitado', money(request.requestedLimit) ], [ 'Aumento solicitado', money(Math.max(0, request.requestedLimit - request.previousLimit)) ], [ 'Fecha', shortDateTime(request.date) ]].forEach(([label, value]) => {
+      [[ 'Cupo actual', money(request.previousLimit) ], [ 'Cupo solicitado', money(request.requestedLimit) ], [ 'Desembolso automático al aprobar', money(Math.max(0, request.requestedLimit - request.previousLimit)) ], [ 'Fecha', shortDateTime(request.date) ], ...(Number(request.disbursedAmount) > 0 ? [['Desembolso realizado', money(request.disbursedAmount)]] : [])].forEach(([label, value]) => {
         const cell = document.createElement('div'); cell.className = 'reviewer-detail-cell';
         const caption = document.createElement('span'); caption.textContent = label;
         const content = document.createElement('strong'); content.textContent = value;

@@ -1,0 +1,9 @@
+/* Herramientas de copia de seguridad del panel del analista */
+.reviewer-backup-panel { margin: 0 0 25px; }
+.reviewer-backup-panel .reviewer-inbox-heading { align-items: flex-start; margin-bottom: 14px; }
+.reviewer-backup-panel .subheading { max-width: 720px; margin: 8px 0 0; color: #9fb4c6; font-size: 11px; line-height: 1.65; }
+.reviewer-backup-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.reviewer-backup-actions .button { min-height: 43px; padding-inline: 17px; }
+.reviewer-backup-warning { margin: 13px 0 0; color: #c4b68f; font-size: 10px; line-height: 1.65; }
+.limit-request-disbursement { display: block; margin-top: 6px; color: #76e6b5; font-size: 10px; line-height: 1.5; }
+@media (max-width: 650px) { .reviewer-backup-actions { display: grid; grid-template-columns: 1fr; } .reviewer-backup-actions .button { width: 100%; } }

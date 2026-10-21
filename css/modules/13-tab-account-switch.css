@@ -1,0 +1,9 @@
+/* Cambio rápido de cuenta, aislado por pestaña */
+.quick-account-switch { display: flex; align-items: center; gap: 7px; min-width: 0; padding-left: 13px; border-left: 1px solid var(--line-strong); }
+.quick-account-switch label { color: #8ca5b7; font-size: 9px; font-weight: 750; white-space: nowrap; }
+.quick-account-switch select { width: 124px; min-width: 0; padding: 8px 24px 8px 9px; border: 1px solid rgba(125,190,218,.2); border-radius: 9px; outline: none; color: #dce9f4; background: #102236; font: inherit; font-size: 10px; cursor: pointer; }
+.quick-account-switch select:focus-visible { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(84,217,232,.12); }
+.quick-account-switch select option { color: #eaf2f8; background: #102236; }
+@media (max-width: 1150px) { .quick-account-switch { padding-left: 8px; gap: 5px; } .quick-account-switch label { display: none; } .quick-account-switch select { width: 116px; } }
+@media (max-width: 720px) { .topbar { gap: 7px; } .topbar-right { flex: 0 0 auto; } .quick-account-switch { border-left: 0; padding-left: 0; } .quick-account-switch select { width: 104px; padding: 8px 18px 8px 6px; font-size: 9px; } }
+@media (max-width: 390px) { .quick-account-switch select { width: 88px; } .topbar { padding-right: 10px; padding-left: 10px; } }

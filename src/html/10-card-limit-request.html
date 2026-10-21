@@ -2,13 +2,13 @@
             <div class="section-heading finance-module-heading"><div><p class="eyebrow">CUPO DE TARJETA</p><h3>Solicitar aumento de cupo</h3></div><span class="section-subtitle">Revisión por el analista</span></div>
             <div class="credit-layout card-limit-request-layout">
               <section class="credit-panel">
-                <div class="credit-panel-heading"><div class="credit-panel-symbol">↗</div><div><h3>Ampliar mi cupo</h3><p>Solicita un nuevo límite. El cambio solo se aplica cuando el analista lo aprueba.</p></div></div>
+                <div class="credit-panel-heading"><div class="credit-panel-symbol">↗</div><div><h3>Ampliar mi cupo</h3><p>Al aprobarse, la diferencia entre tu cupo actual y el nuevo se desembolsa automáticamente a la tarjeta y se suma a tu deuda unificada.</p></div></div>
                 <div class="credit-sim-lines card-limit-current-line"><div><span>Cupo autorizado actual</span><strong id="cardLimitCurrentValue">$ 100.000.000</strong></div></div>
                 <form id="cardLimitRequestForm" class="credit-form" autocomplete="off">
                   <div class="credit-field"><label for="cardLimitRequestedValue">Nuevo cupo solicitado</label><div class="input-wrap amount-input-wrap"><span class="currency-prefix">$</span><input id="cardLimitRequestedValue" name="requestedLimit" type="number" inputmode="numeric" min="101000000" max="500000000" step="1000000" value="125000000" required></div><small>El cupo inicial es de $ 100.000.000. Puedes solicitar hasta $ 500.000.000 en esta demostración.</small></div>
                   <p id="cardLimitRequestError" class="form-message error-message" role="alert" hidden></p>
                   <button id="cardLimitRequestSubmit" class="button button-primary button-wide" type="submit">Enviar solicitud de aumento <span aria-hidden="true">→</span></button>
-                  <p id="cardLimitRequestStatus" class="credit-disclaimer">El analista revisará tu solicitud antes de cambiar el cupo.</p>
+                  <p id="cardLimitRequestStatus" class="credit-disclaimer">Si se aprueba, se desembolsará automáticamente la diferencia de cupo a la tarjeta y se actualizará tu cuota unificada.</p>
                 </form>
               </section>
               <aside class="credit-panel credit-simulation-panel">

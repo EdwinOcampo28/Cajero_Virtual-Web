@@ -25,6 +25,7 @@
         status.className = `credit-status ${statusClass(request.status || 'En revisión')}`;
         status.textContent = request.status || 'En revisión';
         row.append(main, status);
+        if (Number(request.disbursedAmount) > 0) { const disbursement=document.createElement('small'); disbursement.className='limit-request-disbursement'; disbursement.textContent=`Desembolso automático realizado: ${money(request.disbursedAmount)}; integrado a tu deuda unificada.`; row.append(disbursement); }
         if (request.reviewerNote) { const note=document.createElement('small'); note.textContent=`Nota: ${request.reviewerNote}`; row.append(note); }
         history.append(row);
       });

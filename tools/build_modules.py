@@ -43,8 +43,8 @@ def main() -> int:
 
         if not js_files[0].name.startswith("00-config-and-state"):
             raise RuntimeError("El primer módulo JS debe ser 00-config-and-state.js")
-        if not js_files[-1].name.startswith("15-event-wiring-05-keyboard-and-startup"):
-            raise RuntimeError("El módulo de inicio y eventos debe ser el último archivo JS")
+        if not js_files[-1].name.startswith("17-backup-export-import"):
+            raise RuntimeError("El módulo de copias de seguridad debe ser el último archivo JS")
         if not any(p.name.startswith("10-system-reset") for p in js_files):
             raise RuntimeError("Falta el módulo de borrado controlado del sistema")
         if html.count(CSS_MARKER) != 1 or html.count(JS_MARKER) != 1:
