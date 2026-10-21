@@ -1,0 +1,31 @@
+          <section id="cardView" class="finance-module" aria-label="Tarjeta de crédito y operaciones">
+            <div class="section-heading finance-module-heading"><div><p class="eyebrow">TARJETA ACTIVA</p><h3>Resumen de tarjeta</h3></div><span class="section-subtitle">Total de desembolsos y disponible de avances</span></div>
+          
+
+          <div class="card-account-layout card-account-layout-large">
+            <article class="physical-credit-card physical-credit-card-large" aria-label="Tarjeta de crédito de demostración">
+              <div class="physical-card-top"><div class="physical-card-brand"><span class="physical-card-brand-mark">$</span><span>CAJERO <strong>VIRTUAL</strong></span></div><span class="physical-card-badge">CREDIT</span></div>
+              <div class="physical-card-chip" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+              <div class="physical-card-number" id="cardNumberText">•••• •••• •••• 1045</div>
+              <div class="physical-card-bottom"><div><small>TITULAR</small><strong id="cardHolderText">Edwin Ocampo</strong></div><div><small>TIPO DE TARJETA</small><strong>CRÉDITO</strong></div><span class="physical-card-network">CV</span></div>
+              <div class="physical-card-decoration" aria-hidden="true"></div>
+            </article>
+
+            <section class="card-advance-combined" aria-label="Disponible y operación de avance">
+              <div class="card-metrics-grid card-metrics-grid-two compact-card-metrics" aria-label="Resumen de tarjeta">
+                <article class="card-metric card-metric-funds"><span>Total de desembolsos</span><strong id="cardTotalDisbursementsMetric">$ 0</strong><small>Suma de créditos desembolsados originalmente</small></article>
+                <article class="card-metric card-metric-available"><span>Disponible para avances</span><strong id="cardAvailableAdvancesMetric">$ 0</strong><small>Saldo desembolsado disponible y capital recuperado</small></article>
+              </div>
+
+              <section class="credit-panel card-operation-panel advance-operation-panel">
+                <div class="credit-panel-heading"><div class="credit-panel-symbol">↗</div><div><h3>Realizar avance</h3><p>Traslada fondos disponibles de tu tarjeta únicamente a tu propia cuenta de ahorros.</p></div></div>
+                <form id="cardFundsForm" class="credit-form" autocomplete="off">
+                  <div class="credit-field"><label for="cardFundsAmount">Monto del avance</label><div class="input-wrap amount-input-wrap"><span class="currency-prefix">$</span><input id="cardFundsAmount" name="amount" type="number" inputmode="numeric" min="1" step="1" required placeholder="0"></div><small id="cardFundsHint">Fondos disponibles en tarjeta: $ 0.</small></div>
+                  <div class="credit-field"><label for="advanceTermSelect">Plazo de la deuda unificada después del avance</label><select id="advanceTermSelect" name="advanceTermMonths" required><option value="6">6 cuotas</option><option value="12">12 cuotas</option><option value="18">18 cuotas</option><option value="24">24 cuotas</option><option value="36">36 cuotas</option><option value="48">48 cuotas</option><option value="60" selected>60 cuotas</option></select><small>Si el avance usa capital recuperado, se suma al capital pendiente de la deuda existente y se calcula una nueva cuota para el plazo elegido.</small></div>
+                  <p id="cardFundsError" class="form-message error-message" role="alert" hidden></p>
+                  <button class="button button-primary button-wide" type="submit">Realizar avance <span aria-hidden="true">→</span></button>
+                </form>
+              </section>
+            </section>
+          </div>
+

@@ -1,0 +1,15 @@
+.movement-title { overflow: hidden; color: #d5e2ed; font-size: 11px; font-weight: 750; text-overflow: ellipsis; white-space: nowrap; }
+.movement-meta { margin-top: 5px; color: #71899f; font-size: 9px; }
+.movement-trailing { text-align: right; }
+.movement-amount { color: #e7f1f9; font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.movement-amount.positive { color: var(--green); }.movement-amount.negative { color: #f4c88a; }
+.movement-status { display: inline-flex; align-items: center; gap: 4px; margin-top: 5px; color: #7794a6; font-size: 8px; }
+.movement-status::before { width: 4px; height: 4px; border-radius: 50%; background: var(--green); content: ""; }
+.empty-state { display: flex; min-height: 220px; flex-direction: column; align-items: center; justify-content: center; padding: 24px; color: var(--muted); text-align: center; }
+.empty-icon { display: grid; width: 48px; height: 48px; margin-bottom: 15px; place-items: center; border: 1px solid rgba(84,217,232,.18); border-radius: 16px; color: var(--cyan); background: rgba(84,217,232,.06); font-size: 24px; }
+.empty-state strong { color: #dce8f2; font-size: 13px; }
+.empty-state p { margin: 8px 0 0; font-size: 11px; }
+.page-footer { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-top: 31px; padding: 17px 0 5px; border-top: 1px solid rgba(159,191,220,.08); color: #536b80; font-size: 9px; }
+.page-footer > span:last-child { display: flex; align-items: center; gap: 8px; }
+.footer-dot { width: 5px; height: 5px; flex-basis: 5px; box-shadow: none; }
+

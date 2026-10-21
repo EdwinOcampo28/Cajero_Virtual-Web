@@ -1,0 +1,27 @@
+        <section id="overviewView" class="content-view">
+          <div class="welcome-row">
+            <div><p class="eyebrow">TU RESUMEN FINANCIERO</p><h2 id="welcomeTitle">Hola, Edwin <span class="wave-emoji">✦</span></h2><p class="subheading">Consulta tus ahorros, movimientos y productos vinculados.</p></div>
+            <div class="date-pill"><span class="date-icon">◷</span><span id="currentDate"></span></div>
+          </div>
+
+          <section class="balance-card" aria-label="Saldo disponible">
+            <div class="balance-card-top"><div class="balance-label"><span class="balance-icon">$</span><span id="balanceAccountType">Cuenta de ahorros</span></div><span class="account-number-pill" id="balanceAccountNumber">N.º 7184 3059 6247</span></div>
+            <div class="balance-main"><span id="balanceAmount" class="balance-amount">$ 2.000</span><span class="balance-currency">COP</span></div>
+            <div class="balance-card-bottom"><span><span class="balance-live-dot"></span><span id="balanceAccountHolder">Edwin Ocampo</span></span><span id="balanceUpdated">Cuenta activa</span></div>
+            <div class="balance-decoration decoration-a" aria-hidden="true"></div><div class="balance-decoration decoration-b" aria-hidden="true"></div>
+          </section>
+
+          <div class="stats-grid">
+            <article class="stat-card">
+              <div class="stat-card-top"><span>Retiros de hoy</span><span class="stat-icon withdraw-icon">↗</span></div>
+              <div id="withdrawnAmount" class="stat-value">$ 0</div>
+              <div class="stat-note"><span class="note-dot"></span>Acumulado de movimientos del día</div>
+              <div class="stat-foot"><span id="withdrawnCaption">Acumulado de hoy</span><strong id="withdrawLimitText">Máx. 3.000.000 por retiro</strong></div>
+            </article>
+            <article class="stat-card">
+              <div class="stat-card-top"><span>Movimientos registrados</span><span class="stat-icon history-icon">↻</span></div>
+              <div id="movementCount" class="stat-value">0</div>
+              <div class="stat-note"><span class="note-dot"></span>En el historial de tu cuenta</div>
+              <button class="inline-link" data-go-view="history" type="button">Ver historial <span aria-hidden="true">→</span></button>
+            </article>
+          </div>

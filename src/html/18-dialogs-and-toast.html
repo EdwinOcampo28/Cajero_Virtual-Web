@@ -1,0 +1,19 @@
+  <div id="appDialogOverlay" class="app-dialog-overlay" hidden>
+    <section id="appDialogCard" class="app-dialog-card" role="alertdialog" aria-modal="true" aria-labelledby="appDialogTitle" aria-describedby="appDialogMessage">
+      <button class="app-dialog-close" type="button" aria-label="Cerrar ventana">×</button>
+      <div id="appDialogIcon" class="app-dialog-icon" aria-hidden="true">✓</div>
+      <p id="appDialogEyebrow" class="eyebrow">CAJERO VIRTUAL</p>
+      <h2 id="appDialogTitle">Confirmar operación</h2>
+      <p id="appDialogMessage" class="app-dialog-message"></p>
+      <div id="appDialogInputWrap" class="app-dialog-input-wrap" hidden>
+        <label id="appDialogInputLabel" for="appDialogInput" class="field-label">Observación</label>
+        <textarea id="appDialogInput" rows="3" maxlength="500" placeholder="Escribe una observación breve…"></textarea>
+      </div>
+      <div class="app-dialog-actions">
+        <button id="appDialogCancel" class="button button-secondary" type="button">Cancelar</button>
+        <button id="appDialogConfirm" class="button button-primary" type="button">Continuar</button>
+      </div>
+      <div class="app-dialog-foot"><span class="secure-icon">✓</span> Cajero Virtual · Confirmación de operación</div>
+    </section>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden><span id="toastIcon" class="toast-icon">✓</span><span id="toastMessage">Operación realizada.</span></div>

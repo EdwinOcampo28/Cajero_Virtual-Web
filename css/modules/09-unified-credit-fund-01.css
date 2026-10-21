@@ -1,0 +1,27 @@
+/* Vista financiera unificada: tarjeta y préstamos en una sola pantalla */
+.finance-unified-note { display: flex; align-items: flex-start; gap: 11px; margin: -3px 0 26px; padding: 14px 16px; border: 1px solid rgba(84,217,232,.2); border-radius: 14px; color: #c4d6e5; background: linear-gradient(120deg, rgba(18,54,73,.48), rgba(12,26,42,.72)); font-size: 12px; line-height: 1.7; box-shadow: inset 0 1px 0 rgba(255,255,255,.025); }
+.finance-unified-note .hint-icon { flex: 0 0 19px; margin-top: 1px; }
+.finance-module + .finance-module { margin-top: 34px; padding-top: 29px; border-top: 1px solid var(--line-strong); }
+.finance-module-heading { margin-bottom: 19px; }
+
+
+/* v13 · Fondo único de créditos y topes por titular */
+.reviewer-capital-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 13px; margin: 0 0 20px; }
+.reviewer-capital-card { display: flex; min-width: 0; flex-direction: column; gap: 8px; padding: 19px; border: 1px solid rgba(147,187,220,.15); border-radius: 15px; background: linear-gradient(150deg, rgba(16,35,53,.95), rgba(10,23,36,.92)); box-shadow: inset 0 1px 0 rgba(255,255,255,.025); }
+.reviewer-capital-card > span { color: #b7cad9; font-size: 11px; font-weight: 750; }
+.reviewer-capital-card strong { color: #f2f8fd; font-size: clamp(20px, 2.2vw, 28px); letter-spacing: -.04em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.reviewer-capital-card small { color: #8fa5b8; font-size: 9px; line-height: 1.55; }
+.reviewer-capital-total { border-color: rgba(84,217,232,.24); background: linear-gradient(145deg, rgba(18,57,75,.78), rgba(10,23,36,.94)); }
+.reviewer-capital-total strong { color: #75e3ef; }
+.reviewer-capital-available { border-color: rgba(100,223,173,.22); background: linear-gradient(145deg, rgba(18,62,53,.7), rgba(10,23,36,.94)); }
+.reviewer-capital-available strong { color: #83efc0; }
+.reviewer-capital-interest { border-color: rgba(243,199,108,.25); background: linear-gradient(145deg, rgba(63,49,23,.62), rgba(10,23,36,.94)); }
+.reviewer-capital-fees { border-color: rgba(100,223,173,.25); background: linear-gradient(145deg, rgba(18,62,53,.58), rgba(10,23,36,.94)); }
+.reviewer-capital-fees strong { color: #83efc0; }
+.reviewer-capital-interest strong { color: #f3c76c; }
+.finance-capacity-note { margin: 0 0 16px; padding: 13px 14px; border: 1px solid rgba(84,217,232,.16); border-radius: 10px; color: #c3d6e6; background: rgba(84,217,232,.045); font-size: 11px; line-height: 1.7; }
+#legacyCardPaymentPanel[hidden] { display: none !important; }
+@media (max-width: 1180px) { .reviewer-capital-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .reviewer-capital-grid { grid-template-columns: 1fr; } }
+
+

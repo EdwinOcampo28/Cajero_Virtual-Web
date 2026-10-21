@@ -1,0 +1,20 @@
+.credit-sim-lines > div { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; padding: 13px 0; border-bottom: 1px solid var(--line); }
+.credit-sim-lines span { color: #9fb3c5; font-size: 10px; }
+.credit-sim-lines strong { color: #e1edf7; font-size: 11px; font-variant-numeric: tabular-nums; text-align: right; overflow-wrap: anywhere; }
+.credit-sim-note { position: relative; z-index: 1; display: flex; gap: 9px; margin-top: 17px; padding: 12px; border: 1px solid rgba(141,181,212,.11); border-radius: 10px; color: #8ea4b6; background: rgba(7,18,29,.46); font-size: 9px; line-height: 1.65; }
+.credit-applications-section { margin-top: 29px; }
+.credit-applications-list { display: flex; flex-direction: column; gap: 9px; }
+.credit-application-item { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: 16px; padding: 17px 19px; border: 1px solid var(--line); border-radius: 13px; background: rgba(12,26,41,.67); }
+.credit-application-main { display: flex; min-width: 0; flex-direction: column; gap: 5px; }
+.credit-application-main strong { color: #edf7fc; font-size: 16px; font-variant-numeric: tabular-nums; }
+.credit-application-main span { color: #b3c4d3; font-size: 10px; line-height: 1.5; overflow-wrap: anywhere; }
+.credit-application-main small { color: var(--muted-soft); font-size: 9px; }
+.credit-application-status { flex: 0 0 auto; }
+.credit-status { display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; border: 1px solid rgba(243,199,108,.2); border-radius: 999px; color: #f3d58c; background: rgba(243,199,108,.07); font-size: 9px; font-weight: 750; white-space: nowrap; }
+.credit-status::before { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); content: ""; }
+#creditAmountInput, #creditIncomeInput { font-variant-numeric: tabular-nums; }
+@media (max-width: 1000px) { .credit-layout { grid-template-columns: minmax(0, 1fr); } .credit-simulation-panel { order: -1; } }
+@media (max-width: 720px) { .credit-panel { padding: 18px; } .credit-inline-grid { gap: 9px; } .credit-application-item { align-items: flex-start; flex-direction: column; gap: 12px; padding: 15px; } .credit-application-status { align-self: flex-start; } }
+@media (max-width: 390px) { .credit-inline-grid { grid-template-columns: minmax(0, 1fr); } .credit-sim-highlight strong { font-size: 27px; } }
+
+

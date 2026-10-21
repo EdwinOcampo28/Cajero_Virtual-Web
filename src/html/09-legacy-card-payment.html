@@ -1,0 +1,13 @@
+          <section class="section-block card-operations-section" id="legacyCardPaymentSection" hidden>
+            <div class="card-operations-grid">
+              <section class="credit-panel card-operation-panel" id="legacyCardPaymentPanel" hidden>
+                <div class="credit-panel-heading"><div class="credit-panel-symbol">✓</div><div><h3>Pagar saldo antiguo de tarjeta</h3><p>Este pago corresponde únicamente a una deuda heredada de versiones anteriores.</p></div></div>
+                <form id="cardPaymentForm" class="credit-form" autocomplete="off">
+                  <div class="credit-field"><label for="cardPaymentAmount">Monto del pago</label><div class="input-wrap amount-input-wrap"><span class="currency-prefix">$</span><input id="cardPaymentAmount" name="amount" type="number" inputmode="numeric" min="1" step="1" required placeholder="0"></div><small id="cardPaymentHint">Ahorros disponibles: $ 0 · Saldo antiguo: $ 0.</small></div>
+                  <p id="cardPaymentError" class="form-message error-message" role="alert" hidden></p>
+                  <button class="button button-primary button-wide" type="submit">Pagar saldo antiguo <span aria-hidden="true">→</span></button>
+                </form>
+              </section>
+            </div>
+          </section>
+          </section>

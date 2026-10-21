@@ -1,0 +1,3 @@
+@media (max-width: 430px) { .physical-credit-card { min-height: 220px; padding: 20px 17px 17px; } .physical-card-number { font-size: 15px; letter-spacing: .09em; } .physical-card-bottom { gap: 8px; } .physical-card-bottom strong { font-size: 8px; } .card-metrics-grid { grid-template-columns: 1fr; } .card-metric { min-height: 108px; } }
+
+

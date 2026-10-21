@@ -1,0 +1,9 @@
+.app-dialog-card.is-alert .app-dialog-actions { justify-content: flex-end; }
+.app-dialog-foot { display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 21px; padding-top: 16px; border-top: 1px solid var(--line); color: #7892a8; font-size: 9px; letter-spacing: .015em; }
+.app-dialog-foot .secure-icon { width: 14px; height: 14px; font-size: 8px; }
+.toast { border-color: rgba(84, 217, 232, .22); border-radius: 15px; color: #edf7ff; background: linear-gradient(145deg, #102b40, #0b1b2b 78%); box-shadow: 0 20px 52px rgba(0, 0, 0, .38), inset 0 1px 0 rgba(255,255,255,.04); font-size: 12px; line-height: 1.55; }
+.toast.error { border-color: rgba(255, 133, 137, .28); background: linear-gradient(145deg, #422633, #211a28 78%); }
+.toast-icon { width: 29px; height: 29px; flex-basis: 29px; border-radius: 9px; font-size: 14px; }
+@media (max-width: 520px) { .app-dialog-overlay { align-items: end; padding: 12px; } .app-dialog-card { padding: 25px 21px 20px; border-radius: 21px; max-height: 88vh; } .app-dialog-icon { width: 42px; height: 42px; margin-bottom: 14px; } .app-dialog-message { margin-bottom: 18px; font-size: 12px; } .app-dialog-actions { display: grid; grid-template-columns: 1fr; } .app-dialog-actions .button { width: 100%; } }
+@media (prefers-reduced-motion: reduce) { .app-dialog-card { animation: none; } }
+

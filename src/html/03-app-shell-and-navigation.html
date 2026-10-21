@@ -1,0 +1,41 @@
+  <main id="appView" class="app-shell" hidden>
+    <aside class="sidebar" id="sidebar">
+      <a class="sidebar-brand" href="#inicio" aria-label="Cajero Virtual, inicio">
+        <div class="brand-mark small-mark"><span class="brand-mark-core">$</span></div>
+        <div><span class="sidebar-brand-name">Cajero<span>Virtual</span></span><span class="sidebar-brand-tag">BANCA PERSONAL</span></div>
+      </a>
+      <div class="sidebar-caption">MENÚ PRINCIPAL</div>
+      <nav class="side-nav" aria-label="Menú principal">
+        <button class="nav-item active" data-view="overview" type="button"><span class="nav-icon">▦</span><span>Resumen</span><span class="nav-indicator"></span></button>
+        <button class="nav-item" data-view="history" type="button"><span class="nav-icon">↻</span><span>Movimientos</span></button>
+        <button class="nav-item" data-view="finance" type="button"><span class="nav-icon">▣</span><span>Tarjeta y créditos</span></button>
+        <button class="nav-item" data-view="financial-history" type="button"><span class="nav-icon">↻</span><span>Historiales</span></button>
+      </nav>
+      <div class="sidebar-card">
+        <div class="sidebar-card-icon">⌁</div>
+        <p class="sidebar-card-title">Tu cuenta, a tu ritmo</p>
+        <p class="sidebar-card-copy">Todas las operaciones en un mismo lugar.</p>
+        <div class="mini-wave" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+      <div class="sidebar-bottom">
+        <div class="local-status"><span class="status-dot"></span><span>Modo local activo</span></div>
+        <button id="resetDataButton" data-reset-data class="text-button reset-button" type="button"><span class="reset-button-icon" aria-hidden="true">⌫</span><span>Borrar todos los datos del sistema</span></button>
+        <p class="sidebar-version">CAJERO VIRTUAL <span>v23.0</span></p>
+      </div>
+    </aside>
+
+    <section class="workspace">
+      <header class="topbar">
+        <button id="mobileMenuButton" class="mobile-menu-button" type="button" aria-label="Abrir menú">☰</button>
+        <div class="breadcrumb"><span>Mi espacio</span><span class="breadcrumb-slash">/</span><strong id="breadcrumbCurrent">Resumen</strong></div>
+        <div class="topbar-right">
+          <div class="secure-label"><span class="secure-icon">✓</span><span>Sesión iniciada</span></div>
+          <button id="profileButton" class="profile-chip" type="button" aria-label="Cerrar sesión">
+            <span id="profileInitials" class="avatar">EO</span>
+            <span class="profile-text"><strong id="profileName">Edwin Ocampo</strong><small id="profileAccount">Cuenta 01</small></span>
+            <span class="profile-chevron">⌄</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="page-content">

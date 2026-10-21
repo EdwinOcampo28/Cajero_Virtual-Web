@@ -1,0 +1,30 @@
+  <main id="reviewerLoginView" class="login-shell reviewer-login-shell" hidden>
+    <section class="login-brand" aria-label="Acceso de analista">
+      <div class="brand-lockup">
+        <div class="brand-mark"><span class="brand-mark-core">✓</span></div>
+        <div><p class="eyebrow">GESTIÓN DE CRÉDITOS</p><h1>Panel<span>Analista</span></h1></div>
+      </div>
+      <div class="brand-message">
+        <p class="eyebrow accent">REVISIÓN DE SOLICITUDES</p>
+        <h2>Evalúa cada caso.<br><span>Decide con criterio.</span></h2>
+        <p>Consulta los datos declarados por los solicitantes y registra una decisión de demostración, con una nota de revisión.</p>
+      </div>
+      <div class="brand-footer"><span class="status-dot"></span><span>Panel de revisión de demostración</span></div>
+      <div class="brand-orbit orbit-one" aria-hidden="true"></div><div class="brand-orbit orbit-two" aria-hidden="true"></div><div class="brand-grid" aria-hidden="true"></div>
+    </section>
+    <section class="login-panel">
+      <div class="mobile-brand brand-lockup"><div class="brand-mark"><span class="brand-mark-core">✓</span></div><div><p class="eyebrow">GESTIÓN DE CRÉDITOS</p><h1>Panel<span>Analista</span></h1></div></div>
+      <div class="login-heading"><p class="eyebrow">ACCESO RESTRINGIDO</p><h2>Analista de créditos</h2><p>Ingresa la clave del revisor para abrir la bandeja de solicitudes.</p></div>
+      <form id="reviewerLoginForm" class="form-stack" autocomplete="off">
+        <label class="field-label" for="reviewerPinInput">Clave del analista</label>
+        <div class="input-wrap"><span class="input-icon" aria-hidden="true">▣</span><input id="reviewerPinInput" name="reviewerPin" type="password" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" placeholder="••••••" required aria-describedby="reviewerPinHelp" title="Ingresa los 6 dígitos de la clave de demostración"></div>
+        <p id="reviewerPinHelp" class="field-help">Clave de seis dígitos para el perfil de revisión de esta demostración.</p>
+        <p id="reviewerLoginError" class="form-message error-message" role="alert" hidden></p>
+        <button class="button button-primary button-wide" type="submit">Entrar a revisar solicitudes <span aria-hidden="true">→</span></button>
+      </form>
+      <details class="demo-access"><summary><span class="summary-icon" aria-hidden="true">i</span> Credencial de prueba del analista</summary><div class="reviewer-demo-credential"><span>Analista de créditos</span><code>482917</code></div></details>
+      <button id="backToClientLogin" class="button button-secondary button-wide" type="button">← Volver al acceso de clientes</button>
+      <p class="login-legal"><span aria-hidden="true">✦</span> Acceso de demostración; no equivale a seguridad bancaria real.</p>
+    </section>
+  </main>
+

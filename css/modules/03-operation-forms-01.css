@@ -1,0 +1,26 @@
+/* Quick amount presets for deposits and cash withdrawals */
+.quick-amounts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 4px 0 2px; }
+.quick-amounts[hidden] { display: none; }
+.quick-amount { min-width: 0; padding: 11px 8px; border: 1px solid rgba(125,190,218,.18); border-radius: 10px; color: #c9d9e7; background: rgba(7,18,29,.48); font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums; cursor: pointer; transition: border-color .16s ease, background .16s ease, color .16s ease, transform .16s ease; }
+.quick-amount:hover { border-color: rgba(84,217,232,.48); color: #f2fcff; background: rgba(84,217,232,.08); transform: translateY(-1px); }
+.quick-amount.is-selected, .quick-amount[aria-pressed="true"] { border-color: rgba(100,223,173,.62); color: #eafff5; background: rgba(100,223,173,.13); box-shadow: inset 0 0 0 1px rgba(100,223,173,.08); }
+.stat-foot { gap: 9px; }
+.stat-foot strong { text-align: right; }
+@media (max-width: 390px) { .quick-amount { padding: 10px 6px; font-size: 10px; } }
+
+
+/* Account-of-savings details */
+.balance-label { text-transform: uppercase; letter-spacing: .055em; font-size: 10px; font-weight: 800; }
+.account-number-pill { max-width: 66%; overflow-wrap: anywhere; font-size: 9px; letter-spacing: .055em; white-space: normal; text-align: right; }
+.balance-card-bottom > span:first-child { color: #d5edf4; font-weight: 700; }
+.credential-head { grid-template-columns: .9fr 1.3fr 1fr; }
+.credential-row { grid-template-columns: .9fr 1.3fr 1fr; }
+#pinInput { letter-spacing: .28em; font-variant-numeric: tabular-nums; }
+#pinInput::placeholder { letter-spacing: .24em; }
+@media (max-width: 470px) {
+  .account-number-pill { max-width: 58%; padding: 6px 7px; font-size: 8px; }
+  .credential-row { grid-template-columns: .9fr 1.3fr .8fr; gap: 5px; padding: 8px 7px; font-size: 9px; }
+  .credential-row code { font-size: 9px; }
+}
+
+

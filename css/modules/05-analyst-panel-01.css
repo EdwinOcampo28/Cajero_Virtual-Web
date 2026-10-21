@@ -1,0 +1,32 @@
+/* Acceso y panel de revisión de solicitudes de crédito */
+.reviewer-entry-button { margin-top: 12px; }
+.reviewer-login-shell .login-panel { gap: 0; }
+.reviewer-login-shell #backToClientLogin { margin-top: 12px; }
+.reviewer-demo-credential { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 14px 3px 4px; color: #d8e7f5; font-size: 11px; }
+.reviewer-demo-credential code { padding: 7px 10px; border: 1px solid rgba(84,217,232,.2); border-radius: 8px; color: #75e3ef; background: rgba(84,217,232,.07); font-size: 13px; font-weight: 800; letter-spacing: .12em; }
+.reviewer-dashboard { min-height: 100vh; color: var(--text, #eaf4ff); background: radial-gradient(circle at 80% 0%, rgba(32,86,112,.22), transparent 33%), #081523; }
+.reviewer-topbar { display: flex; min-height: 84px; align-items: center; justify-content: space-between; gap: 20px; padding: 16px clamp(20px, 4vw, 58px); border-bottom: 1px solid rgba(147,187,220,.13); background: rgba(7,17,29,.88); }
+.reviewer-brand { padding: 0; }
+.reviewer-session { display: flex; align-items: center; gap: 10px; color: #bed0df; font-size: 11px; font-weight: 700; }
+.reviewer-session > span:nth-child(2) { white-space: nowrap; }
+.reviewer-session .status-dot { flex: 0 0 7px; }
+.reviewer-content { width: min(1280px, calc(100% - 56px)); margin: 0 auto; padding: 36px 0 28px; }
+.reviewer-welcome { display: flex; align-items: flex-start; justify-content: space-between; gap: 22px; margin-bottom: 27px; }
+.reviewer-welcome h1 { margin: 0; color: #f1f7fc; font-size: clamp(26px, 3vw, 36px); letter-spacing: -.045em; }
+.reviewer-welcome .subheading { max-width: 740px; margin-top: 9px; }
+.reviewer-demo-tag { flex: 0 0 auto; padding: 9px 12px; border: 1px solid rgba(243,199,108,.24); border-radius: 999px; color: #f5d99a; background: rgba(243,199,108,.075); font-size: 9px; font-weight: 850; letter-spacing: .1em; }
+.reviewer-kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 13px; margin-bottom: 25px; }
+.reviewer-kpi { display: flex; min-width: 0; flex-direction: column; gap: 7px; padding: 19px; border: 1px solid rgba(147,187,220,.14); border-radius: 15px; background: linear-gradient(150deg, rgba(16,35,53,.91), rgba(10,23,36,.9)); }
+.reviewer-kpi > span { color: #b7cad9; font-size: 11px; font-weight: 700; }
+.reviewer-kpi strong { color: #f2f8fd; font-size: 28px; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.reviewer-kpi small { color: #8fa5b8; font-size: 9px; }
+.reviewer-kpi.pending-kpi strong { color: #f3c76c; }
+.reviewer-kpi.approved-kpi strong { color: #75e5b4; }
+.reviewer-kpi.rejected-kpi strong { color: #ff9e9e; }
+.reviewer-inbox { padding: clamp(17px, 2.4vw, 27px); border: 1px solid rgba(147,187,220,.15); border-radius: 19px; background: rgba(10,23,36,.79); box-shadow: 0 20px 60px rgba(0,0,0,.14); }
+.reviewer-inbox-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 19px; }
+.reviewer-inbox-heading h2 { margin: 0; color: #eff7fc; font-size: 19px; letter-spacing: -.025em; }
+.reviewer-filter-label { display: flex; align-items: center; gap: 10px; color: #a9bdce; font-size: 10px; font-weight: 700; }
+.reviewer-filter-label select { min-height: 42px; max-width: 210px; padding: 0 12px; border: 1px solid rgba(150,185,214,.2); border-radius: 10px; color: #eaf4ff; background: #0d1b2a; font-size: 11px; }
+.reviewer-filter-label select option { color: #eaf4ff; background: #0d1b2a; }
+.reviewer-applications-list { display: flex; flex-direction: column; gap: 14px; }

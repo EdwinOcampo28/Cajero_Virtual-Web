@@ -1,0 +1,11 @@
+/* v14: dedicated financial history screen and focused card summary */
+.card-metrics-grid-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.card-metric-available { border-color: rgba(84, 217, 232, .22); background: linear-gradient(145deg, rgba(16, 54, 73, .96), rgba(10, 28, 43, .96)); }
+.financial-history-summary { margin-top: 4px; }
+.financial-history-block { margin-top: 27px; }
+.financial-history-list { overflow: hidden; border: 1px solid var(--line); border-radius: 15px; background: rgba(12,26,41,.65); }
+.financial-history-list[hidden] { display: none; }
+.financial-history-list .movement-row { border-radius: 0; }
+.financial-history-view .credit-applications-section { margin-top: 27px; }
+@media (max-width: 430px) { .card-metrics-grid-two { grid-template-columns: 1fr; } }
+

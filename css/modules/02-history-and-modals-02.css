@@ -1,0 +1,12 @@
+.modal-form .button-wide { margin-top: 5px; }
+.modal-bottom-note { display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 22px; padding-top: 17px; border-top: 1px solid var(--line); color: #657f94; font-size: 9px; }
+.modal-bottom-note .secure-icon { width: 14px; height: 14px; font-size: 8px; }
+.toast { position: fixed; z-index: 50; right: 26px; bottom: 25px; display: flex; max-width: min(410px, calc(100vw - 32px)); align-items: center; gap: 11px; padding: 14px 18px; border: 1px solid rgba(100,223,173,.23); border-radius: 13px; color: #e8f8f1; background: linear-gradient(125deg, #143b3b, #102b32); box-shadow: 0 15px 40px rgba(0,0,0,.3); font-size: 11px; animation: toast-in .22s ease-out; }
+.toast.error { border-color: rgba(255,133,137,.25); background: linear-gradient(125deg, #4b2632, #291d2a); }
+.toast-icon { display: grid; width: 23px; height: 23px; flex: 0 0 23px; place-items: center; border: 1px solid rgba(100,223,173,.25); border-radius: 8px; color: var(--green); font-size: 12px; }
+.toast.error .toast-icon { border-color: rgba(255,133,137,.3); color: var(--red); }
+@keyframes toast-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+@media (min-width: 1440px) { .page-content { padding-top: 42px; } .balance-card { min-height: 220px; } }
+@media (max-width: 1150px) { .sidebar { width: 218px; flex-basis: 218px; } .page-content { padding-right: 28px; padding-left: 28px; } .topbar { padding-right: 28px; padding-left: 28px; } .actions-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } .action-card { min-height: 135px; } }
+@media (max-width: 900px) { .login-shell { grid-template-columns: .85fr 1.15fr; width: calc(100% - 36px); } .login-brand { padding: 35px 30px; } .brand-message { margin-top: 150px; } .brand-message h2 { font-size: 39px; } .brand-footer { right: 30px; left: 30px; } .login-panel { padding: 45px 34px; } .sidebar { width: 205px; flex-basis: 205px; } .secure-label { display: none; } .stats-grid { gap: 11px; } .stat-card { padding: 15px; } }

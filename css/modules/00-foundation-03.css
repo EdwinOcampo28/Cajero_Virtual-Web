@@ -1,0 +1,20 @@
+.button-primary { position: relative; overflow: hidden; color: #061923; background: linear-gradient(135deg, #80eef2, #40c5da 68%, #39a9ce); box-shadow: inset 0 1px 0 rgba(255,255,255,.48), 0 7px 0 #12627b, 0 11px 22px rgba(35,165,197,.15); }
+.button-primary:hover { box-shadow: inset 0 1px 0 rgba(255,255,255,.48), 0 8px 0 #12627b, 0 15px 28px rgba(35,165,197,.2); }
+.button-wide { width: 100%; margin-top: 13px; padding: 0 17px; }
+.button-arrow { margin-left: auto; font-size: 18px; }
+.button-secondary { padding: 0 17px; border-color: var(--line-strong); color: #bed0e0; background: rgba(16,34,52,.75); }
+.button-secondary:hover { border-color: rgba(84,217,232,.4); }
+.form-message { margin: 4px 0 0; padding: 10px 12px; border-radius: 9px; font-size: 12px; line-height: 1.5; }
+.error-message { border: 1px solid rgba(255,133,137,.18); color: #ff9d9f; background: rgba(118,34,48,.16); }
+.demo-access { margin-top: 25px; border-top: 1px solid var(--line); padding-top: 17px; }
+.demo-access summary { display: flex; align-items: center; gap: 8px; color: #b0c3d4; font-size: 11px; cursor: pointer; list-style: none; }
+.demo-access summary::-webkit-details-marker { display: none; }
+.summary-icon { display: inline-grid; width: 17px; height: 17px; place-items: center; border: 1px solid rgba(84,217,232,.32); border-radius: 50%; color: var(--cyan); font-size: 10px; font-weight: 800; }
+.credentials-table { margin-top: 12px; overflow: hidden; border: 1px solid var(--line); border-radius: 9px; }
+.credential-row { display: grid; grid-template-columns: .55fr 1.7fr .45fr; gap: 8px; padding: 9px 11px; border-top: 1px solid var(--line); color: #bed0df; font-size: 10px; }
+.credential-row:first-child { border-top: 0; }
+.credential-head { color: var(--muted); background: rgba(22,42,61,.45); font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+.credential-row code { color: var(--gold); font-size: 10px; }
+.login-legal { margin: 24px 0 0; color: #6e849a; font-size: 10px; line-height: 1.5; }
+.login-legal span { margin-right: 5px; color: var(--gold); }
+

@@ -1,0 +1,5 @@
+@media (max-width: 600px) { .reviewer-topbar { align-items: flex-start; flex-direction: column; padding: 17px 20px; } .reviewer-session { width: 100%; justify-content: flex-start; flex-wrap: wrap; } .reviewer-content { width: calc(100% - 28px); padding-top: 26px; } .reviewer-welcome { flex-direction: column; } .reviewer-demo-tag { align-self: flex-start; } .reviewer-kpi-grid { gap: 9px; } .reviewer-kpi { padding: 14px; } .reviewer-kpi strong { font-size: 23px; } .reviewer-inbox-heading { align-items: flex-start; flex-direction: column; } .reviewer-filter-label { align-items: flex-start; flex-direction: column; width: 100%; } .reviewer-filter-label select { width: 100%; max-width: none; } .reviewer-card-heading { align-items: flex-start; flex-wrap: wrap; gap: 10px; } .reviewer-requested-amount { order: 3; width: 100%; font-size: 20px; } .reviewer-card-actions { flex-direction: column; } .reviewer-card-actions .button { width: 100%; } }
+@media (max-width: 360px) { .reviewer-detail-grid { grid-template-columns: 1fr; } .reviewer-kpi { padding: 12px; } .reviewer-kpi > span { font-size: 10px; } }
+
+
+

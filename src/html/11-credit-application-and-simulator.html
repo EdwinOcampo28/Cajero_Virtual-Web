@@ -1,0 +1,52 @@
+          <section id="creditsView" class="finance-module" aria-label="Solicitud de créditos y cuotas">
+            <div class="section-heading finance-module-heading"><div><p class="eyebrow">PRÉSTAMOS PERSONALES</p><h3>Solicitar y administrar créditos</h3></div><span class="section-subtitle">Desembolsos, cuotas y abonos</span></div>
+          
+
+          <div class="credit-layout">
+            <section class="credit-panel">
+              <div class="credit-panel-heading"><div class="credit-panel-symbol">＋</div><div><h3>Datos de la solicitud</h3><p>Los campos marcados son obligatorios.</p></div></div>
+              <form id="creditForm" class="credit-form" autocomplete="off">
+                <div class="credit-field">
+                  <label for="creditAmountInput">¿Cuánto dinero necesitas?</label>
+                  <div class="input-wrap amount-input-wrap"><span class="currency-prefix">$</span><input id="creditAmountInput" name="creditAmount" type="number" inputmode="numeric" min="100000" max="100000000" step="1" value="5000000" required></div>
+                  <small>Monto de prueba entre $100.000 y $100.000.000 COP.</small>
+                </div>
+                <div class="credit-inline-grid">
+                  <div class="credit-field">
+                    <label for="creditTermSelect">Plazo de pago</label>
+                    <select id="creditTermSelect" name="termMonths" required>
+                      <option value="6">6 meses</option><option value="12">12 meses</option><option value="18">18 meses</option><option value="24">24 meses</option><option value="36">36 meses</option><option value="48">48 meses</option><option value="60" selected>60 meses</option>
+                    </select>
+                  </div>
+                  <div class="credit-field">
+                    <label for="creditEmploymentSelect">Situación laboral</label>
+                    <select id="creditEmploymentSelect" name="employment" required>
+                      <option value="Empleado">Empleado</option><option value="Independiente">Independiente</option><option value="Pensionado">Pensionado</option><option value="Otro">Otra situación</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="credit-field">
+                  <label for="creditIncomeInput">Ingresos mensuales aproximados</label>
+                  <div class="input-wrap amount-input-wrap"><span class="currency-prefix">$</span><input id="creditIncomeInput" name="monthlyIncome" type="number" inputmode="numeric" min="1" step="1" placeholder="Ej. 2500000" required></div>
+                  <small>Ingresa el total mensual en pesos enteros, sin decimales.</small>
+                </div>
+                <div class="credit-field">
+                  <label for="creditPurposeSelect">Destino del crédito</label>
+                  <select id="creditPurposeSelect" name="purpose" required>
+                    <option value="Libre inversión">Libre inversión</option><option value="Estudio">Estudio</option><option value="Vivienda o mejoras">Vivienda o mejoras</option><option value="Vehículo">Vehículo</option><option value="Consolidación de deudas">Consolidación de deudas</option><option value="Emergencia personal">Emergencia personal</option><option value="Otro">Otro</option>
+                  </select>
+                </div>
+                <p id="creditError" class="form-message error-message" role="alert" hidden></p>
+                <button class="button button-primary button-wide" type="submit">Enviar solicitud de crédito <span aria-hidden="true">→</span></button>
+                <p class="credit-disclaimer">Tu solicitud quedará pendiente hasta que el analista de créditos registre una decisión. Esta demostración no consulta centrales de riesgo ni representa una aprobación bancaria real.</p>
+              </form>
+            </section>
+
+            <aside class="credit-panel credit-simulation-panel">
+              <div class="credit-panel-heading"><div class="credit-panel-symbol gold-symbol">≈</div><div><h3>Simulador de cuotas</h3><p>Estimación ilustrativa, no una oferta bancaria.</p></div></div>
+              <div class="credit-sim-highlight"><span>Cuota mensual estimada</span><strong id="creditMonthlyPayment">$ 0</strong><small>Durante <span id="creditSelectedTerm">60</span> meses</small></div>
+              <div class="credit-sim-lines"><div><span>Monto solicitado</span><strong id="creditSimAmount">$ 5.000.000</strong></div><div><span>Tasa ilustrativa mensual</span><strong>2,13 %</strong></div><div><span>Total estimado por pagar</span><strong id="creditTotalPayable">$ 0</strong></div><div><span>Intereses estimados</span><strong id="creditTotalInterest">$ 0</strong></div></div>
+              <div class="credit-sim-note"><span class="hint-icon">i</span><span>La simulación usa una tasa ilustrativa fija del 2,13 % mensual y cuotas constantes. La tasa real, seguros, cargos, estudio y aprobación no están incluidos ni representados.</span></div>
+            </aside>
+          </div>
+

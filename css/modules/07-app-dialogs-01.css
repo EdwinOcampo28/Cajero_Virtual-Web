@@ -1,0 +1,22 @@
+/* Branded confirmation, alert and input cards: replace native browser pop-ups */
+body.dialog-open { overflow: hidden; }
+.app-dialog-overlay { position: fixed; z-index: 80; inset: 0; display: grid; place-items: center; padding: 20px; overflow-y: auto; background: rgba(1, 7, 13, .80); backdrop-filter: blur(8px); }
+.app-dialog-card { position: relative; width: min(490px, 100%); max-height: min(90vh, 820px); overflow-y: auto; padding: 30px; border: 1px solid rgba(125, 190, 218, .23); border-radius: 22px; color: var(--text); background: radial-gradient(ellipse at 100% 0%, rgba(32, 115, 145, .14), transparent 42%), linear-gradient(155deg, #10263b, #0a1928 75%); box-shadow: 0 32px 110px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .055); animation: modal-in .2s ease-out; }
+.app-dialog-close { position: absolute; top: 15px; right: 16px; display: grid; width: 33px; height: 33px; place-items: center; border: 1px solid var(--line); border-radius: 10px; color: #9eb4c7; background: rgba(6, 17, 29, .58); font-size: 22px; cursor: pointer; }
+.app-dialog-close:hover { color: var(--text); border-color: var(--line-strong); background: rgba(84, 217, 232, .08); }
+.app-dialog-icon { display: grid; width: 48px; height: 48px; margin-bottom: 18px; place-items: center; border: 1px solid rgba(84, 217, 232, .24); border-radius: 15px; color: var(--cyan); background: linear-gradient(145deg, rgba(84, 217, 232, .14), rgba(24, 65, 88, .42)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06), 0 7px 18px rgba(0, 0, 0, .15); font-size: 22px; font-weight: 800; }
+.app-dialog-card .eyebrow { margin-bottom: 7px; color: var(--cyan); }
+.app-dialog-card h2 { max-width: calc(100% - 22px); margin: 0; color: #f3f8fd; font-size: clamp(21px, 3vw, 26px); font-weight: 760; letter-spacing: -.045em; line-height: 1.2; }
+.app-dialog-message { margin: 12px 0 21px; color: #b5c7d7; font-size: 12px; line-height: 1.8; white-space: pre-line; overflow-wrap: anywhere; }
+.app-dialog-input-wrap { display: flex; flex-direction: column; gap: 9px; margin: 0 0 20px; }
+.app-dialog-input-wrap textarea { width: 100%; min-height: 92px; resize: vertical; padding: 12px 13px; border: 1px solid rgba(150, 185, 214, .20); border-radius: 12px; outline: 0; color: var(--text); background: rgba(5, 14, 24, .62); font: inherit; font-size: 12px; line-height: 1.6; }
+.app-dialog-input-wrap textarea::placeholder { color: #647e93; }
+.app-dialog-input-wrap textarea:focus { border-color: rgba(84, 217, 232, .62); box-shadow: 0 0 0 3px rgba(84, 217, 232, .08); }
+.app-dialog-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; margin-top: 5px; }
+.app-dialog-actions .button { min-width: 116px; padding: 0 17px; }
+.app-dialog-actions .button-primary { box-shadow: inset 0 1px 0 rgba(255,255,255,.48), 0 4px 0 #12627b, 0 8px 18px rgba(35,165,197,.12); }
+.app-dialog-actions .button-primary:hover { box-shadow: inset 0 1px 0 rgba(255,255,255,.48), 0 5px 0 #12627b, 0 11px 22px rgba(35,165,197,.18); }
+.app-dialog-actions .button-danger { color: #fff3f4; border-color: rgba(255, 133, 137, .28); background: linear-gradient(135deg, #a44250, #7c283c); box-shadow: inset 0 1px 0 rgba(255,255,255,.13), 0 4px 0 #4a1d2b, 0 8px 18px rgba(170, 52, 70, .17); }
+.app-dialog-actions .button-danger:hover { background: linear-gradient(135deg, #bb4d5b, #8b3044); }
+.app-dialog-card.is-danger .app-dialog-icon { color: var(--red); border-color: rgba(255, 133, 137, .28); background: linear-gradient(145deg, rgba(255, 133, 137, .14), rgba(72, 28, 44, .45)); }
+.app-dialog-card.is-danger .eyebrow { color: var(--red); }

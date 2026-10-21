@@ -1,65 +1,69 @@
-# Cajero Virtual — Cuentas de ahorro de demostración
+# Cajero Virtual v24 · Modularización profunda
 
-Versión web local v9.0 construida con HTML, CSS y JavaScript, sin dependencias externas.
-
-## Cómo abrirlo
+## Abrir el cajero
 
 1. Extrae la carpeta `Cajero_Virtual_Web`.
-2. Abre `index.html` con doble clic en tu navegador.
-3. Selecciona una cuenta de ahorros e ingresa su PIN de 4 dígitos.
+2. Abre `index.html` con doble clic.
+3. No se necesita Python, Node.js, servidor ni conexión a internet para usar la aplicación.
 
-## Cuentas de demostración
+## Qué se cambió en esta versión
 
-Los números de cuenta tienen un formato ficticio de 12 dígitos para identificar las cuentas de prueba; no corresponden al formato oficial de una entidad bancaria. Los PIN se cambiaron por combinaciones distintas y menos obvias, conservando el requisito de cuatro dígitos.
+- Eliminé el `js/app.js` de 115 KB que duplicaba todos los módulos JS fuente. La aplicación carga ahora **38 archivos JavaScript independientes** directamente, en orden, mediante etiquetas de script clásicas compatibles con `file://`.
+- Dividí las reglas visuales en **28 hojas CSS** de menos de 3,6 KB cada una.
+- Organicé el contenido en **20 fragmentos HTML** de origen, separados por pantalla o componente.
+- `index.html` es una entrada generada y compacta de una línea para que siga funcionando con doble clic. El código HTML editable está en `src/html/`; no se debe modificar manualmente el `index.html` generado.
+- Quité una declaración CSS responsive redundante; no encontré funciones de nivel superior duplicadas en los módulos JavaScript.
+- La carga de datos se inicializa al final, después de cargar las funciones, para permitir scripts separados sin generar un bundle.
 
-| Titular | Tipo | Número de cuenta de demostración | PIN (4 dígitos) | Saldo inicial |
-|---|---|---|---:|---:|
-| Edwin Ocampo | Cuenta de ahorros | 7184 3059 6247 | `5837` | $ 0 |
-| Pedro Ocampo | Cuenta de ahorros | 4927 8613 5704 | `9146` | $ 0 |
-| Reinel Ocampo | Cuenta de ahorros | 8361 4925 7083 | `7269` | $ 0 |
+## Dónde editar
 
-## Operaciones y límites
+### HTML
 
-- Consulta de saldo disponible y movimientos.
-- Módulo para solicitar créditos de demostración, con ingreso de monto, plazo de hasta 60 meses, ingresos, situación laboral y destino. Incluye un panel de analista para aprobar o rechazar solicitudes de demostración y registrar una nota.
-- Simulación de cuota fija con tasa ilustrativa del 2,13 % mensual, plazo máximo de 60 meses y pagos mostrados en pesos enteros.
-- El analista puede aprobar y desembolsar el monto: la suma se acredita a los ahorros del titular, registra un movimiento y crea el crédito activo. El desembolso se bloquea si la cuenta superaría su saldo máximo de $ 100.000.000.
-- En el módulo “Mis créditos y cuotas” el cliente consulta capital pendiente, cuota siguiente, desglose de interés y capital, tasa, vencimiento, cuotas pagadas, historial y plazo restante estimado.
-- El pago de una cuota descuenta el monto de los ahorros, aplica primero interés mensual y luego capital, actualiza el saldo del préstamo y avanza el vencimiento. La última cuota se ajusta al capital restante.
-- Los abonos extraordinarios a capital se descuentan de los ahorros, reducen capital y acortan el plazo estimado manteniendo la cuota pactada. Un abono igual al capital pendiente liquida el crédito anticipadamente.
-- Los pagos de cuotas, abonos y desembolsos aparecen en el historial de movimientos con su tipo correspondiente.
-- El monto de solicitud de crédito de prueba está entre $ 100.000 y $ 100.000.000.
-- Depósito máximo de $ 3.000.000 por operación.
-- Saldo máximo de $ 100.000.000 por cuenta, tanto para depósitos como para transferencias recibidas.
-- Retiro máximo de $ 3.000.000 por operación, sin límite diario acumulado y sujeto al saldo disponible.
-- Transferencias entre las tres cuentas, con registro tanto para quien envía como para quien recibe.
-- El sistema valida que los montos sean enteros mayores que cero; no acepta decimales.
-- El historial se puede filtrar por depósitos, retiros y transferencias.
-- Puedes cerrar sesión o reiniciar las cuentas desde el menú lateral.
-- Las cuentas de esta versión comienzan con saldo cero y sin historial.
+Edita fragmentos en `src/html/`. Están numerados en el orden en que forman la página:
 
-## Aviso importante
+- `00-document-start.html`: apertura del documento y marcador de CSS.
+- `01-client-login.html` y `02-analyst-login.html`: accesos de cliente y analista.
+- `03-app-shell-and-navigation.html`: estructura, navegación y marco principal.
+- `04-overview-balance-and-stats.html` y `05-overview-actions-and-recent.html`: resumen del cliente.
+- `06-movements-screen.html`: movimientos de ahorros.
+- `07-finance-screen-start.html`, `08-card-and-advance.html`, `09-legacy-card-payment.html`, `10-card-limit-request.html`, `11-credit-application-and-simulator.html` y `12-active-loans-and-payments.html`: tarjeta, avances, cupo y créditos.
+- `13-financial-history-screen.html`: historial financiero.
+- `14-app-shell-close.html`: cierre del marco principal.
+- `15-analyst-dashboard-and-capital.html` y `16-analyst-request-inboxes.html`: panel y bandejas del analista.
+- `17-operation-modal.html` y `18-dialogs-and-toast.html`: ventanas y mensajes emergentes.
+- `19-document-end.html`: carga de los módulos JS y cierre del documento.
 
-Esta es una simulación de interfaz bancaria: no está conectada a ningún banco y no mueve dinero real. Los desembolsos y pagos modifican únicamente los saldos simulados del sistema, por lo que no debe usarse con datos bancarios reales. Los PIN se validan en JavaScript del navegador y los datos se guardan localmente, por lo que no equivale a la seguridad de una entidad financiera.
+Después de modificar HTML, regenera `index.html` ejecutando desde la carpeta del proyecto:
 
-## Solicitudes de crédito
+```bash
+python tools/build_modules.py
+```
 
-Este módulo registra solicitudes dentro del navegador para fines de demostración. No consulta centrales de riesgo, no evalúa solvencia real, no envía datos a una entidad financiera y no constituye una aprobación, una oferta ni una recomendación de endeudamiento. La tasa de 2,13 % mensual es únicamente un supuesto ilustrativo para la simulación de cuota. El plazo disponible incluye 60 meses, seleccionado por defecto.
+En Windows también puedes probar `py tools/build_modules.py`. El constructor usa únicamente la biblioteca estándar, no descarga nada y no instala paquetes.
 
+### CSS
 
-## Revisión de solicitudes (perfil analista)
+Los estilos están en `css/modules/`. Se dividieron en varios archivos con el mismo prefijo para preservar el orden original de la cascada. Por ejemplo, `01-app-shell-01.css` a `01-app-shell-05.css` son partes consecutivas de la estructura principal. Edita los módulos y guarda; los cambios CSS se cargan directamente, sin reconstrucción.
 
-En la pantalla inicial, pulsa **Acceso de analista de créditos** e ingresa la clave de prueba `482917`. El panel muestra todas las solicitudes guardadas en este navegador, separadas por pendientes, aprobadas y rechazadas. El analista puede aprobar o rechazar cada solicitud, registrar una nota breve y dejar fecha y nombre de la revisión. El cliente verá el nuevo estado cuando vuelva a entrar a su cuenta. Las solicitudes antiguas conservan la tasa histórica usada cuando fueron calculadas; las nuevas se simulan al 2,13 % mensual.
+### JavaScript
 
-Este flujo solo sirve para practicar el proceso de revisión: utiliza los datos que el solicitante declara, no valida documentos ni consulta centrales de riesgo, y no es una autorización financiera real. Al aprobar, la simulación acredita el préstamo a la cuenta del cliente y crea el plan de cuotas. La clave está implementada en el código del navegador, por lo que no ofrece seguridad de servidor ni debe utilizarse para proteger información real. Los cambios de solicitudes se comparten solo dentro del mismo navegador/perfil, al ser una demo sin backend.
+La lógica ejecutable también está en `src/js/`; **no existe un bundle `js/app.js`**. Cada archivo es una porción pequeña cargada desde `index.html` en orden alfabético/numerado. No cambies los prefijos ni reordenes las referencias, porque las variables compartidas y el inicio dependen de ese orden.
 
+- `00-config-and-state.js`: constantes, referencias DOM y estado compartido.
+- `01-storage-and-migrations-*`: almacenamiento, migraciones, creación de cuentas y utilidades de persistencia.
+- `02-format-navigation-and-history-*`: formato de valores, navegación, sesión e historiales.
+- `03-credit-engine-*`: cálculo de cuotas, deuda unificada, capital, límites y fondos del analista.
+- `04-credit-ui-and-payments-*`: interfaz de solicitud, créditos activos, cuotas y abonos.
+- `05-analyst-dashboard-*` y `06-analyst-decisions-*`: acceso, bandejas y decisiones de revisión.
+- `07-card-view-and-helpers-*` y `08-card-operations-and-credit-forms-*`: vistas, avances, pagos de tarjeta y formularios de crédito/cupo.
+- `09-account-operations-and-dialogs-*`: depósitos, retiros, transferencias, modales, confirmaciones y avisos.
+- `10-system-reset.js`: borrado del sistema con confirmación.
+- `11-event-wiring-*` a `15-event-wiring-*`: inicialización final y eventos de la interfaz.
 
-## Ciclo del crédito en v9.0
+Al editar JavaScript, guarda los archivos y recarga `index.html`; no hace falta reconstruir un bundle ni ejecutar Python.
 
-1. El cliente solicita el crédito al 2,13 % mensual (hasta 60 meses) y la solicitud queda “En revisión”.
-2. El analista introduce su clave de demostración y elige “Aprobar y desembolsar”. El importe se acredita a los ahorros y se registra como movimiento entrante. Si supera el tope de saldo de la cuenta, el sistema impide el desembolso.
-3. El cliente entra a “Créditos” y paga su cuota mensual con fondos de ahorros. El pago se distribuye en interés del periodo y capital; el capital pendiente se recalcula.
-4. También puede hacer un abono extraordinario a capital: el sistema descuenta los ahorros, baja el capital y estima un plazo más corto manteniendo la cuota. Puede liquidar anticipadamente pagando el capital pendiente.
-5. Cada cuota y abono queda registrado en el historial del crédito y en los movimientos de la cuenta.
+## Validaciones del paquete
 
-La aplicación calcula interés mensual por cuota, no interés diario ni recargos por mora. Se trata de una simulación local educativa: analista, datos, desembolsos y pagos no están respaldados por una entidad real. Todo se guarda en el navegador actual; limpiar los datos desde el botón de restablecimiento elimina también los créditos y su historial.
+El constructor comprueba referencias CSS/JS locales, cantidad de scripts enlazados e identificadores HTML únicos. En esta versión también se revisó la sintaxis de los módulos por separado y en conjunto para confirmar que pueden compartir el ámbito de los scripts clásicos sin declaraciones duplicadas.
+
+El sistema continúa siendo una simulación local. No usa un servidor bancario ni procesa dinero real.

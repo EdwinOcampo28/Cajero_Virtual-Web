@@ -1,0 +1,4 @@
+@media (max-width: 600px) { .loan-card { padding: 15px; } .loan-card-header { flex-direction: column; } .loan-actions { flex-direction: column; } .loan-actions > .button, .loan-extra-form { width: 100%; min-width: 0; } .loan-extra-input-wrap { width: 100%; } .loan-extra-input-wrap input { flex: 1; } .loan-payment-row { align-items: flex-start; } .loan-payment-row .loan-payment-amount { white-space: nowrap; } }
+@media (max-width: 360px) { .loan-stats-grid { grid-template-columns: 1fr; } }
+
+

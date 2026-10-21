@@ -1,0 +1,29 @@
+/* Solicitudes de crédito: formulario y simulación */
+.action-credit { border-color: rgba(243,199,108,.22); background: linear-gradient(150deg, rgba(51,43,30,.72), rgba(12,23,35,.93)); }
+.action-credit .action-icon { color: var(--gold); border-color: rgba(243,199,108,.24); background: rgba(243,199,108,.08); }
+.action-credit:hover { border-color: rgba(243,199,108,.48); }
+.credit-layout { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(285px, .9fr); gap: 15px; align-items: start; }
+.credit-panel { min-width: 0; padding: 22px; border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(150deg, rgba(16,35,53,.9), rgba(10,23,36,.88)); box-shadow: inset 0 1px 0 rgba(255,255,255,.018); }
+.credit-panel-heading { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+.credit-panel-heading h3 { margin: 0; font-size: 15px; letter-spacing: -.025em; }
+.credit-panel-heading p { margin: 5px 0 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+.credit-panel-symbol { display: grid; width: 42px; height: 42px; flex: 0 0 42px; place-items: center; border: 1px solid rgba(84,217,232,.22); border-radius: 13px; color: var(--cyan); background: rgba(84,217,232,.075); font-size: 22px; }
+.credit-panel-symbol.gold-symbol { border-color: rgba(243,199,108,.23); color: var(--gold); background: rgba(243,199,108,.075); }
+.credit-form { display: flex; flex-direction: column; gap: 15px; }
+.credit-field { display: flex; min-width: 0; flex-direction: column; gap: 7px; }
+.credit-field label { color: #dce8f3; font-size: 11px; font-weight: 750; }
+.credit-field small { color: var(--muted-soft); font-size: 9px; line-height: 1.5; }
+.credit-field .input-wrap { width: 100%; }
+.credit-field .input-wrap input { font-variant-numeric: tabular-nums; }
+.credit-field > select { width: 100%; min-height: 48px; padding: 0 13px; border: 1px solid rgba(150,185,214,.17); border-radius: 11px; outline: 0; color: var(--text); background: rgba(5,14,24,.55); font-size: 12px; }
+.credit-field > select:focus { border-color: rgba(84,217,232,.65); box-shadow: 0 0 0 3px rgba(84,217,232,.08); }
+.credit-field > select option { color: #eaf4ff; background: #0d1b2a; }
+.credit-inline-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.credit-disclaimer { margin: 2px 0 0; color: #8197a9; font-size: 9px; line-height: 1.7; }
+.credit-simulation-panel { position: relative; overflow: hidden; }
+.credit-simulation-panel::after { position: absolute; right: -52px; top: 125px; width: 160px; height: 160px; border: 1px solid rgba(243,199,108,.09); border-radius: 50%; content: ""; box-shadow: 0 0 0 24px rgba(243,199,108,.018), 0 0 0 50px rgba(243,199,108,.012); pointer-events: none; }
+.credit-sim-highlight { position: relative; z-index: 1; padding: 20px; border: 1px solid rgba(100,223,173,.18); border-radius: 13px; background: linear-gradient(140deg, rgba(23,74,72,.52), rgba(12,38,46,.38)); }
+.credit-sim-highlight > span { display: block; color: #b0c8d2; font-size: 10px; }
+.credit-sim-highlight strong { display: block; margin: 9px 0 5px; color: #83efc0; font-size: clamp(25px, 2.4vw, 34px); font-weight: 780; letter-spacing: -.055em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.credit-sim-highlight small { color: #97b2bc; font-size: 10px; }
+.credit-sim-lines { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 0; margin-top: 15px; }

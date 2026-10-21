@@ -1,0 +1,20 @@
+  <div id="modalOverlay" class="modal-overlay" hidden>
+    <section id="operationModal" class="operation-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button id="closeModalButton" class="modal-close" type="button" aria-label="Cerrar ventana">×</button>
+      <div id="modalIcon" class="modal-icon">＋</div>
+      <p id="modalEyebrow" class="eyebrow">OPERACIÓN DE CUENTA</p>
+      <h2 id="modalTitle">Depositar dinero</h2>
+      <p id="modalDescription" class="modal-description">Ingresa el monto que deseas depositar.</p>
+      <form id="operationForm" class="form-stack modal-form">
+        <div id="destinationField" hidden><label class="field-label" for="destinationSelect">Cuenta destino</label><div class="input-wrap select-wrap"><span class="input-icon" aria-hidden="true">▦</span><select id="destinationSelect" name="destination"></select><span class="select-chevron" aria-hidden="true">⌄</span></div></div>
+        <label id="amountLabel" class="field-label" for="amountInput">Monto a depositar</label>
+        <div class="input-wrap amount-input-wrap"><span class="currency-prefix">$</span><input id="amountInput" name="amount" type="number" inputmode="numeric" min="1" step="1" placeholder="0" required></div>
+        <div id="quickAmounts" class="quick-amounts" aria-label="Cantidades rápidas" hidden></div>
+        <div id="operationHint" class="operation-hint"><span class="hint-icon">i</span><span>El monto debe ser mayor que cero.</span></div>
+        <p id="operationError" class="form-message error-message" role="alert" hidden></p>
+        <button id="confirmOperationButton" class="button button-primary button-wide" type="submit">Confirmar operación <span aria-hidden="true">→</span></button>
+      </form>
+      <div class="modal-bottom-note"><span class="secure-icon">✓</span> Operación registrada en este dispositivo</div>
+    </section>
+  </div>
+

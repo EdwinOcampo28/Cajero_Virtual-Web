@@ -1,0 +1,26 @@
+.reviewer-application-card { min-width: 0; padding: 20px; border: 1px solid rgba(147,187,220,.15); border-radius: 14px; background: linear-gradient(145deg, rgba(15,32,48,.94), rgba(9,20,32,.94)); }
+.reviewer-card-heading { display: flex; align-items: center; gap: 17px; padding-bottom: 16px; border-bottom: 1px solid rgba(147,187,220,.11); }
+.reviewer-applicant { min-width: 0; flex: 1; }
+.reviewer-applicant h3 { margin: 0; color: #f1f7fc; font-size: 15px; }
+.reviewer-applicant p { margin: 5px 0 0; color: #8fa7bb; font-size: 10px; overflow-wrap: anywhere; }
+.reviewer-requested-amount { color: #75e5b4; font-size: 21px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.reviewer-detail-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; margin: 16px 0 0; overflow: hidden; border: 1px solid rgba(147,187,220,.1); border-radius: 10px; background: rgba(147,187,220,.08); }
+.reviewer-detail-cell { display: flex; min-width: 0; flex-direction: column; gap: 7px; padding: 12px; background: #0d1c2b; }
+.reviewer-detail-cell span { color: #8fa7bb; font-size: 9px; line-height: 1.4; }
+.reviewer-detail-cell strong { color: #eaf4fc; font-size: 11px; line-height: 1.45; overflow-wrap: anywhere; }
+.reviewer-card-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 17px; }
+.reviewer-card-actions .button { min-height: 42px; padding: 0 16px; font-size: 11px; }
+.reviewer-approve-button { background: linear-gradient(135deg, #158667, #11684f); }
+.reviewer-reject-button { border-color: rgba(255,137,137,.25); color: #ffb0b0; background: rgba(109,35,42,.2); }
+.reviewer-decision-meta { margin: 13px 0 0; color: #91a9ba; font-size: 10px; }
+.reviewer-existing-note { margin: 12px 0 0; padding: 11px 13px; border-left: 3px solid #d8b66b; border-radius: 0 8px 8px 0; color: #e5d5af; background: rgba(243,199,108,.055); font-size: 10px; line-height: 1.6; overflow-wrap: anywhere; }
+.reviewer-disclaimer { margin-top: 18px; padding: 14px 16px; border: 1px solid rgba(243,199,108,.17); border-radius: 12px; color: #afc1cf; background: rgba(243,199,108,.045); font-size: 10px; line-height: 1.7; }
+.reviewer-disclaimer strong { color: #f3d58c; }
+.credit-status.status-approved { border-color: rgba(100,223,173,.23); color: #83efc0; background: rgba(100,223,173,.07); }
+.credit-status.status-approved::before { background: #64dfad; }
+.credit-status.status-rejected { border-color: rgba(255,142,142,.23); color: #ffaaaa; background: rgba(255,142,142,.06); }
+.credit-status.status-rejected::before { background: #ff8e8e; }
+.credit-status.status-pending { border-color: rgba(243,199,108,.2); color: #f3d58c; background: rgba(243,199,108,.07); }
+.credit-review-date { display: block; margin-top: 7px; color: #91a9ba; font-size: 9px; white-space: nowrap; }
+.credit-review-note { flex-basis: 100%; width: 100%; margin: 4px 0 0; padding: 10px 12px; border-left: 3px solid #d8b66b; color: #e5d5af; background: rgba(243,199,108,.045); font-size: 10px; line-height: 1.6; overflow-wrap: anywhere; }
+@media (max-width: 900px) { .reviewer-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .reviewer-detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .reviewer-content { width: calc(100% - 36px); } }

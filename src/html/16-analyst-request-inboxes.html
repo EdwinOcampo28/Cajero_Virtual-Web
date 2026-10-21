@@ -1,0 +1,21 @@
+      <section class="reviewer-kpi-grid" aria-label="Resumen de solicitudes">
+        <article class="reviewer-kpi"><span>Total de solicitudes</span><strong id="reviewerCountAll">0</strong><small>Registradas en este navegador</small></article>
+        <article class="reviewer-kpi pending-kpi"><span>Pendientes</span><strong id="reviewerCountPending">0</strong><small>Esperan decisión</small></article>
+        <article class="reviewer-kpi approved-kpi"><span>Aprobadas</span><strong id="reviewerCountApproved">0</strong><small>Decisión registrada</small></article>
+        <article class="reviewer-kpi rejected-kpi"><span>Rechazadas</span><strong id="reviewerCountRejected">0</strong><small>Decisión registrada</small></article>
+      </section>
+      <section class="reviewer-inbox">
+        <div class="reviewer-inbox-heading"><div><p class="eyebrow">CASOS Y DECISIONES</p><h2>Solicitudes de crédito</h2></div><label class="reviewer-filter-label" for="reviewerFilter">Mostrar<select id="reviewerFilter"><option value="all">Todas las solicitudes</option><option value="pending">Pendientes</option><option value="approved">Aprobadas</option><option value="rejected">Rechazadas</option></select></label></div>
+        <div id="reviewerApplicationsList" class="reviewer-applications-list"></div>
+        <div id="reviewerEmptyState" class="empty-state"><span class="empty-icon">▤</span><strong>No hay solicitudes para revisar</strong><p>Cuando un cliente solicite un crédito en este mismo navegador, aparecerá aquí para su evaluación.</p></div>
+      </section>
+      <section class="reviewer-inbox reviewer-limit-inbox">
+        <div class="reviewer-inbox-heading"><div><p class="eyebrow">GESTIÓN DE TARJETAS</p><h2>Solicitudes de aumento de cupo</h2></div><span class="section-subtitle">Aprobar o rechazar ampliaciones</span></div>
+        <div id="reviewerLimitRequestsList" class="reviewer-applications-list"></div>
+        <div id="reviewerLimitRequestsEmpty" class="empty-state"><span class="empty-icon">↗</span><strong>No hay aumentos de cupo solicitados</strong><p>Las solicitudes de los clientes aparecerán aquí para su evaluación.</p></div>
+      </section>
+      <div class="reviewer-disclaimer"><strong>Reglas del fondo:</strong> el analista inicia con $ 500.000.000 de capital y suma intereses y comisiones efectivamente cobrados. El capital pendiente reduce el disponible; el capital pagado se recupera. Cada tarjeta inicia con cupo autorizado de $ 100.000.000 y solo aumenta cuando el analista aprueba una solicitud, hasta $ 500.000.000 en esta demostración. El saldo máximo de ahorros permanece en $ 100.000.000. Esta demostración no verifica documentos ni consulta centrales de riesgo; los datos existen en este navegador.</div>
+      <footer class="page-footer"><span>© <span id="reviewerFooterYear"></span> Cajero Virtual</span><span><span class="footer-dot"></span> Panel de análisis de demostración</span></footer>
+    </div>
+  </main>
+
