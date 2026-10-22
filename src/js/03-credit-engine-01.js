@@ -10,8 +10,9 @@
     let count = 0;
     while (balance > 0 && count < term + 5) {
       const interest = Math.round(balance * rate);
-      const payment = Math.min(monthlyPayment, balance + interest);
-      const principalPaid = Math.min(balance, Math.max(0, payment - interest));
+      const isFinalPayment = count + 1 >= term;
+      const payment = isFinalPayment ? balance + interest : Math.min(monthlyPayment, balance + interest);
+      const principalPaid = isFinalPayment ? balance : Math.min(balance, Math.max(0, payment - interest));
       if (principalPaid <= 0) break;
       balance = Math.max(0, balance - principalPaid);
       totalPayable += payment;
@@ -58,7 +59,11 @@
     const balance = Math.max(0, roundMoney(loan.outstandingPrincipal));
     if (balance <= 0) return { paymentAmount: 0, interest: 0, principal: 0, dueDate: loan.nextDueDate, installmentNumber: loan.installmentsPaid + 1 };
     const interest = Math.round(balance * loan.monthlyRate);
-    const paymentAmount = Math.min(roundMoney(loan.monthlyPayment), balance + interest);
-    const principal = Math.min(balance, Math.max(0, paymentAmount - interest));
-    return { paymentAmount, interest, principal, dueDate: loan.nextDueDate, installmentNumber: loan.installmentsPaid + 1 };
+    const installmentNumber = Math.max(0, Number(loan.installmentsPaid) || 0) + 1;
+    const isFinalInstallment = installmentNumber >= Math.max(1, Number(loan.termMonths) || 1);
+    const paymentAmount = isFinalInstallment
+      ? roundMoney(balance + interest)
+      : Math.min(roundMoney(loan.monthlyPayment), balance + interest);
+    const principal = isFinalInstallment ? balance : Math.min(balance, Math.max(0, paymentAmount - interest));
+    return { paymentAmount, interest, principal, dueDate: loan.nextDueDate, installmentNumber };
   }

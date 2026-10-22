@@ -39,6 +39,7 @@
             <option value="1">Ahorros · •••• 6247 · Edwin Ocampo</option>
             <option value="2">Ahorros · •••• 5704 · Pedro Ocampo</option>
             <option value="3">Ahorros · •••• 7083 · Reinel Ocampo</option>
+
           </select>
           <span class="select-chevron" aria-hidden="true">⌄</span>
         </div>
@@ -48,11 +49,11 @@
           <input id="pinInput" name="pin" type="password" inputmode="numeric" pattern="[0-9]{4}" minlength="4" maxlength="4" placeholder="••••" required aria-describedby="pinHelp" title="Ingresa exactamente 4 dígitos">
           <button id="togglePin" class="reveal-button" type="button" aria-label="Mostrar PIN">Ver</button>
         </div>
-        <p id="pinHelp" class="field-help">Ingresa los 4 dígitos del PIN de tu cuenta de ahorros.</p>
+        <p id="pinHelp" class="field-help">Ingresa los 4 dígitos del PIN de la cuenta seleccionada.</p>
         <p id="loginError" class="form-message error-message" role="alert" hidden></p>
         <button class="button button-primary button-wide" type="submit"><span>Ingresar a mi cuenta</span><span class="button-arrow" aria-hidden="true">↗</span></button>
       </form>
-      <button id="reviewerAccessButton" class="button button-secondary button-wide reviewer-entry-button" type="button">Acceso de analista de créditos <span aria-hidden="true">↗</span></button>
+      <button id="reviewerAccessButton" class="button button-secondary button-wide reviewer-entry-button" type="button">Acceso de analista de créditos <span aria-hidden="true">↗</span></button> <button id="treasuryAccessButton" class="button button-secondary button-wide reviewer-entry-button" type="button">Acceso de tesorería <span aria-hidden="true">↗</span></button>
       <details class="demo-access">
         <summary><span class="summary-icon" aria-hidden="true">i</span> Credenciales para probar el sistema</summary>
         <div class="credentials-table">
@@ -60,6 +61,7 @@
           <div class="credential-row"><span>•••• 6247</span><span>Edwin Ocampo</span><code>5837</code></div>
           <div class="credential-row"><span>•••• 5704</span><span>Pedro Ocampo</span><code>9146</code></div>
           <div class="credential-row"><span>•••• 7083</span><span>Reinel Ocampo</span><code>7269</code></div>
+
         </div>
       </details>
       <p class="login-legal"><span aria-hidden="true">✦</span> Aplicación demostrativa. No uses datos bancarios reales.</p>

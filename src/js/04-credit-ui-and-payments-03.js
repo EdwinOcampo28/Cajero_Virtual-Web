@@ -7,6 +7,7 @@
     if (current.balance < installment.paymentAmount) {
       return showToast(`Saldo insuficiente. Necesitas ${money(installment.paymentAmount)} y tienes ${money(current.balance)}.`, 'error');
     }
+    const transactionRevision = captureDatabaseRevision();
     const confirmed = await showAppDialog({
       type: 'confirm',
       title: `Pagar cuota ${installment.installmentNumber}`,
@@ -16,6 +17,7 @@
       confirmText: 'Pagar cuota'
     });
     if (!confirmed) return;
+    if (!isDatabaseRevisionCurrent(transactionRevision)) { abortStaleFinancialOperation(); return; }
     current.balance = roundMoney(current.balance - installment.paymentAmount);
     loan.outstandingPrincipal = Math.max(0, roundMoney(loan.outstandingPrincipal - installment.principal));
     restoreCardAdvanceBalance(current, installment.principal);
@@ -31,7 +33,7 @@
     } else {
       loan.nextDueDate = addMonthsToDate(loan.nextDueDate, 1);
     }
-    saveDatabase();
+    if (!saveDatabase()) { renderApp(); return; }
     renderApp();
     renderLoans();
     renderCreditApplications();

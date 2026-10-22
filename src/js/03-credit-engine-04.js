@@ -3,7 +3,7 @@
   }
 
   function availableAnalystCapital() {
-    return Math.max(0, roundMoney(totalAnalystBalance() - outstandingLoanPrincipalAcrossSystem()));
+    return Math.max(0, roundMoney(totalAnalystBalance() - analystCapitalCommitted()));
   }
 
   function cardLimitForRecord(card) {
@@ -27,7 +27,7 @@
   function createLoanFromCardAdvance(accountId, principal, termMonths = 60) {
     const amount = roundMoney(principal);
     if (amount <= 0) return null;
-    const term = VALID_CREDIT_TERMS.includes(Number(termMonths)) ? Number(termMonths) : 60;
+    const term = VALID_CARD_ADVANCE_TERMS.includes(Number(termMonths)) ? Number(termMonths) : 12;
     const estimate = calculateCreditEstimate(amount, term);
     const disbursedAt = new Date().toISOString();
     return {

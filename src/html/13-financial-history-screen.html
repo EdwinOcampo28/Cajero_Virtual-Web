@@ -1,13 +1,12 @@
 
         <section id="financialHistoryView" class="content-view" hidden>
           <div class="welcome-row history-welcome">
-            <div><p class="eyebrow">REGISTROS FINANCIEROS</p><h2>Historiales de tarjeta y créditos</h2><p class="subheading">Consulta en una sesión independiente los movimientos de tarjeta, solicitudes, desembolsos, cuotas y abonos.</p></div>
-            <button class="button button-secondary" data-go-view="finance" type="button">← Volver a tarjeta y créditos</button>
+            <div><p class="eyebrow">REGISTROS FINANCIEROS</p><h2>Historiales</h2><p class="subheading">Consulta los movimientos de tarjeta, desembolsos, cuotas y abonos registrados.</p></div>
+            <button class="button button-secondary" data-go-view="credits" type="button">← Volver a créditos</button>
           </div>
-          <div class="history-summary-grid financial-history-summary">
+          <div class="history-summary-grid financial-history-summary financial-history-summary-two">
             <div class="history-summary-card"><span>Movimientos de tarjeta</span><strong id="financialCardHistoryCount">0</strong></div>
             <div class="history-summary-card"><span>Pagos y abonos de créditos</span><strong id="financialLoanPaymentCount">0</strong></div>
-            <div class="history-summary-card"><span>Solicitudes de crédito</span><strong id="financialApplicationsCount">0</strong></div>
           </div>
           <section class="section-block financial-history-block">
             <div class="section-heading"><div><p class="eyebrow">TARJETA DE CRÉDITO</p><h3>Historial de tarjeta</h3></div><span class="section-subtitle">Desembolsos y traslados de fondos</span></div>
@@ -18,13 +17,6 @@
             <div class="section-heading"><div><p class="eyebrow">PRÉSTAMOS PERSONALES</p><h3>Historial de cuotas y abonos</h3></div><span class="section-subtitle">Capital e intereses registrados por pago</span></div>
             <div id="loanPaymentHistoryList" class="movement-list full-movement-list financial-history-list"></div>
             <div id="emptyLoanPaymentHistory" class="empty-state" hidden><span class="empty-icon">↻</span><strong>Sin pagos registrados</strong><p>Las cuotas y los abonos de capital se mostrarán aquí cuando realices una operación.</p></div>
-          </section>
-          
-
-          <section class="section-block credit-applications-section">
-            <div class="section-heading"><div><p class="eyebrow">SEGUIMIENTO</p><h3>Mis solicitudes</h3></div><span class="section-subtitle">Estados y decisiones de revisión</span></div>
-            <div id="creditApplicationsList" class="credit-applications-list"></div>
-            <div id="emptyCreditApplications" class="empty-state"><span class="empty-icon">▤</span><strong>Todavía no has solicitado un crédito</strong><p>Cuando envíes una solicitud de prueba, podrás consultar aquí su resumen y estado.</p></div>
           </section>
           <footer class="page-footer"><span>© <span id="financialHistoryFooterYear"></span> Cajero Virtual</span><span><span class="footer-dot"></span> Historiales financieros · simulación</span></footer>
         </section>

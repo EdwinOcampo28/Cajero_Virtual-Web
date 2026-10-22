@@ -1,4 +1,13 @@
+  function getReviewerSelectedClientId() {
+    const filter = $('#reviewerClientFilter');
+    if (!filter || filter.value === 'all' || filter.value === '') return null;
+    const parsed = Number(filter.value);
+    return Number.isInteger(parsed) && parsed >= 1 && parsed <= MAX_ACCOUNT_ID ? parsed : null;
+  }
+
   function enterReviewerLogin() {
+    if (treasuryView) treasuryView.hidden = true;
+    if (treasuryLoginView) treasuryLoginView.hidden = true;
     loginView.hidden = true;
     reviewerLoginView.hidden = false;
     reviewerView.hidden = true;
@@ -11,6 +20,8 @@
     reviewerSession = false;
     reviewerView.hidden = true;
     reviewerLoginView.hidden = true;
+    if (treasuryLoginView) treasuryLoginView.hidden = true;
+    if (treasuryView) treasuryView.hidden = true;
     loginView.hidden = false;
     reviewerPinInput.value = '';
     reviewerLoginError.hidden = true;
@@ -27,6 +38,7 @@
       reviewerPinInput.focus();
       return;
     }
+    treasurySession = false;
     reviewerSession = true;
     persistTabSession('analyst', null);
     reviewerLoginView.hidden = true;
@@ -36,6 +48,7 @@
     reviewerPinInput.value = '';
     reviewerLoginError.hidden = true;
     $('#reviewerFooterYear').textContent = String(new Date().getFullYear());
+    if (typeof setReviewerActivePage === 'function') setReviewerActivePage('overview');
     renderReviewerDashboard();
   }
 
@@ -44,6 +57,8 @@
     reviewerSession = false;
     reviewerView.hidden = true;
     reviewerLoginView.hidden = true;
+    if (treasuryLoginView) treasuryLoginView.hidden = true;
+    if (treasuryView) treasuryView.hidden = true;
     loginView.hidden = false;
     reviewerPinInput.value = '';
     reviewerLoginError.hidden = true;
@@ -52,7 +67,12 @@
 
   function renderReviewerDashboard() {
     if (!reviewerSession) return;
-    const applications = Array.isArray(db.creditApplications) ? db.creditApplications : [];
+    if (typeof populateReviewerClientFilter === 'function') populateReviewerClientFilter();
+    const allApplications = Array.isArray(db.creditApplications)
+      ? db.creditApplications.filter((item) => item.origin !== 'Aumento de cupo' || Number(item.activatedAmount) > 0)
+      : [];
+    const selectedClientId = getReviewerSelectedClientId();
+    const applications = allApplications.filter((item) => selectedClientId === null || Number(item.accountId) === selectedClientId);
     const pending = applications.filter((item) => (item.status || 'En revisión') === 'En revisión').length;
     const approved = applications.filter((item) => ['Aprobado', 'Desembolsado', 'Pagado'].includes(item.status)).length;
     const rejected = applications.filter((item) => item.status === 'Rechazado').length;
@@ -61,13 +81,16 @@
     $('#reviewerCountApproved').textContent = String(approved);
     $('#reviewerCountRejected').textContent = String(rejected);
     $('#reviewerFundTotal').textContent = money(totalAnalystBalance());
-    $('#reviewerFundCommitted').textContent = money(outstandingLoanPrincipalAcrossSystem());
+    $('#reviewerFundCommitted').textContent = money(analystCapitalCommitted());
     $('#reviewerFundAvailable').textContent = money(availableAnalystCapital());
     $('#reviewerFundInterest').textContent = money(totalInterestEarned());
-    const feesMetric = $('#reviewerFundFees');
-    if (feesMetric) feesMetric.textContent = money(totalAdvanceFeesEarned());
-    const operationFeesMetric = $('#reviewerFundOperationFees');
-    if (operationFeesMetric) operationFeesMetric.textContent = money(totalOperationFeesEarned());
+    if (typeof renderReviewerCommissionCards === 'function') renderReviewerCommissionCards();
+    if (typeof renderReviewerClientSummary === 'function') renderReviewerClientSummary();
     renderReviewerApplications();
     renderReviewerLimitIncreaseRequests();
+    const activePage = reviewerView?.querySelector('[data-reviewer-tab][aria-current="page"]')?.dataset.reviewerTab;
+    if (activePage === 'tools') {
+      if (typeof renderFinancialAuditPanel === 'function') renderFinancialAuditPanel();
+      if (typeof renderMonthlyFinancialReport === 'function') renderMonthlyFinancialReport();
+    }
   }

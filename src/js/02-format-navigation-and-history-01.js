@@ -38,6 +38,7 @@
       date: new Date().toISOString()
     };
     db.accounts[accountId].history.unshift(item);
+    if (typeof recordAuditMovement === 'function') recordAuditMovement(accountId, item, 'Ahorros');
     return item;
   }
 

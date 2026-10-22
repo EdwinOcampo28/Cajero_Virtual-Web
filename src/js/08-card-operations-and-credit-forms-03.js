@@ -1,8 +1,41 @@
+  function pendingCreditApplicationForAccount(accountId) {
+    return (db.creditApplications || []).find((item) => item.accountId === accountId && (item.status || 'En revisión') === 'En revisión') || null;
+  }
+
+  function renderCreditApplicationFormState(current = account()) {
+    const button = $('#creditSubmitButton');
+    const status = $('#creditRequestStatus');
+    if (!button || !status) return;
+    if (!current) { button.disabled = true; status.hidden = true; return; }
+    const pending = pendingCreditApplicationForAccount(current.id);
+    const available = Math.max(0, roundMoney(availablePersonalCreditForAccount(current.id)));
+    const exhausted = available < MIN_CREDIT_AMOUNT;
+    button.disabled = Boolean(pending) || exhausted;
+    status.hidden = false;
+    status.classList.toggle('error-message', Boolean(pending) || exhausted);
+    status.classList.toggle('credit-request-status', true);
+    if (pending) {
+      status.textContent = `Ya tienes una solicitud en revisión por ${money(pending.amount)}. El botón se habilitará cuando el analista registre su decisión.`;
+    } else if (exhausted) {
+      status.textContent = 'Ya alcanzaste el cupo máximo disponible para créditos. El botón se habilitará cuando recuperes capacidad de crédito.';
+    } else {
+      status.textContent = `Puedes solicitar hasta ${money(Math.min(MAX_CREDIT_AMOUNT, available))}. Si envías una solicitud, el botón se deshabilitará mientras esté en revisión.`;
+      status.hidden = false;
+    }
+  }
+
   function submitCreditApplication(event) {
     event.preventDefault();
     const current = account();
     if (!current) return;
     creditError.hidden = true;
+    const pendingRequest = pendingCreditApplicationForAccount(current.id);
+    if (pendingRequest) {
+      creditError.textContent = `Ya existe una solicitud en revisión por ${money(pendingRequest.amount)}. Espera la decisión del analista antes de enviar otra.`;
+      creditError.hidden = false;
+      renderCreditApplicationFormState(current);
+      return;
+    }
     const amount = Number(creditAmountInput.value);
     const monthlyIncome = Number(creditIncomeInput.value);
     const termMonths = Number(creditTermSelect.value);
@@ -56,7 +89,8 @@
     };
     if (!Array.isArray(db.creditApplications)) db.creditApplications = [];
     db.creditApplications.unshift(application);
-    saveDatabase();
+    recordAuditEvent('Solicitud de crédito enviada', { category: 'creditos', accountId: current.id, amount, source: 'Cliente', referenceId: application.id, description: application.purpose, details: { termMonths, monthlyRate: ILLUSTRATIVE_MONTHLY_RATE } });
+    if (!saveDatabase()) { renderApp(); return; }
     renderCreditApplications();
     if (reviewerSession) renderReviewerDashboard();
     creditError.hidden = true;
@@ -64,7 +98,9 @@
     creditAmountInput.value = '5000000';
     creditTermSelect.value = '60';
     updateCreditSimulation();
-    showView('financial-history');
-    showToast('Solicitud registrada. El analista debe aprobarla para que se realice el desembolso.');
+    renderCreditApplications();
+    renderCreditApplicationFormState(current);
+    showView('credits');
+    showToast('Solicitud registrada. El botón permanecerá deshabilitado hasta que el analista registre una decisión.');
     $('#creditApplicationsList').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }

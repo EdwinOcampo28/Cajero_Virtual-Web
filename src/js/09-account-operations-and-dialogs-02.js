@@ -13,15 +13,24 @@
     if (currentModalAction === 'withdraw' && amount > MAX_WITHDRAWAL_AMOUNT) {
       return operationProblem(`El retiro máximo por operación es de ${money(MAX_WITHDRAWAL_AMOUNT)}.`);
     }
+    if (currentModalAction === 'transfer' && amount > MAX_TRANSFER_AMOUNT) {
+      return operationProblem(`La transferencia máxima por operación es de ${money(MAX_TRANSFER_AMOUNT)}.`);
+    }
     const current = account();
     resetDailyWithdrawalIfNeeded(current);
 
     if (currentModalAction === 'deposit') {
       if (amount <= OPERATION_FEE) return operationProblem(`El depósito debe superar la comisión fija de ${money(OPERATION_FEE)}.`);
       const netAmount = roundMoney(amount - OPERATION_FEE);
-      if (current.balance + netAmount > MAX_ACCOUNT_BALANCE) {
-        return operationProblem(`Después de descontar la comisión de ${money(OPERATION_FEE)}, este depósito superaría el saldo máximo de ${money(MAX_ACCOUNT_BALANCE)}. Puedes ingresar como máximo ${money(MAX_ACCOUNT_BALANCE - current.balance + OPERATION_FEE)}.`);
+      if (current.balance + netAmount > maxSavingsBalanceForAccount(activeAccountId)) {
+        return operationProblem(`Después de descontar la comisión de ${money(OPERATION_FEE)}, este depósito superaría el saldo máximo de ${money(maxSavingsBalanceForAccount(activeAccountId))}. Puedes ingresar como máximo ${money(maxSavingsBalanceForAccount(activeAccountId) - current.balance + OPERATION_FEE)}.`);
       }
+      const treasury = db.withdrawalTreasury;
+      accrueWithdrawalTreasury(db);
+      if (!treasury || !Number.isSafeInteger(treasury.balance) || treasury.balance < 0) return operationProblem('No se pudo validar el saldo disponible en Tesorería. El depósito no se realizó.');
+      if (amount > treasury.balance) return operationProblem(`Tesorería dispone de ${money(treasury.balance)} y no alcanza para financiar el depósito de ${money(amount)}.`);
+      treasury.balance -= amount;
+      recordTreasuryMovement('deposit_funded', amount, `Depósito de ${current.name}; ${money(netAmount)} abonados y ${money(OPERATION_FEE)} de comisión`, 'out');
       current.balance = roundMoney(current.balance + netAmount);
       db.operationFeesCollected = roundMoney((Number(db.operationFeesCollected) || 0) + OPERATION_FEE);
       recordMovement(activeAccountId, 'deposit', amount, `Depósito ingresado · Neto recibido ${money(netAmount)}`, 'in');
@@ -33,24 +42,28 @@
     if (currentModalAction === 'withdraw') {
       const totalDebit = roundMoney(amount + OPERATION_FEE);
       if (totalDebit > current.balance) return operationProblem(`Saldo insuficiente. Necesitas ${money(totalDebit)} para retirar ${money(amount)} y pagar la comisión de ${money(OPERATION_FEE)}.`);
+      const receiver = db.withdrawalTreasury;
+      if (!receiver || !Number.isSafeInteger(receiver.balance) || amount > Number.MAX_SAFE_INTEGER - receiver.balance) return operationProblem('La Tesorería de retiros alcanzó su límite seguro de saldo; el retiro no se aplicó.');
       current.balance = roundMoney(current.balance - totalDebit);
       current.withdrawnToday = roundMoney(current.withdrawnToday + amount);
       db.operationFeesCollected = roundMoney((Number(db.operationFeesCollected) || 0) + OPERATION_FEE);
-      recordMovement(activeAccountId, 'withdraw', amount, 'Retiro de efectivo entregado', 'out');
+      recordMovement(activeAccountId, 'withdraw', amount, `Retiro dirigido a ${TREASURY_NAME}`, 'out');
       recordMovement(activeAccountId, 'operation_fee', OPERATION_FEE, 'Comisión por retiro', 'out');
-      finalizeOperation(`Retiro de ${money(amount)} realizado. Comisión: ${money(OPERATION_FEE)}.`);
+      receiver.balance += amount;
+      recordTreasuryMovement('withdrawal_received', amount, `Retiro recibido automáticamente de ${current.name}`, 'in');
+      finalizeOperation(`Retiro de ${money(amount)} acreditado a ${TREASURY_NAME}. Comisión: ${money(OPERATION_FEE)}.`);
       return;
     }
 
     if (currentModalAction === 'transfer') {
       const destinationId = Number(destinationSelect.value);
-      if (!Number.isInteger(destinationId) || destinationId < 1 || destinationId > 3) return operationProblem('Selecciona una cuenta destino válida.');
+      if (!Number.isInteger(destinationId) || destinationId < 1 || destinationId > MAX_ACCOUNT_ID) return operationProblem('Selecciona una cuenta destino válida.');
       if (destinationId === activeAccountId) return operationProblem('No puedes transferir dinero a tu misma cuenta.');
       const totalDebit = roundMoney(amount + OPERATION_FEE);
       if (totalDebit > current.balance) return operationProblem(`Saldo insuficiente. Necesitas ${money(totalDebit)} para transferir ${money(amount)} y pagar la comisión de ${money(OPERATION_FEE)}.`);
       const destination = db.accounts[destinationId];
-      if (destination.balance + amount > MAX_ACCOUNT_BALANCE) {
-        return operationProblem(`La cuenta de destino no puede superar ${money(MAX_ACCOUNT_BALANCE)}. Solo puede recibir ${money(MAX_ACCOUNT_BALANCE - destination.balance)} más.`);
+      if (destination.balance + amount > maxSavingsBalanceForAccount(destinationId)) {
+        return operationProblem(`La cuenta de destino no puede superar ${money(maxSavingsBalanceForAccount(destinationId))}. Solo puede recibir ${money(maxSavingsBalanceForAccount(destinationId) - destination.balance)} más.`);
       }
       current.balance = roundMoney(current.balance - totalDebit);
       destination.balance = roundMoney(destination.balance + amount);

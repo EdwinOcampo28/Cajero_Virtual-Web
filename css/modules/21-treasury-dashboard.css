@@ -1,0 +1,13 @@
+
+.treasury-content { max-width: 1080px; }
+.treasury-balance-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.treasury-balance-grid .reviewer-capital-card { min-height: 132px; }
+.treasury-balance-grid .reviewer-capital-card strong { font-size: clamp(1.3rem, 3vw, 2rem); }
+.treasury-transfer-panel { margin-top: 24px; }
+.treasury-transfer-form { max-width: 660px; margin-top: 22px; }
+.treasury-transfer-form .button { margin-top: 8px; }
+@media (max-width: 760px) {
+  .treasury-balance-grid { grid-template-columns: 1fr; }
+  .treasury-balance-grid .reviewer-capital-card { min-height: 100px; }
+  .treasury-transfer-panel .reviewer-client-summary-heading { display: block; }
+}

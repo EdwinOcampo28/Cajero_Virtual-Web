@@ -1,13 +1,14 @@
   function openModal(action) {
+    if (action === 'deposit') accrueWithdrawalTreasury(db);
     if (action === 'balance') {
       renderApp();
       showToast(`Saldo disponible: ${money(account().balance)}.`);
       return;
     }
     const config = {
-      deposit: { icon: '＋', eyebrow: 'AUMENTAR SALDO', title: 'Depositar dinero', description: `Se cobrará una comisión fija de ${money(OPERATION_FEE)} y el saldo recibirá el importe neto.`, label: 'Monto del depósito', hint: `Máximo por depósito: ${money(MAX_DEPOSIT_AMOUNT)}. Comisión: ${money(OPERATION_FEE)}. El saldo de la cuenta no puede superar ${money(MAX_ACCOUNT_BALANCE)}.` },
-      withdraw: { icon: '↗', eyebrow: 'RETIRO DE EFECTIVO', title: 'Retirar dinero', description: `La comisión fija de ${money(OPERATION_FEE)} se suma al importe retirado.`, label: 'Monto a retirar', hint: `Saldo disponible: ${money(account().balance)}. Comisión: ${money(OPERATION_FEE)}. Máximo por retiro: ${money(MAX_WITHDRAWAL_AMOUNT)}.` },
-      transfer: { icon: '⇄', eyebrow: 'ENVÍO ENTRE CUENTAS', title: 'Transferir dinero', description: `El destinatario recibe el importe indicado; a tu cuenta se le descontará además la comisión de ${money(OPERATION_FEE)}.`, label: 'Monto a transferir', hint: `Saldo disponible: ${money(account().balance)}. Comisión: ${money(OPERATION_FEE)}. No se permiten transferencias a la misma cuenta.` }
+      deposit: { icon: '＋', eyebrow: 'AUMENTAR SALDO', title: 'Depositar dinero', description: `Tesorería financiará el importe total; se cobrará una comisión fija de ${money(OPERATION_FEE)} y el saldo recibirá el neto.`, label: 'Monto del depósito', hint: `Máximo por depósito: ${money(MAX_DEPOSIT_AMOUNT)}. Tesorería disponible: ${money(db.withdrawalTreasury?.balance || 0)}. Comisión: ${money(OPERATION_FEE)}; el importe total se descuenta de Tesorería y el neto llega a tus ahorros. Límite de ahorros: ${money(maxSavingsBalanceForAccount(activeAccountId))}.` },
+      withdraw: { icon: "↗", eyebrow: "RETIRO DE EFECTIVO", title: "Retirar dinero", description: "El importe se acreditará automáticamente a la Tesorería de retiros. La comisión fija de " + money(OPERATION_FEE) + " se cobra por separado.", label: "Monto a retirar", hint: "Saldo disponible: " + money(account().balance) + ". El importe se enviará a Tesorería de retiros (•••• 0004). Comisión: " + money(OPERATION_FEE) + ". Máximo por retiro: " + money(MAX_WITHDRAWAL_AMOUNT) + "." },
+      transfer: { icon: '⇄', eyebrow: 'ENVÍO ENTRE CUENTAS', title: 'Transferir dinero', description: `El destinatario recibe el importe indicado; a tu cuenta se le descontará además la comisión de ${money(OPERATION_FEE)}.`, label: 'Monto a transferir', hint: `Saldo disponible: ${money(account().balance)}. Comisión: ${money(OPERATION_FEE)}. Máximo por transferencia: ${money(MAX_TRANSFER_AMOUNT)}. No se permiten transferencias a la misma cuenta.` }
     };
     const selected = config[action];
     if (!selected) return;
@@ -24,7 +25,7 @@
     if (action === 'transfer') populateDestinations();
     const quickAmounts = $('#quickAmounts');
     quickAmounts.replaceChildren();
-    const presets = action === 'deposit' ? QUICK_DEPOSIT_AMOUNTS : action === 'withdraw' ? QUICK_WITHDRAW_AMOUNTS : [];
+    const presets = action === 'deposit' ? QUICK_DEPOSIT_AMOUNTS : action === 'withdraw' ? QUICK_WITHDRAW_AMOUNTS : action === 'transfer' ? QUICK_TRANSFER_AMOUNTS : [];
     quickAmounts.hidden = presets.length === 0;
     presets.forEach((amount) => {
       const button = document.createElement('button');
@@ -37,7 +38,7 @@
     });
     amountInput.step = '1';
     amountInput.min = '1';
-    amountInput.removeAttribute('max');
+    amountInput.max = String(action === 'deposit' ? MAX_DEPOSIT_AMOUNT : action === 'withdraw' ? MAX_WITHDRAWAL_AMOUNT : MAX_TRANSFER_AMOUNT);
     operationError.hidden = true;
     amountInput.value = '';
     amountInput.placeholder = '0';
@@ -49,7 +50,7 @@
 
   function populateDestinations() {
     destinationSelect.replaceChildren();
-    for (let id = 1; id <= 3; id += 1) {
+    for (let id = 1; id <= MAX_ACCOUNT_ID; id += 1) {
       if (id === activeAccountId) continue;
       const option = document.createElement('option');
       option.value = String(id);

@@ -1,9 +1,9 @@
   function finalizeOperation(message) {
-    saveDatabase();
+    const saved = saveDatabase();
     closeModal();
     renderApp();
     if (currentView === 'history') renderHistory();
-    showToast(message);
+    if (saved) showToast(message);
   }
 
   function showAppDialog({

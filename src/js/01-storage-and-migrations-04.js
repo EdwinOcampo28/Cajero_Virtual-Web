@@ -1,6 +1,6 @@
   function consolidateActiveLoans(database) {
     if (!database || !Array.isArray(database.loans)) return;
-    for (let accountId = 1; accountId <= 3; accountId += 1) {
+    for (let accountId = 1; accountId <= MAX_ACCOUNT_ID; accountId += 1) {
       const activeLoans = database.loans
         .filter((loan) => loan.accountId === accountId && loan.status !== 'Pagado' && Number(loan.outstandingPrincipal) > 0)
         .sort((a, b) => new Date(a.disbursedAt || 0) - new Date(b.disbursedAt || 0));
@@ -51,14 +51,58 @@
     if (!Array.isArray(card.history)) card.history = [];
     const item = { id: createId(), type, amount: roundMoney(amount), description, direction, date: new Date().toISOString() };
     card.history.unshift(item);
+    if (typeof recordAuditMovement === 'function') recordAuditMovement(accountId, item, 'Tarjeta');
     return item;
+  }
+
+  function readCurrentStorageRaw() {
+    try { return localStorage.getItem(STORAGE_KEY); } catch (error) { return null; }
+  }
+
+  function captureDatabaseRevision() {
+    return { revision: dbRevision, raw: readCurrentStorageRaw() };
+  }
+
+  function isDatabaseRevisionCurrent(token) {
+    const currentRaw = readCurrentStorageRaw();
+    return Boolean(token) && token.revision === dbRevision && token.raw === currentRaw && token.raw === lastPersistedRaw;
+  }
+
+  function refreshAfterDatabaseConflict() {
+    db = loadDatabase();
+    dbRevision += 1;
+    if (typeof refreshRealtimeVisibleViews === 'function') {
+      refreshRealtimeVisibleViews({ notify: false, reason: 'conflicto' });
+    } else if (reviewerSession && reviewerView && !reviewerView.hidden) renderReviewerDashboard();
+    else if (typeof treasurySession !== 'undefined' && treasurySession && treasuryView && !treasuryView.hidden && typeof renderTreasuryView === 'function') renderTreasuryView(true);
+    else if (activeAccountId !== null && appView && !appView.hidden) renderApp();
   }
 
   function saveDatabase() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+      const currentRaw = localStorage.getItem(STORAGE_KEY);
+      if (databaseLoadIssue) {
+        showToast('Los datos guardados parecen dañados o incompletos. Para evitar sobrescribirlos, importa una copia válida o utiliza Borrar todos los datos tras confirmar.', 'error');
+        return false;
+      }
+      if (currentRaw !== lastPersistedRaw) {
+        if (typeof refreshAfterDatabaseConflict === 'function') refreshAfterDatabaseConflict();
+        else { db = loadDatabase(); dbRevision += 1; }
+        showToast('Otra pestaña modificó los datos. Esta operación no se guardó para evitar sobrescribir cambios; revisa los saldos actualizados.', 'error');
+        return false;
+      }
+      accrueWithdrawalTreasury();
+      const serialized = JSON.stringify(db);
+      localStorage.setItem(STORAGE_KEY, serialized);
+      lastPersistedRaw = serialized;
+      dbRevision += 1;
+      // Notifica a otras pestañas después de persistir el estado. El módulo realtime
+      // se carga al final; el guard mantiene compatible el guardado de arranque.
+      if (typeof broadcastDatabaseSaved === 'function') broadcastDatabaseSaved();
+      return true;
     } catch (error) {
       showToast('No se pudo guardar en este navegador. Comprueba el almacenamiento disponible.', 'error');
+      return false;
     }
   }
 

@@ -21,11 +21,11 @@
 
   function switchAccountInCurrentTab(accountId) {
     const numericId = Number(accountId);
-    if (!Number.isInteger(numericId) || numericId < 1 || numericId > 3 || !db.accounts[numericId]) {
+    if (!Number.isInteger(numericId) || numericId < 1 || numericId > MAX_ACCOUNT_ID || !db.accounts[numericId]) {
       syncQuickAccountSelector();
       return;
     }
-    if (reviewerSession) return;
+    if (reviewerSession || (typeof treasurySession !== 'undefined' && treasurySession)) return;
     activeAccountId = numericId;
     persistTabSession('client', numericId);
     loginView.hidden = true;
@@ -48,6 +48,14 @@
   // Cuando otra pestaña realiza una operación, actualiza esta vista sin alterar su cuenta activa.
   window.addEventListener('storage', (event) => {
     if (event.key !== STORAGE_KEY && event.key !== null) return;
+    // El módulo de tiempo real centraliza la recarga para evitar dobles renderizados
+    // cuando BroadcastChannel y storage anuncian la misma escritura. El fallback
+    // conserva el comportamiento anterior si el módulo no está disponible.
+    if (typeof handleRealtimeExternalChange === 'function') {
+      handleRealtimeExternalChange('storage', event);
+      return;
+    }
+    dbRevision += 1;
     db = loadDatabase();
     if (reviewerSession && !reviewerView.hidden) {
       renderReviewerDashboard();
@@ -64,7 +72,7 @@
   try {
     const rawTabSession = sessionStorage.getItem(TAB_SESSION_KEY);
     const tabSession = rawTabSession ? JSON.parse(rawTabSession) : null;
-    if (tabSession?.role === 'client' && Number.isInteger(Number(tabSession.accountId)) && Number(tabSession.accountId) >= 1 && Number(tabSession.accountId) <= 3 && db.accounts[Number(tabSession.accountId)]) {
+    if (tabSession?.role === 'client' && Number.isInteger(Number(tabSession.accountId)) && Number(tabSession.accountId) >= 1 && Number(tabSession.accountId) <= MAX_ACCOUNT_ID && db.accounts[Number(tabSession.accountId)]) {
       activeAccountId = Number(tabSession.accountId);
       reviewerSession = false;
       loginView.hidden = true;

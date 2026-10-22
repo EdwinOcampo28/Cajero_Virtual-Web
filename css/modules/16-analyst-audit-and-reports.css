@@ -1,0 +1,34 @@
+/* Auditoría interna, trazabilidad y exportación de informes */
+.reviewer-audit-panel, .reviewer-report-panel, .reviewer-audit-log-panel { margin: 0 0 25px; }
+.reviewer-audit-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 9px; }
+.reviewer-audit-toolbar .button { min-height: 41px; padding: 0 14px; font-size: 10px; }
+.reviewer-report-toolbar { align-items: flex-end; }
+.reviewer-report-toolbar label, .reviewer-audit-search-label { display: flex; flex-direction: column; gap: 6px; color: #9fb4c6; font-size: 10px; font-weight: 750; }
+.reviewer-report-toolbar input, .reviewer-audit-search-label input { min-height: 41px; min-width: 150px; padding: 0 12px; border: 1px solid rgba(150,185,214,.2); border-radius: 10px; color: #eaf4ff; background: #0d1b2a; font: inherit; }
+.reviewer-audit-search-label { margin-bottom: 14px; }
+.reviewer-audit-search-label input { width: 100%; min-width: 0; }
+.reviewer-audit-status { margin: 0 0 14px; padding: 13px 15px; border: 1px solid rgba(100,223,173,.22); border-radius: 11px; color: #a8f2cf; background: rgba(100,223,173,.06); font-size: 11px; line-height: 1.6; }
+.reviewer-audit-status.has-warnings { border-color: rgba(243,199,108,.25); color: #f2d79b; background: rgba(243,199,108,.06); }
+.reviewer-audit-status.has-errors { border-color: rgba(255,142,142,.25); color: #ffb2b2; background: rgba(255,142,142,.06); }
+.reviewer-audit-summary, .reviewer-report-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.reviewer-audit-summary { margin-bottom: 14px; }
+.reviewer-audit-metric, .reviewer-report-card { min-width: 0; padding: 14px; border: 1px solid rgba(147,187,220,.12); border-radius: 12px; background: linear-gradient(145deg, rgba(15,32,48,.9), rgba(9,20,32,.9)); }
+.reviewer-audit-metric span, .reviewer-report-card span { display: block; color: #9fb4c6; font-size: 9px; line-height: 1.45; }
+.reviewer-audit-metric strong, .reviewer-report-card strong { display: block; margin-top: 7px; color: #eff7fc; font-size: clamp(17px, 1.8vw, 24px); letter-spacing: -.035em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.reviewer-audit-metric small, .reviewer-report-card small { display: block; margin-top: 6px; color: #829bae; font-size: 9px; line-height: 1.5; }
+.reviewer-audit-issues { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.reviewer-audit-issue { padding: 11px 13px; border-left: 3px solid #e7b85e; border-radius: 0 8px 8px 0; color: #ecd7a6; background: rgba(243,199,108,.055); font-size: 10px; line-height: 1.6; overflow-wrap: anywhere; }
+.reviewer-audit-issue.is-error { border-left-color: #ff8e8e; color: #ffb2b2; background: rgba(255,142,142,.055); }
+.reviewer-audit-issue strong { display: block; margin-bottom: 3px; }
+.reviewer-report-card.is-positive strong { color: #75e5b4; }
+.reviewer-report-card.is-warning strong { color: #f3d58c; }
+.reviewer-report-footnote { margin: 13px 0 0; color: #8fa5b8; font-size: 9px; line-height: 1.65; }
+.reviewer-audit-log-list { display: flex; flex-direction: column; gap: 8px; }
+.reviewer-audit-row { display: grid; grid-template-columns: minmax(120px, .8fr) minmax(140px, 1fr) minmax(0, 2fr) auto; align-items: start; gap: 12px; padding: 13px 14px; border: 1px solid rgba(147,187,220,.1); border-radius: 10px; background: rgba(7,19,31,.68); }
+.reviewer-audit-date { color: #8fa7bb; font-size: 9px; line-height: 1.6; }
+.reviewer-audit-row strong { display: block; color: #eaf4fc; font-size: 10px; line-height: 1.5; }
+.reviewer-audit-row small { display: block; margin-top: 3px; color: #8099ad; font-size: 9px; line-height: 1.5; overflow-wrap: anywhere; }
+.reviewer-audit-amount { color: #75e5b4; font-size: 11px; font-weight: 850; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.reviewer-audit-chip { display: inline-flex; align-items: center; padding: 4px 7px; border: 1px solid rgba(147,187,220,.16); border-radius: 999px; color: #b8cbd9; background: rgba(147,187,220,.05); font-size: 8px; font-weight: 800; white-space: nowrap; }
+@media (max-width: 900px) { .reviewer-audit-summary, .reviewer-report-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .reviewer-audit-row { grid-template-columns: 1fr 1fr; } .reviewer-audit-description { grid-column: 1 / -1; } .reviewer-audit-amount { justify-self: end; } }
+@media (max-width: 600px) { .reviewer-audit-toolbar, .reviewer-report-toolbar { width: 100%; display: grid; grid-template-columns: 1fr; } .reviewer-audit-toolbar .button, .reviewer-report-toolbar .button { width: 100%; } .reviewer-report-toolbar label { width: 100%; } .reviewer-report-toolbar input { width: 100%; } .reviewer-audit-summary, .reviewer-report-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } .reviewer-audit-metric, .reviewer-report-card { padding: 12px; } .reviewer-audit-row { padding: 11px; gap: 8px; } }

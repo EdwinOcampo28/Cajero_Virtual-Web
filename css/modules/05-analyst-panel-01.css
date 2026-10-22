@@ -29,4 +29,4 @@
 .reviewer-filter-label { display: flex; align-items: center; gap: 10px; color: #a9bdce; font-size: 10px; font-weight: 700; }
 .reviewer-filter-label select { min-height: 42px; max-width: 210px; padding: 0 12px; border: 1px solid rgba(150,185,214,.2); border-radius: 10px; color: #eaf4ff; background: #0d1b2a; font-size: 11px; }
 .reviewer-filter-label select option { color: #eaf4ff; background: #0d1b2a; }
-.reviewer-applications-list { display: flex; flex-direction: column; gap: 14px; }
+.reviewer-applications-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; gap: 14px; } .reviewer-applications-list[hidden] { display: none; }

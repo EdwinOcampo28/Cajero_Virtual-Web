@@ -26,5 +26,5 @@
   });
 
   // Keep each account's daily withdrawal counter aligned with the local calendar.
-  for (let id = 1; id <= 3; id += 1) resetDailyWithdrawalIfNeeded(db.accounts[id]);
+  for (let id = 1; id <= MAX_ACCOUNT_ID; id += 1) resetDailyWithdrawalIfNeeded(db.accounts[id]);
   saveDatabase();

@@ -7,6 +7,7 @@
     if (amount > current.balance) return showToast(`No tienes saldo suficiente. Tu saldo disponible es ${money(current.balance)}.`, 'error');
     if (amount > loan.outstandingPrincipal) return showToast(`El abono no puede superar el capital pendiente de ${money(loan.outstandingPrincipal)}.`, 'error');
     const willClose = amount === loan.outstandingPrincipal;
+    const transactionRevision = captureDatabaseRevision();
     const confirmed = await showAppDialog({
       type: 'confirm',
       title: willClose ? 'Liquidar crédito' : 'Confirmar abono a capital',
@@ -16,6 +17,7 @@
       confirmText: willClose ? 'Liquidar crédito' : 'Confirmar abono'
     });
     if (!confirmed) return;
+    if (!isDatabaseRevisionCurrent(transactionRevision)) { abortStaleFinancialOperation(); return; }
     current.balance = roundMoney(current.balance - amount);
     loan.outstandingPrincipal = Math.max(0, roundMoney(loan.outstandingPrincipal - amount));
     restoreCardAdvanceBalance(current, amount);
@@ -28,7 +30,7 @@
       loan.closedAt = new Date().toISOString();
       updateLinkedApplicationsStatus(loan, 'Pagado');
     }
-    saveDatabase();
+    if (!saveDatabase()) { renderApp(); return; }
     renderApp();
     renderLoans();
     renderCreditApplications();

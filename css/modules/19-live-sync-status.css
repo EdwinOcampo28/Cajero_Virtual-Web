@@ -1,0 +1,52 @@
+/* Indicador discreto de actualización automática entre pestañas. */
+.realtime-sync-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 28px;
+  padding: 5px 9px;
+  border: 1px solid rgba(100, 223, 173, .22);
+  border-radius: 999px;
+  background: rgba(100, 223, 173, .07);
+  color: #bcebd9;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  transition: background .18s ease, border-color .18s ease, color .18s ease;
+}
+.realtime-sync-dot {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border-radius: 50%;
+  background: #64dfad;
+  box-shadow: 0 0 0 3px rgba(100, 223, 173, .10);
+}
+.realtime-sync-badge[data-sync-state="updated"] {
+  border-color: rgba(84, 217, 232, .34);
+  background: rgba(84, 217, 232, .10);
+  color: #c5f6fb;
+}
+.realtime-sync-badge[data-sync-state="updated"] .realtime-sync-dot {
+  background: #54d9e8;
+  box-shadow: 0 0 0 3px rgba(84, 217, 232, .12);
+}
+.realtime-sync-badge[data-sync-state="fallback"] {
+  border-color: rgba(243, 199, 108, .25);
+  background: rgba(243, 199, 108, .07);
+  color: #f6dfaa;
+}
+.realtime-sync-badge[data-sync-state="fallback"] .realtime-sync-dot { background: #f3c76c; }
+.realtime-sync-badge[data-sync-state="error"] {
+  border-color: rgba(255, 147, 156, .3);
+  background: rgba(255, 147, 156, .08);
+  color: #ffc0c6;
+}
+.realtime-sync-badge[data-sync-state="error"] .realtime-sync-dot { background: #ff939c; }
+.topbar-right .realtime-sync-badge { margin-right: 2px; }
+.reviewer-session .realtime-sync-badge { margin-inline: 5px; }
+@media (max-width: 920px) {
+  .topbar-right .realtime-sync-badge { display: none; }
+  .reviewer-session .realtime-sync-badge { display: none; }
+}

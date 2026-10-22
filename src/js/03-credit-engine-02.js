@@ -20,7 +20,8 @@
   function updateLinkedApplicationsStatus(loan, status) {
     const linked = new Set([...(Array.isArray(loan.applicationIds) ? loan.applicationIds : []), ...(loan.applicationId ? [loan.applicationId] : [])]);
     (db.creditApplications || []).forEach((application) => {
-      if (linked.has(application.id)) application.status = status;
+      if (!linked.has(application.id)) return;
+      application.status = Number(application.cardFundsRemaining) > 0 ? 'Aprobado' : status;
     });
   }
 
@@ -45,7 +46,7 @@
   function addRecoveredCapitalToUnifiedDebt(accountId, principal, termMonths = 60) {
     const amount = roundMoney(principal);
     if (amount <= 0) return null;
-    const chosenTerm = VALID_CREDIT_TERMS.includes(Number(termMonths)) ? Number(termMonths) : 60;
+    const chosenTerm = VALID_CARD_ADVANCE_TERMS.includes(Number(termMonths)) ? Number(termMonths) : 12;
     let loan = (db.loans || []).find((item) => item.accountId === accountId && item.status === 'Activo' && Number(item.outstandingPrincipal) > 0);
     if (!loan) {
       loan = createLoanFromCardAdvance(accountId, amount, chosenTerm);

@@ -5,13 +5,13 @@
   gap: 18px;
 }
 .physical-credit-card-large {
-  min-height: 315px;
-  padding: 30px 30px 25px;
+  min-height: 288px;
+  padding: 25px 25px 21px;
   border-radius: 23px;
 }
-.physical-credit-card-large .physical-card-chip { width: 45px; height: 34px; margin-top: 26px; }
-.physical-credit-card-large .physical-card-number { margin: 22px 0 24px; font-size: clamp(18px, 2vw, 25px); }
-.physical-credit-card-large .physical-card-bottom { padding-top: 17px; }
+.physical-credit-card-large .physical-card-chip { width: 42px; height: 32px; margin-top: 21px; }
+.physical-credit-card-large .physical-card-number { margin: 18px 0 19px; font-size: clamp(18px, 2vw, 25px); }
+.physical-credit-card-large .physical-card-bottom { padding-top: 14px; }
 .physical-credit-card-large .physical-card-bottom strong { font-size: 11px; }
 .card-advance-combined {
   display: flex;
@@ -41,11 +41,11 @@
 #legacyCardPaymentSection[hidden] { display: none !important; }
 @media (max-width: 1050px) {
   .card-account-layout-large { grid-template-columns: 1fr; }
-  .physical-credit-card-large { min-height: 305px; }
+  .physical-credit-card-large { min-height: 276px; }
   .card-advance-combined { padding: 14px; }
 }
 @media (max-width: 430px) {
-  .physical-credit-card-large { min-height: 250px; padding: 21px 17px 18px; }
+  .physical-credit-card-large { min-height: 230px; padding: 18px 16px 15px; }
   .physical-credit-card-large .physical-card-number { font-size: 16px; letter-spacing: .09em; }
   .card-advance-combined { padding: 10px; }
   .card-advance-combined .compact-card-metrics { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 7px; }

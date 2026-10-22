@@ -4,24 +4,44 @@
         <div class="brand-mark small-mark"><span class="brand-mark-core">✓</span></div>
         <div><span class="sidebar-brand-name">Panel<span>Analista</span></span><span class="sidebar-brand-tag">REVISIÓN DE CRÉDITOS</span></div>
       </a>
-      <div class="reviewer-session"><span class="status-dot"></span><span>Analista de créditos</span><button id="resetDataButtonReviewer" data-reset-data class="button button-danger-header" type="button"><span aria-hidden="true">⌫</span> Borrar datos</button><button id="reviewerLogoutButton" class="button button-secondary" type="button">Cerrar sesión</button></div>
+      <div class="reviewer-session"><span class="status-dot"></span><span>Analista de créditos</span><span class="realtime-sync-badge" data-realtime-sync-status role="status" aria-live="polite" title="Los cambios guardados en otras pestañas se reflejan automáticamente"><span class="realtime-sync-dot" aria-hidden="true"></span><span class="realtime-sync-label">En tiempo real</span></span><button id="resetDataButtonReviewer" data-reset-data class="button button-danger-header" type="button"><span aria-hidden="true">⌫</span> Borrar datos</button><button id="reviewerLogoutButton" class="button button-secondary" type="button">Cerrar sesión</button></div>
     </header>
     <div class="reviewer-content">
-      <div class="reviewer-welcome"><div><p class="eyebrow">BANDEJA DE SOLICITUDES</p><h1>Revisión de créditos</h1><p class="subheading">Revisa la información declarada, registra una nota y decide si apruebas o rechazas cada solicitud.</p></div><span class="reviewer-demo-tag">MODO DEMOSTRACIÓN</span></div>
+      <nav class="reviewer-module-nav" aria-label="Secciones del panel del analista">
+        <button type="button" class="reviewer-module-tab is-active" data-reviewer-tab="overview" aria-current="page">Resumen</button>
+        <button type="button" class="reviewer-module-tab" data-reviewer-tab="requests">Solicitudes</button>
+        <button type="button" class="reviewer-module-tab" data-reviewer-tab="tools">Herramientas</button>
+        <button type="button" class="reviewer-module-tab" data-reviewer-tab="events">Registro</button>
+        <label class="reviewer-client-filter-label" for="reviewerClientFilter">
+          <span aria-hidden="true">⌕</span><span>Filtrar por cliente</span>
+          <select id="reviewerClientFilter" aria-label="Filtrar el panel del analista por cliente">
+            <option value="all">Todos los clientes</option>
+          </select>
+        </label>
+      </nav>
+      <section id="reviewerPageOverview" class="reviewer-page" data-reviewer-page="overview">
+      <div class="reviewer-welcome"><div><p class="eyebrow">RESUMEN FINANCIERO</p><h1>Panel del analista</h1><p class="subheading">Consulta el capital disponible y los ingresos del sistema. Usa las secciones superiores para revisar expedientes, auditorías e informes por cliente.</p></div><span class="reviewer-demo-tag">MODO DEMOSTRACIÓN</span></div>
       <section class="reviewer-capital-grid" aria-label="Saldo y capital del analista">
         <article class="reviewer-capital-card reviewer-capital-total"><span>Saldo total del analista</span><strong id="reviewerFundTotal">$ 500.000.000</strong><small>Capital inicial, intereses y comisiones cobrados</small></article>
-        <article class="reviewer-capital-card"><span>Capital pendiente de recuperar</span><strong id="reviewerFundCommitted">$ 0</strong><small>Capital que aún deben los clientes</small></article>
-        <article class="reviewer-capital-card reviewer-capital-available"><span>Disponible para desembolsar</span><strong id="reviewerFundAvailable">$ 500.000.000</strong><small>Saldo total menos capital pendiente</small></article>
+        <article class="reviewer-capital-card"><span>Capital comprometido</span><strong id="reviewerFundCommitted">$ 0</strong><small>Créditos activos y desembolsos aún en tarjeta</small></article>
+        <article class="reviewer-capital-card reviewer-capital-available"><span>Disponible para desembolsar</span><strong id="reviewerFundAvailable">$ 500.000.000</strong><small>Saldo total menos el capital comprometido</small></article>
         <article class="reviewer-capital-card reviewer-capital-interest"><span>Intereses ganados</span><strong id="reviewerFundInterest">$ 0</strong><small>Intereses efectivamente cobrados en cuotas</small></article>
-        <article class="reviewer-capital-card reviewer-capital-fees"><span>Comisiones por avances</span><strong id="reviewerFundFees">$ 0</strong><small>Costos de avance cobrados</small></article>
-        <article class="reviewer-capital-card reviewer-capital-fees"><span>Comisiones de operaciones</span><strong id="reviewerFundOperationFees">$ 0</strong><small>Depósitos, retiros y transferencias</small></article>
+        <article class="reviewer-capital-card reviewer-capital-fee-deposit"><span>Comisiones por depósitos</span><strong id="reviewerFundDepositFees">$ 0</strong><small>Total cobrado a todos los clientes</small></article>
+        <article class="reviewer-capital-card reviewer-capital-fee-withdraw"><span>Comisiones por retiros</span><strong id="reviewerFundWithdrawalFees">$ 0</strong><small>Total cobrado a todos los clientes</small></article>
+        <article class="reviewer-capital-card reviewer-capital-fee-transfer"><span>Comisiones por transferencias</span><strong id="reviewerFundTransferFees">$ 0</strong><small>Total cobrado a todos los clientes</small></article>
+        <article class="reviewer-capital-card reviewer-capital-fees"><span>Comisiones por avances</span><strong id="reviewerFundFees">$ 0</strong><small>Total cobrado a todos los clientes</small></article>
       </section>
-      <section class="reviewer-inbox reviewer-backup-panel" aria-label="Copias de seguridad del sistema">
-        <div class="reviewer-inbox-heading"><div><p class="eyebrow">RESPALDO LOCAL</p><h2>Copias de seguridad</h2><p class="subheading">Exporta los datos actuales o restaura una copia anterior del cajero.</p></div></div>
-        <div class="reviewer-backup-actions">
-          <button id="exportBackupButton" class="button button-secondary" type="button">Exportar copia de seguridad</button>
-          <button id="importBackupButton" class="button button-primary" type="button">Importar copia de seguridad</button>
-          <input id="importBackupFile" class="backup-file-input" type="file" accept=".json,application/json" aria-label="Seleccionar archivo de copia de seguridad" hidden>
-        </div>
-        <p class="reviewer-backup-warning">La copia incluye saldos, cuentas de prueba, operaciones, créditos, solicitudes y registros financieros. Guárdala en un lugar seguro; importar una copia reemplaza los datos actuales de este navegador.</p>
+
+
+      <div class="reviewer-disclaimer"><strong>Reglas del fondo:</strong> el analista inicia con $ 500.000.000 de capital y suma intereses y comisiones efectivamente cobrados. El capital pendiente reduce el disponible; el capital pagado se recupera. Cada tarjeta inicia con cupo autorizado de $ 100.000.000 y solo aumenta cuando el analista aprueba una solicitud, hasta $ 500.000.000 en esta demostración. El saldo máximo de ahorros permanece en $ 200.000.000. Esta demostración no verifica documentos ni consulta centrales de riesgo; los datos existen en este navegador.</div>
+      <section class="reviewer-client-summary-panel" aria-labelledby="reviewerClientSummaryHeading">
+        <div class="reviewer-client-summary-heading"><div><p class="eyebrow">ACTIVIDAD ACUMULADA</p><h2 id="reviewerClientSummaryHeading">Resumen de todos los clientes</h2><p id="reviewerClientSummaryDescription">El filtro superior actualiza estos importes. El total pagado suma cuotas, abonos y comisiones registradas a lo largo del tiempo.</p></div><span id="reviewerClientSummaryScope" class="reviewer-client-summary-scope">Todos los clientes</span></div>
+        <div id="reviewerClientSummaryCards" class="reviewer-client-summary-grid" aria-live="polite"></div>
       </section>
+      </section>
+      <section id="reviewerPageRequests" class="reviewer-page" data-reviewer-page="requests" hidden>
+        <div class="reviewer-page-heading"><p class="eyebrow">GESTIÓN DE CLIENTES</p><h2>Solicitudes y decisiones</h2><p class="subheading">Filtra por titular para revisar créditos y aumentos de cupo sin mezclar expedientes.</p></div>
+      <nav class="reviewer-request-nav" aria-label="Tipo de solicitud">
+        <button type="button" class="reviewer-request-tab is-active" data-reviewer-request-tab="credits" aria-current="page">Créditos</button>
+        <button type="button" class="reviewer-request-tab" data-reviewer-request-tab="limits">Aumento de cupo</button>
+      </nav>

@@ -2,7 +2,7 @@
     if (!selectElement) return;
     const selectedValue = selectElement.value;
     selectElement.replaceChildren();
-    for (let id = 1; id <= 3; id += 1) {
+    for (let id = 1; id <= MAX_ACCOUNT_ID; id += 1) {
       const recipient = db.accounts[id];
       const option = document.createElement('option');
       option.value = String(id);
@@ -16,17 +16,16 @@
   }
 
   function applyCardInterestThroughToday(current) {
-    if (!current || !current.card) return;
+    if (!current || !current.card) return true;
     const card = current.card;
     if (card.debt <= 0) {
       card.debt = 0;
       card.nextInterestDate = null;
-      return;
+      return true;
     }
     if (!card.nextInterestDate) {
       card.nextInterestDate = addMonthsToDate(localDateKey(), 1);
-      saveDatabase();
-      return;
+      return saveDatabase();
     }
     const today = localDateKey();
     let guard = 0;
@@ -42,15 +41,18 @@
       card.nextInterestDate = addMonthsToDate(card.nextInterestDate, 1);
       guard += 1;
     }
-    if (changed || guard > 0) saveDatabase();
+    if (changed || guard > 0) return saveDatabase();
+    return true;
   }
 
   function renderCardView() {
-    const current = account();
+    let current = account();
     if (!current) return;
     current.card = current.card || { number: current.cardNumber, limit: MAX_CARD_FUNDS, funds: 0, recoveredFunds: 0, debt: 0, nextInterestDate: null, history: [] };
     if (!Number.isFinite(current.card.recoveredFunds)) current.card.recoveredFunds = 0;
-    applyCardInterestThroughToday(current); // Only preserves payment/interest history migrated from older versions.
+    if (!applyCardInterestThroughToday(current)) return; // Stop rendering stale values if a parallel tab changed the database.
+    current = account();
+    if (!current) return;
     const card = current.card;
     const totalDisbursements = totalDisbursedForAccount(current.id);
     const availableAdvances = availableAdvancesForCard(card);
@@ -58,9 +60,9 @@
     $('#cardHolderText').textContent = current.name.toLocaleUpperCase('es-CO');
     $('#cardTotalDisbursementsMetric').textContent = money(totalDisbursements);
     $('#cardAvailableAdvancesMetric').textContent = money(availableAdvances);
-    const maxAdvanceBySavings = Math.max(0, roundMoney(MAX_ACCOUNT_BALANCE - current.balance + ADVANCE_FEE));
+    const maxAdvanceBySavings = Math.max(0, roundMoney(maxSavingsBalanceForAccount(current.id) - current.balance + ADVANCE_FEE));
     $('#cardFundsAmount').max = String(Math.min(availableAdvances, maxAdvanceBySavings));
-    $('#cardFundsHint').textContent = `Disponible de tarjeta: ${money(availableAdvances)}. La cuenta de ahorros puede recibir hasta ${money(maxAdvanceBySavings)} adicionales contando el costo fijo del avance; el saldo final nunca superará ${money(MAX_ACCOUNT_BALANCE)}.`;
+    $('#cardFundsHint').textContent = `Disponible de tarjeta: ${money(availableAdvances)}. La cuenta puede recibir hasta ${money(maxAdvanceBySavings)} adicionales contando el costo fijo del avance; el saldo final nunca superará ${money(maxSavingsBalanceForAccount(current.id))}.`;
     $('#cardPaymentHint').textContent = `Ahorros disponibles: ${money(current.balance)} · Saldo antiguo de avances pendiente: ${money(card.debt)}.`;
     $('#cardPaymentAmount').max = String(Math.min(card.debt, current.balance));
     $('#legacyCardPaymentPanel').hidden = !(card.debt > 0);

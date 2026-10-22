@@ -3,6 +3,8 @@
     const currentLabel = $('#cardLimitCurrentValue');
     if (currentLabel) currentLabel.textContent = money(limit);
     const requestedInput = $('#cardLimitRequestedValue');
+    const requestField = $('#cardLimitRequestField');
+    const requestIntro = $('#cardLimitRequestIntro');
     const error = $('#cardLimitRequestError');
     const submitButton = $('#cardLimitRequestSubmit');
     const requests = Array.isArray(db.limitIncreaseRequests) ? db.limitIncreaseRequests.filter((request) => request.accountId === current.id).sort((a,b) => new Date(b.date) - new Date(a.date)) : [];
@@ -17,47 +19,80 @@
         const main = document.createElement('div');
         main.className = 'credit-application-main';
         const title = document.createElement('strong');
-        title.textContent = `Cupo solicitado: ${money(request.requestedLimit)}`;
+        const increase = Number(request.increaseAmount) > 0 ? Number(request.increaseAmount) : Math.max(0, Number(request.requestedLimit) - Number(request.previousLimit));
+        title.textContent = `Aumento solicitado: ${money(increase)} · Nuevo cupo: ${money(request.requestedLimit)}`;
         const meta = document.createElement('small');
-        meta.textContent = `${shortDateTime(request.date)} · Cupo anterior: ${money(request.previousLimit)}`;
+        meta.textContent = `${shortDateTime(request.date)} · Cupo anterior: ${money(request.previousLimit)} · crédito a 12 meses al 2,13 % mensual cuando avances`;
         main.append(title, meta);
         const status = document.createElement('span');
         status.className = `credit-status ${statusClass(request.status || 'En revisión')}`;
         status.textContent = request.status || 'En revisión';
         row.append(main, status);
-        if (Number(request.disbursedAmount) > 0) { const disbursement=document.createElement('small'); disbursement.className='limit-request-disbursement'; disbursement.textContent=`Desembolso automático realizado: ${money(request.disbursedAmount)}; integrado a tu deuda unificada.`; row.append(disbursement); }
+        if (Number(request.disbursedAmount) > 0) { const disbursement=document.createElement('small'); disbursement.className='limit-request-disbursement'; disbursement.textContent=`Desembolso a tarjeta: ${money(request.disbursedAmount)}. Se convierte en crédito a 12 cuotas únicamente al realizar avances.`; row.append(disbursement); }
         if (request.reviewerNote) { const note=document.createElement('small'); note.textContent=`Nota: ${request.reviewerNote}`; row.append(note); }
         history.append(row);
       });
     }
     if (empty) empty.hidden = requests.length > 0;
-    const maxed = limit >= MAX_CARD_LIMIT;
+    const increaseAmounts = [50000000];
+    const enabledAmounts = increaseAmounts.filter((amount) => limit + amount <= MAX_CARD_LIMIT);
+    const noMoreOptions = enabledAmounts.length === 0;
+    const maximumReached = limit >= MAX_CARD_LIMIT;
+    if (requestField) requestField.hidden = noMoreOptions;
+    if (requestIntro) requestIntro.textContent = noMoreOptions
+      ? (maximumReached
+        ? `Tu tarjeta ya alcanzó el cupo máximo de ${money(MAX_CARD_LIMIT)}.`
+        : `No hay espacio para otro aumento de ${money(50000000)} sin superar el máximo de ${money(MAX_CARD_LIMIT)}.`)
+      : 'El aumento disponible es de $ 50.000.000. Si se aprueba, esos fondos se cargan a tu tarjeta y solo generan crédito cuando haces avances.';
     if (requestedInput) {
-      if (requestedInput.dataset.accountId !== String(current.id)) {
-        requestedInput.dataset.accountId = String(current.id);
-        delete requestedInput.dataset.userEdited;
-      }
-      requestedInput.min = String(limit + 1000000);
-      requestedInput.max = String(MAX_CARD_LIMIT);
-      const suggested = Math.min(MAX_CARD_LIMIT, limit + 25000000);
-      if (!requestedInput.dataset.userEdited) requestedInput.value = String(suggested);
-      requestedInput.disabled = Boolean(pending) || maxed;
+      const pendingAmount = pending
+        ? (Number(pending.increaseAmount) > 0 ? Number(pending.increaseAmount) : Math.max(0, Number(pending.requestedLimit) - Number(pending.previousLimit)))
+        : Number(requestedInput.value);
+      Array.from(requestedInput.options).forEach((option) => {
+        const amount = Number(option.value);
+        const canChoose = limit + amount <= MAX_CARD_LIMIT;
+        option.disabled = !canChoose;
+        option.textContent = noMoreOptions
+          ? (maximumReached ? `Cupo máximo alcanzado · ${money(MAX_CARD_LIMIT)}` : 'Aumento no disponible')
+          : `Aumentar ${money(amount)} · nuevo cupo ${money(limit + amount)} · crédito a 12 meses al avanzar`;
+      });
+      const desired = pendingAmount && increaseAmounts.includes(pendingAmount) ? pendingAmount : (enabledAmounts.includes(Number(requestedInput.value)) ? Number(requestedInput.value) : (enabledAmounts[0] || 50000000));
+      requestedInput.value = String(desired);
+      requestedInput.disabled = Boolean(pending) || noMoreOptions;
     }
-    if (submitButton) submitButton.disabled = Boolean(pending) || maxed;
+    if (submitButton) {
+      submitButton.disabled = Boolean(pending) || noMoreOptions;
+      submitButton.hidden = noMoreOptions;
+    }
     const statusText = $('#cardLimitRequestStatus');
     if (statusText) {
-      statusText.textContent = pending ? `Tienes una solicitud pendiente para aumentar el cupo a ${money(pending.requestedLimit)}.` : maxed ? 'Tu tarjeta ya tiene el cupo máximo de demostración autorizado.' : 'Puedes solicitar un cupo mayor; el analista revisará la solicitud.';
+      statusText.textContent = pending
+        ? `Tienes una solicitud pendiente de aumento de ${money(Number(pending.increaseAmount) || (pending.requestedLimit - pending.previousLimit))}, a ${money(pending.requestedLimit) } de cupo. Si se aprueba, los fondos se cargarán a tu tarjeta y el crédito se activará a 12 cuotas solo al avanzar.`
+        : noMoreOptions
+          ? (maximumReached
+            ? `¡Has alcanzado el cupo máximo de ${money(MAX_CARD_LIMIT)}! Ya no puedes solicitar otro aumento.`
+            : `No puedes solicitar otro aumento de ${money(50000000)} porque superarías el máximo de ${money(MAX_CARD_LIMIT)}.`)
+          : 'El aumento disponible es de $50.000.000. Si se aprueba, se cargará a tu tarjeta y el crédito se activará a 12 cuotas solo al realizar avances.';
     }
-    if (error && !pending && !maxed) error.hidden = true;
+    if (error && !pending && !noMoreOptions) error.hidden = true;
   }
 
   function totalDisbursedForAccount(accountId) {
-    // Cuenta solo los desembolsos originales; las reutilizaciones de capital nunca se suman a esta cifra.
-    return roundMoney((db.loans || []).reduce((sum, loan) => {
+    // Cuenta los fondos desembolsados a tarjeta, incluidos los que aún no se han avanzado.
+    const loanOriginals = (db.loans || []).reduce((sum, loan) => {
       if (loan.accountId !== accountId) return sum;
       const original = Number.isFinite(loan.originalDisbursedTotal)
         ? loan.originalDisbursedTotal
         : (loan.source === 'Avance de capital recuperado' ? 0 : Number(loan.principalOriginal) || 0);
       return sum + Math.max(0, original);
-    }, 0));
+    }, 0);
+    const pendingOriginals = (db.creditApplications || []).filter((application) => application.accountId === accountId && application.disbursedAt)
+      .reduce((sum, application) => {
+        const linkedLoan = findLoanForApplication(application.id);
+        const alreadyActivated = linkedLoan
+          ? (Number.isFinite(application.activatedAmount) ? Math.max(0, Number(application.activatedAmount)) : Number(application.amount))
+          : 0;
+        return sum + Math.max(0, Number(application.amount) - alreadyActivated);
+      }, 0);
+    return roundMoney(loanOriginals + pendingOriginals);
   }

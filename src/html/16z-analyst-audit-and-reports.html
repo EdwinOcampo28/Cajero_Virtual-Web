@@ -1,0 +1,36 @@
+      <div class="reviewer-tool-section">
+      <section class="reviewer-inbox reviewer-audit-panel" aria-labelledby="financialAuditHeading">
+        <div class="reviewer-inbox-heading">
+          <div><p class="eyebrow">CONTROL INTERNO</p><h2 id="financialAuditHeading">Auditoría financiera</h2><p class="subheading">Comprueba saldos, cupos, deudas, cuotas y comisiones sin modificar los datos.</p></div>
+          <div class="reviewer-audit-toolbar"><button id="runFinancialAuditButton" class="button button-secondary" type="button">Ejecutar auditoría</button><button id="exportAuditLogButton" class="button button-secondary" type="button">Exportar registro CSV</button></div>
+        </div>
+        <div id="financialAuditStatus" class="reviewer-audit-status" role="status" aria-live="polite">La auditoría se ejecutará al abrir el panel.</div>
+        <div id="financialAuditSummary" class="reviewer-audit-summary"></div>
+        <div id="financialAuditIssues" class="reviewer-audit-issues"></div>
+      </section>
+      </div>
+      <div class="reviewer-tool-section">
+      <section class="reviewer-inbox reviewer-report-panel" aria-labelledby="financialReportHeading">
+        <div class="reviewer-inbox-heading">
+          <div><p class="eyebrow">INFORMES EXPORTABLES</p><h2 id="financialReportHeading">Informe financiero mensual</h2><p class="subheading">Consulta la actividad de un mes y exporta el resumen como CSV.</p></div>
+          <div class="reviewer-audit-toolbar reviewer-report-toolbar"><label for="financialReportMonth">Mes del informe<input id="financialReportMonth" type="month"></label><button id="refreshFinancialReportButton" class="button button-secondary" type="button">Actualizar informe</button><button id="exportFinancialReportButton" class="button button-primary" type="button">Exportar informe CSV</button></div>
+        </div>
+        <div id="financialReportCards" class="reviewer-report-grid"></div>
+        <p id="financialReportFootnote" class="reviewer-report-footnote"></p>
+      </section>
+      </div>
+      </section>
+      <section id="reviewerPageEvents" class="reviewer-page" data-reviewer-page="events" hidden>
+      <section class="reviewer-inbox reviewer-audit-log-panel" aria-labelledby="auditLogHeading">
+        <div class="reviewer-inbox-heading">
+          <div><p class="eyebrow">TRAZABILIDAD</p><h2 id="auditLogHeading">Registro cronológico de operaciones</h2><p class="subheading">Incluye asientos de ahorros y tarjeta, solicitudes, decisiones, respaldos y borrados. Se guardan hasta 5.000 eventos recientes.</p></div>
+          <label class="reviewer-filter-label" for="auditLogFilter">Filtrar<select id="auditLogFilter"><option value="all">Todos los eventos</option><option value="ahorros">Ahorros</option><option value="tarjeta">Tarjeta</option><option value="creditos">Créditos</option><option value="cupo">Aumentos de cupo</option><option value="comisiones">Comisiones</option><option value="respaldos">Copias de seguridad</option><option value="sistema">Sistema y auditoría</option></select></label>
+        </div>
+        <label class="reviewer-audit-search-label" for="auditLogSearch">Buscar por titular, tipo, descripción o referencia<input id="auditLogSearch" type="search" placeholder="Ej. transferencia, cuota, Edwin…" autocomplete="off"></label>
+        <div id="auditLogList" class="reviewer-audit-log-list"></div>
+        <div id="auditLogEmpty" class="empty-state" hidden><span class="empty-icon">⌕</span><strong>No hay eventos coincidentes</strong><p>Prueba otro filtro o realiza una operación para comenzar el registro.</p></div>
+      </section>
+      </section>
+      <footer class="page-footer"><span>© <span id="reviewerFooterYear"></span> Cajero Virtual</span><span><span class="footer-dot"></span> Panel de análisis de demostración</span></footer>
+    </div>
+  </main>

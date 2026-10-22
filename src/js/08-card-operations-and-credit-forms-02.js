@@ -8,18 +8,20 @@
     if (!validIntegerAmount(rawAmount)) return cardFormProblem('cardPayment', 'Ingresa un importe entero mayor que cero, sin decimales.');
     if (amount > current.balance) return cardFormProblem('cardPayment', `Ahorros insuficientes. Saldo disponible: ${money(current.balance)}.`);
     if (amount > current.card.debt) return cardFormProblem('cardPayment', `El pago no puede superar la deuda actual de la tarjeta: ${money(current.card.debt)}.`);
+    const transactionRevision = captureDatabaseRevision();
     const confirmed = await showAppDialog({
       type: 'confirm', title: 'Pagar tarjeta desde ahorros',
       message: `Se descontarán ${money(amount)} de tus ahorros para reducir la deuda de tarjeta. Ahorros después del pago: ${money(current.balance - amount)}.`,
       eyebrow: 'PAGO DE TARJETA', icon: '✓', confirmText: 'Confirmar pago'
     });
     if (!confirmed) return;
+    if (!isDatabaseRevisionCurrent(transactionRevision)) { abortStaleFinancialOperation(); return; }
     current.balance = roundMoney(current.balance - amount);
     current.card.debt = Math.max(0, roundMoney(current.card.debt - amount));
     if (current.card.debt === 0) current.card.nextInterestDate = null;
     recordMovement(activeAccountId, 'card_payment', amount, 'Pago de tarjeta desde cuenta de ahorros', 'out');
     recordCardMovement(activeAccountId, 'card_payment', amount, 'Pago de tarjeta recibido desde ahorros', 'in');
-    saveDatabase();
+    if (!saveDatabase()) { renderApp(); return; }
     $('#cardPaymentForm').reset();
     renderApp();
     showToast(`Saldo antiguo de tarjeta pagado por ${money(amount)}.`);
@@ -32,9 +34,11 @@
     const error = $('#cardLimitRequestError');
     error.hidden = true;
     const currentLimit = cardCreditLimitForAccount(current.id);
-    const requestedLimit = Number($('#cardLimitRequestedValue').value);
-    if (!Number.isInteger(requestedLimit) || requestedLimit <= currentLimit || requestedLimit > MAX_CARD_LIMIT) {
-      error.textContent = `El nuevo cupo debe ser mayor que ${money(currentLimit)} y no puede superar ${money(MAX_CARD_LIMIT)}.`;
+    const increaseAmount = Number($('#cardLimitRequestedValue').value);
+    const allowedIncreaseAmounts = [50000000];
+    const requestedLimit = roundMoney(currentLimit + increaseAmount);
+    if (!allowedIncreaseAmounts.includes(increaseAmount) || requestedLimit > MAX_CARD_LIMIT) {
+      error.textContent = `El aumento debe ser de ${money(50000000)} y el nuevo cupo no puede superar ${money(MAX_CARD_LIMIT)}.`;
       error.hidden = false;
       $('#cardLimitRequestedValue').focus();
       return;
@@ -45,19 +49,20 @@
       error.hidden = false;
       return;
     }
-    if (currentLimit >= MAX_CARD_LIMIT) {
-      error.textContent = `Tu tarjeta ya alcanzó el cupo máximo permitido de ${money(MAX_CARD_LIMIT)} en esta demostración.`;
+    if (!allowedIncreaseAmounts.some((value) => currentLimit + value <= MAX_CARD_LIMIT)) {
+      error.textContent = `Tu tarjeta ya no tiene espacio para un aumento de ${money(50000000)}.`;
       error.hidden = false;
       return;
     }
     const request = {
       id: createId(), accountId: current.id, applicantName: current.name, accountNumber: current.accountNumber,
-      previousLimit: currentLimit, requestedLimit: roundMoney(requestedLimit), status: 'En revisión', date: new Date().toISOString()
+      previousLimit: currentLimit, increaseAmount, requestedLimit, termMonths: 12, status: 'En revisión', date: new Date().toISOString()
     };
     if (!Array.isArray(db.limitIncreaseRequests)) db.limitIncreaseRequests = [];
     db.limitIncreaseRequests.unshift(request);
-    saveDatabase();
+    recordAuditEvent('Solicitud de aumento de cupo enviada', { category: 'cupo', accountId: current.id, amount: increaseAmount, source: 'Cliente', referenceId: request.id, description: `Nuevo cupo solicitado: ${money(requestedLimit)}`, details: { previousLimit: currentLimit, requestedLimit, termMonths: 12 } });
+    if (!saveDatabase()) { renderApp(); return; }
     renderCardLimitRequestSection(current);
     if (reviewerSession) renderReviewerDashboard();
-    showToast(`Solicitud de aumento de cupo a ${money(request.requestedLimit)} enviada al analista.`);
+    showToast(`Solicitud de aumento de ${money(increaseAmount)} enviada. Nuevo cupo propuesto: ${money(requestedLimit)}. El crédito se activará a 12 cuotas solo al realizar avances si se aprueba.`);
   }

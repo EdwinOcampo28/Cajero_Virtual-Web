@@ -15,7 +15,8 @@
     if (!current) return;
     const container = $('#creditApplicationsList');
     container.replaceChildren();
-    const applications = (db.creditApplications || []).filter((item) => item.accountId === activeAccountId);
+    const applications = (db.creditApplications || []).filter((item) => item.accountId === activeAccountId
+      && (item.origin !== 'Aumento de cupo' || Number(item.activatedAmount) > 0));
     $('#emptyCreditApplications').hidden = applications.length > 0;
     container.hidden = applications.length === 0;
     applications.forEach((item) => {
@@ -25,22 +26,25 @@
       const main = document.createElement('div');
       main.className = 'credit-application-main';
       const title = document.createElement('strong');
-      title.textContent = money(item.amount);
+      title.textContent = money(item.origin === 'Aumento de cupo' && Number(item.activatedAmount) > 0 ? item.activatedAmount : item.amount);
       const meta = document.createElement('span');
-      meta.textContent = `${item.purpose} · ${loan ? `${loan.termMonths - loan.installmentsPaid} meses restantes` : `${item.termMonths} meses`} · ${loan ? 'Cuota vigente de la deuda' : 'Cuota estimada'} ${money(loan ? loan.monthlyPayment : item.monthlyPayment)}`;
+      const fundsPending = Math.max(0, Number(item.cardFundsRemaining) || 0);
+      meta.textContent = `${item.purpose} · ${loan ? `${loan.termMonths - loan.installmentsPaid} meses restantes` : `${item.termMonths} meses`} · ${loan ? 'Cuota vigente de la deuda' : (fundsPending > 0 ? 'Sin cuotas hasta avanzar' : 'Cuota estimada')} ${loan ? money(loan.monthlyPayment) : (fundsPending > 0 ? '' : money(item.monthlyPayment))}`;
       const date = document.createElement('small');
       date.textContent = `Solicitada el ${shortDateTime(item.date)}`;
       main.append(title, meta, date);
       const status = document.createElement('span');
       status.className = `credit-status ${statusClass(loan && loan.status === 'Pagado' ? 'Pagado' : (item.status || 'En revisión'))}`;
-      status.textContent = loan ? (loan.status === 'Pagado' ? 'Crédito pagado' : 'Desembolsado') : (item.status || 'En revisión');
+      status.textContent = fundsPending > 0
+        ? (Number(item.activatedAmount) > 0 ? `Avance parcial · ${money(fundsPending)} en tarjeta` : 'Fondos en tarjeta · sin crédito activo')
+        : (loan ? (loan.status === 'Pagado' ? 'Crédito pagado' : 'Crédito activo') : (item.status || 'En revisión'));
       const copy = document.createElement('div');
       copy.className = 'credit-application-status';
       copy.append(status);
       if (item.reviewedAt || item.disbursedAt) {
         const reviewDate = document.createElement('small');
         reviewDate.className = 'credit-review-date';
-        reviewDate.textContent = item.disbursedAt ? `Desembolsado el ${shortDateTime(item.disbursedAt)}` : `Revisada el ${shortDateTime(item.reviewedAt)}`;
+        reviewDate.textContent = item.disbursedAt ? `Fondos cargados en tarjeta el ${shortDateTime(item.disbursedAt)}` : `Revisada el ${shortDateTime(item.reviewedAt)}`;
         copy.append(reviewDate);
       }
       card.append(main, copy);
@@ -51,6 +55,12 @@
           ? `Crédito pagado. Total registrado en abonos y cuotas: ${money((loan.payments || []).reduce((sum, item) => sum + item.amount, 0))}.`
           : `Saldo de capital pendiente: ${money(loan.outstandingPrincipal)} · Próxima cuota: ${money(nextInstallmentFor(loan).paymentAmount)} · Vencimiento: ${loan.nextDueDate}.`;
         card.append(loanSummary);
+      }
+      if (fundsPending > 0) {
+        const pendingFunds = document.createElement('p');
+        pendingFunds.className = 'credit-review-note';
+        pendingFunds.textContent = `Fondos aún disponibles en la tarjeta: ${money(fundsPending)}. Ese monto no genera crédito ni cuotas hasta trasladarlo a ahorros mediante un avance.`;
+        card.append(pendingFunds);
       }
       if (item.reviewerNote) {
         const note = document.createElement('p');

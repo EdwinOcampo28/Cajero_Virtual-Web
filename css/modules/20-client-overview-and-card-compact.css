@@ -1,0 +1,109 @@
+/* v35 · Tarjeta principal ampliada; resumen de cuenta compacto. */
+#overviewView .welcome-row { margin-bottom: 15px; }
+#overviewView .welcome-row h2 { font-size: clamp(22px, 2.6vw, 29px); }
+#overviewView .subheading { margin-top: 6px; font-size: 10px; line-height: 1.4; }
+#overviewView .balance-card { min-height: 142px; padding: 14px 17px 12px; border-radius: 16px; box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 12px 24px rgba(0,0,0,.1); }
+#overviewView .balance-label { gap: 7px; font-size: 10px; }
+#overviewView .balance-icon { width: 23px; height: 23px; border-radius: 7px; font-size: 14px; }
+#overviewView .account-number-pill { padding: 5px 8px; font-size: 8px; letter-spacing: .06em; }
+#overviewView .balance-main { gap: 9px; margin: 10px 0 9px; }
+#overviewView .balance-amount { font-size: clamp(27px, 3.4vw, 37px); }
+#overviewView .balance-currency { font-size: 9px; }
+#overviewView .balance-card-bottom { padding-top: 8px; font-size: 9px; }
+#overviewView .balance-card-bottom > span:first-child { gap: 6px; }
+#overviewView .stats-grid { gap: 9px; margin-top: 10px; }
+#overviewView .stat-card { padding: 10px 12px 9px; border-radius: 12px; }
+#overviewView .stat-card-top { gap: 8px; font-size: 10px; }
+#overviewView .stat-icon { width: 23px; height: 23px; border-radius: 7px; font-size: 13px; }
+#overviewView .stat-value { margin-top: 5px; font-size: 20px; }
+#overviewView .progress-track { height: 4px; margin-top: 9px; }
+#overviewView .stat-note { gap: 5px; margin-top: 6px; font-size: 9px; line-height: 1.35; }
+#overviewView .stat-foot { gap: 6px; margin-top: 7px; font-size: 8px; line-height: 1.35; }
+#overviewView .stat-foot strong { font-size: 8px; }
+#overviewView .stat-card .inline-link { margin-top: 8px; font-size: 9px; }
+#overviewView .section-block { margin-top: 17px; }
+#overviewView .section-heading { margin-bottom: 10px; }
+#overviewView .actions-grid { gap: 8px; }
+#overviewView .action-card { min-height: 101px; padding: 10px 10px 9px; border-radius: 12px; }
+#overviewView .action-icon { width: 30px; height: 30px; margin-bottom: 5px; border-radius: 9px; font-size: 14px; }
+#overviewView .action-title { margin-bottom: 3px; font-size: 10px; line-height: 1.3; }
+#overviewView .action-desc { font-size: 8px; line-height: 1.35; }
+#overviewView .action-arrow { right: 9px; bottom: 8px; font-size: 11px; }
+#overviewView .recent-section { margin-top: 18px; }
+#overviewView .recent-section .movement-row { gap: 9px; padding: 10px 12px; }
+#overviewView .recent-section .movement-icon { width: 30px; height: 30px; flex-basis: 30px; border-radius: 9px; }
+#overviewView .recent-section .movement-title { font-size: 10px; }
+#overviewView .recent-section .movement-meta { margin-top: 3px; font-size: 8px; }
+#overviewView .recent-section .movement-amount { font-size: 10px; }
+
+/* Tarjeta: menor altura física, métricas compactas y formulario más corto. */
+#cardView .card-account-layout-large { grid-template-columns: minmax(350px, 1.08fr) minmax(310px, .92fr); gap: 18px; align-items: stretch; }
+#cardView .physical-credit-card-large { width:100%; min-height:318px; padding:25px 25px 21px; border-radius:23px; box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 16px 30px rgba(0,0,0,.22); }
+#cardView .physical-credit-card-large .physical-card-brand { gap:9px; font-size:12px; }
+#cardView .physical-credit-card-large .physical-card-brand-mark { width:36px; height:36px; border-radius:10px; font-size:19px; }
+#cardView .physical-credit-card-large .physical-card-badge { padding:6px 9px; font-size:9px; }
+#cardView .physical-credit-card-large .physical-card-chip { width:44px; height:34px; margin-top:24px; border-radius:7px; }
+#cardView .physical-credit-card-large .physical-card-number { margin:21px 0 22px; font-size:clamp(20px,2.1vw,27px); letter-spacing:.1em; }
+#cardView .physical-credit-card-large .physical-card-bottom { gap:12px; padding-top:15px; }
+#cardView .physical-credit-card-large .physical-card-bottom > div { gap:4px; }
+#cardView .physical-credit-card-large .physical-card-bottom small { font-size:8px; }
+#cardView .physical-credit-card-large .physical-card-bottom strong { font-size:12px; }
+#cardView .physical-credit-card-large .physical-card-network { font-size:26px; }
+#cardView .card-advance-combined { gap: 8px; padding: 9px; border-radius: 14px; }
+#cardView .card-advance-combined .compact-card-metrics { gap: 6px; }
+#cardView .card-advance-combined .card-metric { min-height: 62px; padding: 8px; border-radius: 10px; }
+#cardView .card-advance-combined .card-metric > span { font-size: 8px; line-height: 1.35; }
+#cardView .card-advance-combined .card-metric > strong { margin-top: 5px; font-size: clamp(14px, 1.3vw, 18px); line-height: 1.2; }
+#cardView .card-advance-combined .card-metric > small { margin-top: 3px; font-size: 7px; line-height: 1.3; }
+#cardView .advance-operation-panel { padding: 10px; border-radius: 11px; }
+#cardView .advance-operation-panel .credit-panel-heading { gap: 8px; margin-bottom: 9px; }
+#cardView .advance-operation-panel .credit-panel-heading h3 { font-size: 12px; }
+#cardView .advance-operation-panel .credit-panel-heading p { font-size: 9px; line-height: 1.4; }
+#cardView .advance-operation-panel .credit-panel-symbol { width: 29px; height: 29px; flex-basis: 29px; border-radius: 8px; font-size: 14px; }
+#cardView .advance-operation-panel .credit-form { gap: 8px; }
+#cardView .advance-operation-panel .credit-field label { font-size: 9px; }
+#cardView .advance-operation-panel .credit-field small { font-size: 8px; line-height: 1.4; }
+#cardView .advance-operation-panel .credit-field > select { min-height: 38px; font-size: 10px; }
+#cardView .advance-operation-panel .button-wide { min-height: 38px; font-size: 10px; }
+#cardLimitRequestSection .credit-panel { padding: 15px; border-radius: 13px; }
+#cardLimitRequestSection .credit-panel-heading { gap: 10px; margin-bottom: 14px; }
+#cardLimitRequestSection .credit-panel-heading h3 { font-size: 13px; }
+#cardLimitRequestSection .credit-panel-symbol { width: 34px; height: 34px; flex-basis: 34px; border-radius: 10px; font-size: 18px; }
+#cardLimitRequestSection .credit-form { gap: 10px; }
+#cardLimitRequestSection .credit-field > select { min-height: 41px; }
+#cardLimitRequestSection .credit-applications-list { gap: 8px; }
+#cardLimitRequestSection .credit-application-item { padding: 10px; border-radius: 10px; }
+
+@media (max-width: 1050px) {
+  #cardView .card-account-layout-large { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  #cardView .physical-credit-card-large { max-width:680px; min-height:318px; }
+}
+@media (max-width: 720px) {
+  #overviewView .welcome-row { gap: 9px; margin-bottom: 13px; }
+  #overviewView .balance-card { min-height: 132px; padding: 12px 13px 10px; }
+  #overviewView .balance-main { margin: 9px 0 8px; }
+  #overviewView .balance-amount { font-size: clamp(25px, 7vw, 32px); }
+  #overviewView .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  #overviewView .stat-card { padding: 9px; }
+  #overviewView .stat-value { font-size: 18px; }
+  #overviewView .stat-foot { flex-direction: column; }
+  #overviewView .stat-foot strong { text-align: left; }
+  #overviewView .actions-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  #overviewView .action-card { min-height: 94px; padding: 9px; }
+  #overviewView .action-desc { padding-right: 8px; }
+  #cardView .card-account-layout-large { grid-template-columns: minmax(0, 1fr); }
+  #cardView .physical-credit-card-large { max-width:none; min-height:260px; padding:22px 20px 18px; }
+  #cardView .physical-credit-card-large .physical-card-chip { margin-top:18px; }
+  #cardView .physical-credit-card-large .physical-card-number { margin:18px 0; font-size:clamp(19px,5.3vw,24px); }
+  #cardView .card-advance-combined { padding: 8px; }
+  #cardView .card-advance-combined .card-metric { min-height: 58px; padding: 7px; }
+  #cardView .card-advance-combined .card-metric > strong { font-size: 14px; }
+}
+@media (max-width: 390px) {
+  #overviewView .stats-grid { grid-template-columns: minmax(0, 1fr); }
+  #overviewView .stat-foot { flex-direction: row; }
+  #overviewView .action-card { min-height: 90px; }
+  #cardView .card-advance-combined .compact-card-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #cardView .card-advance-combined .card-metric > span { font-size: 7px; }
+  #cardView .card-advance-combined .card-metric > strong { font-size: 12px; }
+}

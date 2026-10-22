@@ -1,6 +1,9 @@
   function renderReviewerLimitIncreaseRequests() {
     if (!reviewerSession || !reviewerLimitRequestsList) return;
-    const requests = Array.isArray(db.limitIncreaseRequests) ? db.limitIncreaseRequests.slice().sort((a, b) => new Date(b.date) - new Date(a.date)) : [];
+    const selectedClientId = getReviewerSelectedClientId();
+    const requests = (Array.isArray(db.limitIncreaseRequests) ? db.limitIncreaseRequests : [])
+      .filter((request) => selectedClientId === null || Number(request.accountId) === selectedClientId)
+      .slice().sort((a, b) => new Date(b.date) - new Date(a.date));
     reviewerLimitRequestsList.replaceChildren();
     const empty = $('#reviewerLimitRequestsEmpty');
     if (empty) empty.hidden = requests.length > 0;
@@ -23,13 +26,16 @@
       heading.append(applicant, status);
       const details = document.createElement('div');
       details.className = 'reviewer-detail-grid';
-      [[ 'Cupo actual', money(request.previousLimit) ], [ 'Cupo solicitado', money(request.requestedLimit) ], [ 'Desembolso automático al aprobar', money(Math.max(0, request.requestedLimit - request.previousLimit)) ], [ 'Fecha', shortDateTime(request.date) ], ...(Number(request.disbursedAmount) > 0 ? [['Desembolso realizado', money(request.disbursedAmount)]] : [])].forEach(([label, value]) => {
+      const currentCardLimit = typeof cardCreditLimitForAccount === 'function' ? cardCreditLimitForAccount(request.accountId) : Number(db.accounts[request.accountId]?.card?.limit) || 0;
+      [[ 'Cupo antes de la solicitud', money(request.previousLimit) ], [ 'Cupo actual de la tarjeta', money(currentCardLimit) ], [ 'Aumento solicitado', money(Number(request.increaseAmount) || Math.max(0, request.requestedLimit - request.previousLimit)) ], [ 'Nuevo cupo solicitado', money(request.requestedLimit) ], [ 'Desembolso previsto a tarjeta', money(Math.max(0, request.requestedLimit - request.previousLimit)) ], [ 'Plazo del crédito al avanzar', '12 cuotas al 2,13 % mensual' ], [ 'Fecha', shortDateTime(request.date) ], ...(Number(request.disbursedAmount) > 0 ? [['Desembolso cargado a tarjeta', money(request.disbursedAmount)], ['Fondos aún en tarjeta', money(request.cardFundsRemaining || 0)], ['Crédito activado por avances', money(request.activatedAmount || 0)]] : [])].forEach(([label, value]) => {
         const cell = document.createElement('div'); cell.className = 'reviewer-detail-cell';
         const caption = document.createElement('span'); caption.textContent = label;
         const content = document.createElement('strong'); content.textContent = value;
         cell.append(caption, content); details.append(cell);
       });
-      card.append(heading, details);
+      card.append(heading);
+      appendReviewerLiveClientBalanceSnapshot(card, request.accountId);
+      card.append(details);
       if (request.reviewerNote) { const note = document.createElement('p'); note.className='reviewer-existing-note'; note.textContent=`Nota del analista: ${request.reviewerNote}`; card.append(note); }
       if ((request.status || 'En revisión') === 'En revisión') {
         const actions = document.createElement('div'); actions.className = 'reviewer-card-actions';

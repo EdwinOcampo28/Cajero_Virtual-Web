@@ -3,15 +3,16 @@
     const application = (db.creditApplications || []).find((item) => item.id === applicationId);
     if (!application) return;
     const oldApprovedWithoutLoan = application.status === 'Aprobado' && !findLoanForApplication(application.id);
-    const isLegacyDisbursement = decision === 'Desembolsar' && oldApprovedWithoutLoan;
+    const isLegacyDisbursement = decision === 'Desembolsar' && oldApprovedWithoutLoan && !application.disbursedAt && !(Number(application.cardFundsRemaining) > 0);
     if (decision === 'Desembolsar' && !isLegacyDisbursement) return;
     if (decision !== 'Desembolsar' && (application.status || 'En revisión') !== 'En revisión') {
       showToast('Esta solicitud ya tiene una decisión registrada.', 'error');
       return;
     }
+    const transactionRevision = captureDatabaseRevision();
     const targetAccount = db.accounts[application.accountId];
     if (decision === 'Aprobado' || decision === 'Desembolsar') {
-      targetAccount.card = targetAccount.card || { number: targetAccount.cardNumber, limit: MAX_CARD_FUNDS, funds: 0, recoveredFunds: 0, debt: 0, nextInterestDate: null, history: [] };
+      targetAccount.card = targetAccount.card || { number: targetAccount.cardNumber, limit: MAX_CARD_FUNDS, funds: 0, recoveredFunds: 0, debt: 0, nextInterestDate: null, history: [], pendingDisbursements: [] };
       if (!Number.isFinite(targetAccount.card.recoveredFunds)) targetAccount.card.recoveredFunds = 0;
       const poolAvailable = availableAnalystCapital();
       const personalExposure = outstandingCreditExposureForAccount(application.accountId);
@@ -46,17 +47,18 @@
     }
     const confirmText = decision === 'Rechazado'
       ? '¿Confirmas rechazar esta solicitud de crédito? No se realizará ningún desembolso.'
-      : `¿Confirmas aprobar y desembolsar ${money(application.amount)} a la tarjeta de crédito de ${application.applicantName || targetAccount.name}? Los fondos quedarán disponibles en la tarjeta para trasladarlos a ahorros y el préstamo iniciará su plan de cuotas.`;
+      : `¿Confirmas aprobar y cargar ${money(application.amount)} a la tarjeta de crédito de ${application.applicantName || targetAccount.name}? Los fondos quedarán disponibles en la tarjeta. No se generará un crédito ni cuotas hasta que el cliente traslade fondos a sus ahorros mediante un avance.`;
     const approved = await showAppDialog({
       type: 'confirm',
-      title: decision === 'Rechazado' ? 'Rechazar solicitud' : 'Aprobar y desembolsar crédito',
+      title: decision === 'Rechazado' ? 'Rechazar solicitud' : 'Aprobar desembolso a tarjeta',
       message: confirmText,
       eyebrow: 'DECISIÓN DEL ANALISTA',
       icon: decision === 'Rechazado' ? '!' : '✓',
-      confirmText: decision === 'Rechazado' ? 'Rechazar solicitud' : 'Aprobar y desembolsar',
+      confirmText: decision === 'Rechazado' ? 'Rechazar solicitud' : 'Aprobar desembolso',
       danger: decision === 'Rechazado'
     });
     if (!approved) return;
+    if (!isDatabaseRevisionCurrent(transactionRevision)) { abortStaleFinancialOperation(); return; }
     const note = await showAppDialog({
       type: 'prompt',
       title: 'Nota de decisión',
@@ -68,6 +70,7 @@
       inputLabel: 'Observación del analista'
     });
     if (note === null) return;
+    if (!isDatabaseRevisionCurrent(transactionRevision)) { abortStaleFinancialOperation(); return; }
 
     application.reviewerName = REVIEWER_NAME;
     application.reviewerNote = note.trim().slice(0, 500);
@@ -75,22 +78,24 @@
     if (decision === 'Rechazado') {
       application.status = 'Rechazado';
       application.reviewerDecision = 'Rechazado';
+      recordAuditEvent('Solicitud de crédito rechazada', { category: 'creditos', accountId: application.accountId, amount: application.amount, source: 'Analista', referenceId: application.id, description: application.purpose || 'Solicitud de crédito', details: { note: application.reviewerNote } });
     } else {
-      if (!Array.isArray(db.loans)) db.loans = [];
-      const loan = addOriginalDisbursementToUnifiedDebt(application);
       targetAccount.card.funds = roundMoney(targetAccount.card.funds + application.amount);
-      recordCardMovement(application.accountId, 'card_disbursement', application.amount, `Desembolso de crédito ${String(loan.id).slice(-7)} recibido en tarjeta`, 'in');
-      application.status = 'Desembolsado';
-      application.reviewerDecision = 'Aprobado';
       application.disbursedAt = new Date().toISOString();
-      application.loanId = loan.id;
-      application.monthlyPayment = loan.monthlyPayment;
-      const currentEstimate = calculateCreditEstimate(loan.outstandingPrincipal, Math.max(1, loan.termMonths - loan.installmentsPaid));
-      application.totalPayable = currentEstimate.totalPayable;
-      application.totalInterest = currentEstimate.totalInterest;
-      recordMovement(application.accountId, 'card_disbursement', application.amount, `Desembolso de crédito integrado a la deuda única ${String(loan.id).slice(-7)} (no ingresado aún a ahorros)`, null);
+      application.activatedAmount = 0;
+      application.cardFundsRemaining = 0;
+      if (!queueCardDisbursement(application.accountId, application, application.amount)) {
+        showToast('No se pudo registrar el desembolso pendiente en la tarjeta.', 'error');
+        return;
+      }
+      recordCardMovement(application.accountId, 'card_disbursement', application.amount, 'Desembolso cargado a fondos de tarjeta; crédito pendiente de avance', 'in');
+      application.status = 'Aprobado';
+      application.reviewerDecision = 'Aprobado';
+      application.loanId = null;
+      recordMovement(application.accountId, 'card_disbursement', application.amount, 'Desembolso acreditado a fondos de tarjeta; aún no activa crédito ni cuotas', null);
+      recordAuditEvent('Crédito aprobado y fondos desembolsados a tarjeta', { category: 'creditos', accountId: application.accountId, amount: application.amount, source: 'Analista', referenceId: application.id, description: 'Fondos disponibles en tarjeta; crédito y cuotas se activan al realizar un avance', details: { loanActivated: false, cardFundsRemaining: application.amount } });
     }
-    saveDatabase();
+    if (!saveDatabase()) { renderReviewerDashboard(); return; }
     renderReviewerDashboard();
-    showToast(decision === 'Rechazado' ? 'Solicitud rechazada. No se desembolsó dinero.' : `Crédito desembolsado: ${money(application.amount)} disponibles en los fondos de tu tarjeta. Trasládalos a ahorros para usarlos.`);
+    showToast(decision === 'Rechazado' ? 'Solicitud rechazada. No se desembolsó dinero.' : `Desembolso cargado a la tarjeta: ${money(application.amount)}. No hay crédito ni cuotas activas hasta realizar un avance.`);
   }

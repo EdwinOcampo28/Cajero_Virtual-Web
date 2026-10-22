@@ -43,8 +43,10 @@ def main() -> int:
 
         if not js_files[0].name.startswith("00-config-and-state"):
             raise RuntimeError("El primer módulo JS debe ser 00-config-and-state.js")
-        if not js_files[-1].name.startswith("17-backup-export-import"):
-            raise RuntimeError("El módulo de copias de seguridad debe ser el último archivo JS")
+        if not any(p.name.startswith("17-backup-export-import") for p in js_files):
+            raise RuntimeError("Falta el módulo de copias de seguridad")
+        if not js_files[-1].name.startswith("24-live-sync-and-refresh"):
+            raise RuntimeError("El último módulo debe activar la sincronización en tiempo real")
         if not any(p.name.startswith("10-system-reset") for p in js_files):
             raise RuntimeError("Falta el módulo de borrado controlado del sistema")
         if html.count(CSS_MARKER) != 1 or html.count(JS_MARKER) != 1:
@@ -71,6 +73,17 @@ def main() -> int:
                 raise FileNotFoundError(f"No existe el módulo JavaScript referenciado: {src}")
         if "js/app.js" in output:
             raise RuntimeError("El HTML todavía referencia js/app.js")
+        declarations = re.findall(r'\bfunction\s+([A-Za-z_$][\w$]*)\s*\(', "\n".join(p.read_text(encoding="utf-8") for p in js_files))
+        duplicates = sorted(name for name, count in __import__("collections").Counter(declarations).items() if count > 1)
+        if duplicates:
+            raise RuntimeError("Hay declaraciones de función duplicadas: " + ", ".join(duplicates))
+        exact_css_duplicates = {}
+        for css_path in css_files:
+            content = css_path.read_text(encoding="utf-8")
+            exact_css_duplicates.setdefault(content, []).append(css_path.name)
+        repeated_css = [names for names in exact_css_duplicates.values() if len(names) > 1]
+        if repeated_css:
+            raise RuntimeError("Hay módulos CSS idénticos duplicados: " + "; ".join(", ".join(names) for names in repeated_css))
         if len(re.findall(r'<script\b[^>]*\bsrc="', output)) != len(js_files):
             raise RuntimeError("El número de scripts enlazados no coincide con los módulos JavaScript")
 

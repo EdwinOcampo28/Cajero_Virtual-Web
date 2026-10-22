@@ -1,0 +1,26 @@
+/* Resumen acumulado por cliente: histórico completo y desglose de comisiones. */
+.reviewer-client-summary-panel { margin-top: 15px; padding: 15px; border: 1px solid rgba(147,187,220,.14); border-radius: 14px; background: rgba(10,23,36,.68); }
+.reviewer-client-summary-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.reviewer-client-summary-heading .eyebrow { margin: 0 0 5px; color: #54d9e8; font-size: 9px; }
+.reviewer-client-summary-heading h2 { margin: 0; color: #eff7fc; font-size: 16px; letter-spacing: -.025em; }
+.reviewer-client-summary-heading p:not(.eyebrow) { margin: 5px 0 0; max-width: 760px; color: #8fa5b8; font-size: 9px; line-height: 1.45; }
+.reviewer-client-summary-scope { flex: 0 0 auto; max-width: 190px; padding: 6px 9px; border: 1px solid rgba(84,217,232,.2); border-radius: 8px; color: #85e5ee; background: rgba(84,217,232,.065); font-size: 9px; font-weight: 800; text-align: right; overflow-wrap: anywhere; }
+.reviewer-client-summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.reviewer-client-summary-card { display: flex; min-width: 0; min-height: 76px; flex-direction: column; justify-content: space-between; gap: 5px; padding: 10px; border: 1px solid rgba(147,187,220,.12); border-radius: 10px; background: linear-gradient(145deg, rgba(15,32,48,.83), rgba(9,20,32,.88)); }
+.reviewer-client-summary-card > span { color: #a8bdce; font-size: 9px; font-weight: 750; line-height: 1.35; }
+.reviewer-client-summary-card strong { color: #eff7fc; font-size: clamp(13px, 1.3vw, 17px); letter-spacing: -.025em; font-variant-numeric: tabular-nums; line-height: 1.25; overflow-wrap: anywhere; }
+.reviewer-client-summary-card small { color: #7f96a9; font-size: 8px; line-height: 1.35; }
+.reviewer-client-summary-card.is-positive strong { color: #75e5b4; }
+.reviewer-client-summary-card.is-balance { border-color: rgba(84,217,232,.19); }
+.reviewer-client-summary-card.is-balance strong { color: #75e3ef; }
+.reviewer-client-summary-card.is-warning strong { color: #f3c76c; }
+.reviewer-client-summary-card.is-fee-deposit { border-color: rgba(84,217,232,.22); }
+.reviewer-client-summary-card.is-fee-deposit strong { color: #75e3ef; }
+.reviewer-client-summary-card.is-fee-withdraw { border-color: rgba(243,199,108,.22); }
+.reviewer-client-summary-card.is-fee-withdraw strong { color: #f3c76c; }
+.reviewer-client-summary-card.is-fee-transfer { border-color: rgba(155,196,255,.22); }
+.reviewer-client-summary-card.is-fee-transfer strong { color: #9bc4ff; }
+.reviewer-client-summary-card.is-fee-advance { border-color: rgba(100,223,173,.22); }
+.reviewer-client-summary-card.is-fee-advance strong { color: #83efc0; }
+@media (max-width: 1180px) { .reviewer-client-summary-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .reviewer-client-summary-panel { padding: 11px; } .reviewer-client-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; } .reviewer-client-summary-card { min-height: 72px; padding: 9px; } .reviewer-client-summary-card strong { font-size: 14px; } .reviewer-client-summary-heading { flex-direction: column; } .reviewer-client-summary-scope { max-width: 100%; text-align: left; } }

@@ -1,7 +1,7 @@
   historyFilter.addEventListener('change', renderHistory);
   creditForm.addEventListener('submit', submitCreditApplication);
   cardLimitRequestForm.addEventListener('submit', submitCardLimitIncreaseRequest);
-  $('#cardLimitRequestedValue').addEventListener('input', (event) => { event.currentTarget.dataset.userEdited = 'true'; $('#cardLimitRequestError').hidden = true; });
+  $('#cardLimitRequestedValue').addEventListener('change', () => { $('#cardLimitRequestError').hidden = true; });
   $('#cardFundsForm').addEventListener('submit', submitCardAdvance);
   $('#cardPaymentForm').addEventListener('submit', submitCardPayment);
   ['cardFunds', 'cardPayment'].forEach((prefix) => {

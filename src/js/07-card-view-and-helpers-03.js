@@ -25,7 +25,6 @@
     $('#emptyLoanPaymentHistory').hidden = payments.length > 0;
     paymentList.hidden = payments.length === 0;
     $('#financialLoanPaymentCount').textContent = String(payments.length);
-    $('#financialApplicationsCount').textContent = String((db.creditApplications || []).filter((item) => item.accountId === activeAccountId).length);
   }
 
   function cardFormProblem(prefix, message) {

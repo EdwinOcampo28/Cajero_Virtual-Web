@@ -1,3 +1,8 @@
+        <section id="creditsPageView" class="content-view" hidden>
+          <div class="welcome-row history-welcome">
+            <div><p class="eyebrow">PRÉSTAMOS PERSONALES</p><h2>Créditos</h2><p class="subheading">Solicita financiación, consulta el estado de tus solicitudes y administra las cuotas de tus créditos.</p></div>
+            <button class="button button-secondary" data-go-view="finance" type="button">Ir a tarjeta →</button>
+          </div>
           <section id="creditsView" class="finance-module" aria-label="Solicitud de créditos y cuotas">
             <div class="section-heading finance-module-heading"><div><p class="eyebrow">PRÉSTAMOS PERSONALES</p><h3>Solicitar y administrar créditos</h3></div><span class="section-subtitle">Desembolsos, cuotas y abonos</span></div>
           
@@ -37,7 +42,8 @@
                   </select>
                 </div>
                 <p id="creditError" class="form-message error-message" role="alert" hidden></p>
-                <button class="button button-primary button-wide" type="submit">Enviar solicitud de crédito <span aria-hidden="true">→</span></button>
+                <p id="creditRequestStatus" class="form-message credit-request-status" role="status" hidden></p>
+                <button id="creditSubmitButton" class="button button-primary button-wide" type="submit">Enviar solicitud de crédito <span aria-hidden="true">→</span></button>
                 <p class="credit-disclaimer">Tu solicitud quedará pendiente hasta que el analista de créditos registre una decisión. Esta demostración no consulta centrales de riesgo ni representa una aprobación bancaria real.</p>
               </form>
             </section>

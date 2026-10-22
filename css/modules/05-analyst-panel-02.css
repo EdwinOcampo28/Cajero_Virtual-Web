@@ -1,14 +1,14 @@
-.reviewer-application-card { min-width: 0; padding: 20px; border: 1px solid rgba(147,187,220,.15); border-radius: 14px; background: linear-gradient(145deg, rgba(15,32,48,.94), rgba(9,20,32,.94)); }
-.reviewer-card-heading { display: flex; align-items: center; gap: 17px; padding-bottom: 16px; border-bottom: 1px solid rgba(147,187,220,.11); }
+.reviewer-application-card { display: flex; min-width: 0; height: 100%; flex-direction: column; padding: 16px; border: 1px solid rgba(147,187,220,.15); border-radius: 14px; background: linear-gradient(145deg, rgba(15,32,48,.94), rgba(9,20,32,.94)); }
+.reviewer-card-heading { display: flex; align-items: flex-start; flex-wrap: wrap; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid rgba(147,187,220,.11); }
 .reviewer-applicant { min-width: 0; flex: 1; }
 .reviewer-applicant h3 { margin: 0; color: #f1f7fc; font-size: 15px; }
 .reviewer-applicant p { margin: 5px 0 0; color: #8fa7bb; font-size: 10px; overflow-wrap: anywhere; }
-.reviewer-requested-amount { color: #75e5b4; font-size: 21px; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.reviewer-detail-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; margin: 16px 0 0; overflow: hidden; border: 1px solid rgba(147,187,220,.1); border-radius: 10px; background: rgba(147,187,220,.08); }
-.reviewer-detail-cell { display: flex; min-width: 0; flex-direction: column; gap: 7px; padding: 12px; background: #0d1c2b; }
+.reviewer-requested-amount { color: #75e5b4; font-size: clamp(17px, 1.6vw, 21px); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.reviewer-detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 10px 0 0; overflow: hidden; border: 1px solid rgba(147,187,220,.1); border-radius: 10px; background: rgba(147,187,220,.08); }
+.reviewer-detail-cell { display: flex; min-width: 0; flex-direction: column; gap: 5px; padding: 9px; background: #0d1c2b; }
 .reviewer-detail-cell span { color: #8fa7bb; font-size: 9px; line-height: 1.4; }
 .reviewer-detail-cell strong { color: #eaf4fc; font-size: 11px; line-height: 1.45; overflow-wrap: anywhere; }
-.reviewer-card-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 17px; }
+.reviewer-card-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: auto; padding-top: 13px; }
 .reviewer-card-actions .button { min-height: 42px; padding: 0 16px; font-size: 11px; }
 .reviewer-approve-button { background: linear-gradient(135deg, #158667, #11684f); }
 .reviewer-reject-button { border-color: rgba(255,137,137,.25); color: #ffb0b0; background: rgba(109,35,42,.2); }
@@ -24,3 +24,11 @@
 .credit-review-date { display: block; margin-top: 7px; color: #91a9ba; font-size: 9px; white-space: nowrap; }
 .credit-review-note { flex-basis: 100%; width: 100%; margin: 4px 0 0; padding: 10px 12px; border-left: 3px solid #d8b66b; color: #e5d5af; background: rgba(243,199,108,.045); font-size: 10px; line-height: 1.6; overflow-wrap: anywhere; }
 @media (max-width: 900px) { .reviewer-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .reviewer-detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .reviewer-content { width: calc(100% - 36px); } }
+
+/* Saldo vivo de cada titular dentro de las solicitudes del analista. */
+.reviewer-live-client-balance { margin-top: 11px; padding: 10px; border: 1px solid rgba(84,217,232,.15); border-radius: 10px; background: rgba(7,20,31,.62); }
+.reviewer-live-client-balance-heading { margin: 0 0 8px; color: #9fc4d7; font-size: 9px; font-weight: 850; letter-spacing: .07em; text-transform: uppercase; }
+.reviewer-live-client-balance-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.reviewer-live-client-balance-cell { display: flex; min-width: 0; flex-direction: column; gap: 4px; padding: 7px 8px; border: 1px solid rgba(147,187,220,.08); border-radius: 7px; background: rgba(13,28,43,.88); }
+.reviewer-live-client-balance-cell span { color: #8fa7bb; font-size: 8px; line-height: 1.35; }
+.reviewer-live-client-balance-cell strong { color: #eaf4fc; font-size: 10px; line-height: 1.35; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
