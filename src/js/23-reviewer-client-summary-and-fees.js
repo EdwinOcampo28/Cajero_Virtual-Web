@@ -15,8 +15,9 @@
     const depositFees = operationFee(/dep[oó]sito/i);
     const withdrawalFees = operationFee(/retiro/i);
     const transferFees = operationFee(/transferencia/i);
+    const treasuryDistributionFees = operationFee(/reparto autom[aá]tico de tesorer[ií]a/i);
     const advanceFees = sumHistory((movement) => movement.type === 'card_advance_fee');
-    const totalFees = roundMoney(depositFees + withdrawalFees + transferFees + advanceFees);
+    const totalFees = roundMoney(depositFees + withdrawalFees + transferFees + treasuryDistributionFees + advanceFees);
     const installmentPayments = sumPayments('amount');
     const capitalPaid = sumPayments('principal');
     const interestPaid = sumPayments('interest');
@@ -46,6 +47,7 @@
       depositFees,
       withdrawalFees,
       transferFees,
+      treasuryDistributionFees,
       advanceFees,
       totalFees,
       paidToSystem,
@@ -65,9 +67,10 @@
   function renderReviewerCommissionCards() {
     const summary = getReviewerClientFinancialSummary(null);
     const elements = [
-      ['reviewerFundDepositFees', summary.depositFees],
+      ['reviewerFundDepositAndTreasuryFees', roundMoney(summary.depositFees + summary.treasuryDistributionFees)],
       ['reviewerFundWithdrawalFees', summary.withdrawalFees],
       ['reviewerFundTransferFees', summary.transferFees],
+
       ['reviewerFundFees', summary.advanceFees]
     ];
     elements.forEach(([id, value]) => {
@@ -99,8 +102,9 @@
       ['Comisiones por depósitos', summary.depositFees, 'Costo acumulado de depósitos', 'is-fee-deposit'],
       ['Comisiones por retiros', summary.withdrawalFees, 'Costo acumulado de retiros', 'is-fee-withdraw'],
       ['Comisiones por transferencias', summary.transferFees, 'Costo acumulado de transferencias', 'is-fee-transfer'],
+      ['Comisiones por reparto de Tesorería', summary.treasuryDistributionFees, 'Cobro de $5.000 por cuenta en cada reparto', 'is-fee-transfer'],
       ['Comisiones por avances', summary.advanceFees, 'Costo acumulado de avances', 'is-fee-advance'],
-      ['Total de comisiones', summary.totalFees, 'Suma de los cuatro tipos de comisión', 'is-positive'],
+      ['Total de comisiones', summary.totalFees, 'Suma de todos los tipos de comisión', 'is-positive'],
       ['Saldo actual de ahorros', summary.currentSavings, 'Saldo disponible de las cuentas seleccionadas', 'is-balance'],
       ['Disponible en tarjeta', summary.availableCardFunds, 'Fondos desembolsados y capital recuperado disponibles', 'is-balance'],
       ['Capital pendiente', summary.currentDebt, `${summary.activeLoans} crédito(s) activo(s)`, 'is-warning'],

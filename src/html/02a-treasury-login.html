@@ -1,17 +1,17 @@
   <main id="treasuryLoginView" class="login-shell reviewer-login-shell treasury-login-shell" hidden>
     <section class="login-brand" aria-label="Acceso de tesorería">
       <div class="brand-lockup"><div class="brand-mark"><span class="brand-mark-core">$</span></div><div><p class="eyebrow">GESTIÓN DE RETIROS</p><h1>Cuenta<span>Tesorería</span></h1></div></div>
-      <div class="brand-message"><p class="eyebrow accent">RECEPCIÓN AUTOMÁTICA</p><h2>Una bóveda independiente.<br><span>Un saldo que crece.</span></h2><p>Recibe los retiros de los clientes, acumula cinco pesos por segundo y permite transferir saldo a las cuentas de ahorro.</p></div>
+      <div class="brand-message"><p class="eyebrow accent">RECEPCIÓN AUTOMÁTICA</p><h2>Una bóveda independiente.<br><span>Un saldo que crece.</span></h2><p>Recibe los retiros de los clientes, financia sus depósitos y acumula fondos automáticamente según la configuración vigente. La sesión es de consulta.</p></div>
       <div class="brand-footer"><span class="status-dot"></span><span>Acceso separado de clientes y analista</span></div>
       <div class="brand-orbit orbit-one" aria-hidden="true"></div><div class="brand-orbit orbit-two" aria-hidden="true"></div><div class="brand-grid" aria-hidden="true"></div>
     </section>
     <section class="login-panel">
       <div class="mobile-brand brand-lockup"><div class="brand-mark"><span class="brand-mark-core">$</span></div><div><p class="eyebrow">GESTIÓN DE RETIROS</p><h1>Cuenta<span>Tesorería</span></h1></div></div>
-      <div class="login-heading"><p class="eyebrow">ACCESO INDEPENDIENTE</p><h2>Tesorería de retiros</h2><p>Ingresa el PIN propio de esta cuenta.</p></div>
+      <div class="login-heading"><p class="eyebrow">ACCESO INDEPENDIENTE</p><h2>Tesorería de retiros</h2><p>Ingresa el PIN propio para consultar saldos e historial.</p></div>
       <form id="treasuryLoginForm" class="form-stack" autocomplete="off">
         <label class="field-label" for="treasuryPinInput">PIN de tesorería</label>
         <div class="input-wrap"><span class="input-icon" aria-hidden="true">▣</span><input id="treasuryPinInput" name="treasuryPin" type="password" inputmode="numeric" pattern="[0-9]{4}" minlength="4" maxlength="4" placeholder="••••" required aria-describedby="treasuryPinHelp" title="Ingresa los 4 dígitos del PIN de demostración"></div>
-        <p id="treasuryPinHelp" class="field-help">Esta sesión solo permite transferir dinero a las tres cuentas de ahorro.</p>
+        <p id="treasuryPinHelp" class="field-help">Esta sesión permite consultar el saldo y los movimientos automáticos de Tesorería.</p>
         <p id="treasuryLoginError" class="form-message error-message" role="alert" hidden></p>
         <button class="button button-primary button-wide" type="submit">Entrar a tesorería <span aria-hidden="true">→</span></button>
       </form>

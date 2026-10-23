@@ -1,4 +1,5 @@
   function openModal(action) {
+    if (action === 'deposit' && typeof catchUpAutomaticEventsBeforeOperation === 'function' && !catchUpAutomaticEventsBeforeOperation()) return;
     if (action === 'deposit') accrueWithdrawalTreasury(db);
     if (action === 'balance') {
       renderApp();
@@ -6,7 +7,7 @@
       return;
     }
     const config = {
-      deposit: { icon: '＋', eyebrow: 'AUMENTAR SALDO', title: 'Depositar dinero', description: `Tesorería financiará el importe total; se cobrará una comisión fija de ${money(OPERATION_FEE)} y el saldo recibirá el neto.`, label: 'Monto del depósito', hint: `Máximo por depósito: ${money(MAX_DEPOSIT_AMOUNT)}. Tesorería disponible: ${money(db.withdrawalTreasury?.balance || 0)}. Comisión: ${money(OPERATION_FEE)}; el importe total se descuenta de Tesorería y el neto llega a tus ahorros. Límite de ahorros: ${money(maxSavingsBalanceForAccount(activeAccountId))}.` },
+      deposit: { icon: '＋', eyebrow: 'AUMENTAR SALDO', title: 'Depositar dinero', description: `Tesorería financiará el importe total; se cobrará una comisión fija de ${money(DEPOSIT_FEE)} y el saldo recibirá el neto.`, label: 'Monto del depósito', hint: `Máximo por depósito: ${money(MAX_DEPOSIT_AMOUNT)}. Tesorería disponible: ${money(db.withdrawalTreasury?.balance || 0)}. Comisión: ${money(DEPOSIT_FEE)}; el importe total se descuenta de Tesorería y el neto llega a tus ahorros. Ahorros sin tope de saldo.` },
       withdraw: { icon: "↗", eyebrow: "RETIRO DE EFECTIVO", title: "Retirar dinero", description: "El importe se acreditará automáticamente a la Tesorería de retiros. La comisión fija de " + money(OPERATION_FEE) + " se cobra por separado.", label: "Monto a retirar", hint: "Saldo disponible: " + money(account().balance) + ". El importe se enviará a Tesorería de retiros (•••• 0004). Comisión: " + money(OPERATION_FEE) + ". Máximo por retiro: " + money(MAX_WITHDRAWAL_AMOUNT) + "." },
       transfer: { icon: '⇄', eyebrow: 'ENVÍO ENTRE CUENTAS', title: 'Transferir dinero', description: `El destinatario recibe el importe indicado; a tu cuenta se le descontará además la comisión de ${money(OPERATION_FEE)}.`, label: 'Monto a transferir', hint: `Saldo disponible: ${money(account().balance)}. Comisión: ${money(OPERATION_FEE)}. Máximo por transferencia: ${money(MAX_TRANSFER_AMOUNT)}. No se permiten transferencias a la misma cuenta.` }
     };

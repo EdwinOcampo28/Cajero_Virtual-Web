@@ -25,6 +25,7 @@
     const depositFees = sumMovements((item) => item.type === 'operation_fee' && /dep[oó]sito/i.test(item.description || ''));
     const withdrawalFees = sumMovements((item) => item.type === 'operation_fee' && /retiro/i.test(item.description || ''));
     const transferFees = sumMovements((item) => item.type === 'operation_fee' && /transferencia/i.test(item.description || ''));
+    const treasuryDistributionFees = sumMovements((item) => item.type === 'operation_fee' && /reparto autom[aá]tico de tesorer[ií]a/i.test(item.description || ''));
     const withdrawals = sumMovements((item) => item.type === 'withdraw');
     const withdrawalsReceived = sumMovements((item) => item.type === 'withdrawal_received');
     const transfersSent = sumMovements((item) => item.type === 'transfer' && item.direction === 'out');
@@ -41,6 +42,7 @@
       depositFees,
       withdrawalFees,
       transferFees,
+      treasuryDistributionFees,
       netDeposits: roundMoney(grossDeposits - depositFees),
       withdrawals,
       withdrawalsReceived,
@@ -197,6 +199,7 @@
       ['Comisiones por depósitos', report.depositFees, 'Cobros asociados a depósitos'],
       ['Comisiones por retiros', report.withdrawalFees, 'Cobros asociados a retiros'],
       ['Comisiones por transferencias', report.transferFees, 'Cobros asociados a transferencias'],
+      ['Comisiones por reparto de Tesorería', report.treasuryDistributionFees, 'Cobro de $5.000 por cuenta en cada reparto'],
       ['Comisiones por avances', report.advanceFees, 'Cobros asociados a avances'],
       ['Total de comisiones', report.totalFees, 'Suma de todas las comisiones'],
       ['Capital pendiente', report.outstandingPrincipal, `${report.activeLoans} crédito(s) activo(s)`],
@@ -243,6 +246,7 @@
       ['Comisiones por depósitos', report.depositFees, 'Comisión cobrada por depósitos'],
       ['Comisiones por retiros', report.withdrawalFees, 'Comisión cobrada por retiros'],
       ['Comisiones por transferencias', report.transferFees, 'Comisión cobrada por transferencias'],
+      ['Comisiones por reparto de Tesorería', report.treasuryDistributionFees, 'Comisión de $5.000 por cuenta en cada reparto'],
       ['Depósitos netos', report.netDeposits, 'Importe abonado después de comisión'],
       ['Retiros', report.withdrawals, 'Importe retirado por clientes'],
       ['Retiros recibidos', report.withdrawalsReceived, 'Importe acreditado automáticamente a tesorería'],
@@ -251,9 +255,9 @@
       ['Avances a ahorros', report.advances, 'No se cuentan como desembolsos nuevos'],
       ['Capital recuperado', report.capitalRepaid, 'Principal de cuotas, abonos y liquidaciones'],
       ['Intereses cobrados', report.interestCollected, 'Excluye intereses futuros no pagados'],
-      ['Total de comisiones por operaciones', report.operationFees, 'Suma de comisiones por depósitos, retiros y transferencias'],
+      ['Total de comisiones por operaciones', report.operationFees, 'Incluye depósitos, retiros, transferencias y reparto de Tesorería'],
       ['Comisiones de avances', report.advanceFees, 'Costos de avances a ahorros'],
-      ['Total de comisiones', report.totalFees, 'Suma de depósitos, retiros, transferencias y avances'],
+      ['Total de comisiones', report.totalFees, 'Incluye todas las comisiones de operación, Tesorería y avances'],
       ['Pagos de cuotas y abonos', report.installmentPayments, `${report.paymentsCount} pagos registrados`],
       ['Capital pendiente actual', report.outstandingPrincipal, `${report.activeLoans} créditos activos`],
       ['Créditos vencidos actuales', report.overdueLoans, 'Número de créditos con vencimiento pasado'],

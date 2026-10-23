@@ -32,6 +32,7 @@
       if (typeof renderFinancialAuditPanel === 'function') renderFinancialAuditPanel();
       if (typeof renderMonthlyFinancialReport === 'function') renderMonthlyFinancialReport();
     }
+    if (target === 'settings' && typeof renderSimulationSettingsPanel === 'function') renderSimulationSettingsPanel();
     if (target === 'events' && typeof renderAuditLog === 'function') renderAuditLog();
   }
 

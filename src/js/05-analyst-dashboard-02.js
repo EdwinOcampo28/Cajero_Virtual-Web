@@ -113,7 +113,7 @@
         [isLimitIncreaseDisbursement ? 'Tipo de operación' : 'Ingresos mensuales declarados', isLimitIncreaseDisbursement ? 'Desembolso automático por aumento de cupo' : money(item.monthlyIncome || 0)],
         [relatedLoan ? 'Cuota vigente' : 'Cuota estimada al activar', money(relatedLoan?.monthlyPayment || item.monthlyPayment || 0)],
         ['Plazo', `${item.termMonths || 0} meses`],
-        ['Tasa mensual de la solicitud', `${((Number(item.monthlyRate) || ILLUSTRATIVE_MONTHLY_RATE) * 100).toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %`],
+        ['Tasa mensual de la solicitud', `${((Number.isFinite(item.monthlyRate) ? item.monthlyRate : currentMonthlyInterestRate()) * 100).toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} %`],
         ...(!isLimitIncreaseDisbursement ? [['Situación laboral', item.employment || 'No indicada']] : []),
         ['Destino', item.purpose || 'No indicado'],
         ['Total estimado de la solicitud', money(item.totalPayable || 0)],
@@ -136,6 +136,12 @@
       });
 
       card.append(heading);
+      if (item.automaticSimulation === true && (item.status || 'En revisión') === 'En revisión') {
+        const automaticNotice = document.createElement('p');
+        automaticNotice.className = 'reviewer-decision-meta';
+        automaticNotice.textContent = `Aprobación automática programada para ${shortDateTime(item.autoApprovalAt)}; el desembolso pasará a ahorros y generará cuotas al avanzar.`;
+        card.append(automaticNotice);
+      }
       appendReviewerLiveClientBalanceSnapshot(card, item.accountId);
       card.append(details);
       if (item.reviewedAt) {
@@ -152,7 +158,7 @@
       }
       const normalizedStatus = item.status || 'En revisión';
       const needsLegacyDisbursement = normalizedStatus === 'Aprobado' && !relatedLoan && !item.disbursedAt && !(Number(item.cardFundsRemaining) > 0);
-      if (normalizedStatus === 'En revisión' || needsLegacyDisbursement) {
+      if ((normalizedStatus === 'En revisión' || needsLegacyDisbursement) && item.automaticSimulation !== true) {
         const actions = document.createElement('div');
         actions.className = 'reviewer-card-actions';
         const approve = document.createElement('button');

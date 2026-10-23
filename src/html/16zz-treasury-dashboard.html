@@ -2,28 +2,21 @@
     <header class="reviewer-topbar">
       <a class="sidebar-brand reviewer-brand" href="#tesoreria" aria-label="Cuenta de tesorería">
         <div class="brand-mark small-mark"><span class="brand-mark-core">$</span></div>
-        <div><span class="sidebar-brand-name">Cuenta<span>Tesorería</span></span><span class="sidebar-brand-tag">RECEPCIÓN DE RETIROS</span></div>
+        <div><span class="sidebar-brand-name">Cuenta<span>Tesorería</span></span><span class="sidebar-brand-tag">RECEPCIÓN Y FINANCIACIÓN</span></div>
       </a>
       <div class="reviewer-session"><span class="status-dot"></span><span>Tesorería independiente</span><span class="realtime-sync-badge" data-realtime-sync-status role="status" aria-live="polite" title="Los cambios guardados en otras pestañas se reflejan automáticamente"><span class="realtime-sync-dot" aria-hidden="true"></span><span class="realtime-sync-label">En tiempo real</span></span><button id="treasuryLogoutButton" class="button button-secondary" type="button">Cerrar sesión</button></div>
     </header>
     <div class="reviewer-content treasury-content">
-      <div class="reviewer-welcome"><div><p class="eyebrow">FONDO RECEPTOR AUTOMÁTICO</p><h1>Tesorería de retiros</h1><p class="subheading">Aquí llegan los retiros de las tres cuentas. El saldo suma $5 por cada segundo transcurrido.</p></div><span class="reviewer-demo-tag">SOLO TRANSFERENCIAS</span></div>
+      <div class="reviewer-welcome"><div><p class="eyebrow">FONDO RECEPTOR AUTOMÁTICO</p><h1>Tesorería de retiros</h1><p class="subheading">Aquí llegan los retiros y de aquí salen los depósitos de las tres cuentas. Cada hora, Tesorería distribuye en partes iguales todo el saldo que las tres cuentas puedan recibir. El cronómetro acumula fondos automáticamente, sin tope.</p></div><span class="reviewer-demo-tag">CONSULTA DE MOVIMIENTOS</span></div>
       <section class="reviewer-capital-grid treasury-balance-grid" aria-label="Saldo y temporizador de tesorería">
-        <article class="reviewer-capital-card reviewer-capital-total"><span>Saldo disponible</span><strong id="treasuryBalance">$ 0</strong><small>Retiros recibidos y acumulación del temporizador</small></article>
-        <article class="reviewer-capital-card reviewer-capital-available"><span>Tiempo acumulado</span><strong id="treasuryElapsed">00:00:00</strong><small>El cronómetro suma $5 por cada segundo</small></article>
-        <article class="reviewer-capital-card"><span>Valor generado por cronómetro</span><strong id="treasuryTimerTotal">$ 0</strong><small>Importe histórico generado por el cronómetro</small></article>
+        <article class="reviewer-capital-card reviewer-capital-total"><span>Saldo disponible</span><strong id="treasuryBalance">$ 0</strong><small>Retiros recibidos y acumulación del temporizador, menos depósitos</small></article>
+        <article class="reviewer-capital-card reviewer-capital-available"><span>Tiempo acumulado</span><strong id="treasuryElapsed">00:00:00</strong><small>El cronómetro suma <span id="treasuryTimerRateText">$ 1.000 por segundo</span></small></article>
+        <article class="reviewer-capital-card"><span>Valor generado por cronómetro</span><strong id="treasuryTimerTotal">$ 0</strong><small><span id="treasuryTimerUnlimitedHint">Acumulación sin tope</span></small></article>
       </section>
-      <section class="reviewer-client-summary-panel treasury-transfer-panel" aria-labelledby="treasuryTransferHeading">
-        <div class="reviewer-client-summary-heading"><div><p class="eyebrow">ÚNICA OPERACIÓN DISPONIBLE</p><h2 id="treasuryTransferHeading">Transferir fondos</h2><p>Envía dinero desde tesorería a una de las tres cuentas de ahorro, sin comisión.</p></div><span class="reviewer-client-summary-scope">Transferencia interna</span></div>
-        <form id="treasuryTransferForm" class="form-stack treasury-transfer-form" autocomplete="off">
-          <label class="field-label" for="treasuryDestination">Cuenta de destino</label>
-          <div class="input-wrap select-wrap"><span class="input-icon" aria-hidden="true">▦</span><select id="treasuryDestination" required><option value="1">Edwin Ocampo · •••• 6247</option><option value="2">Pedro Ocampo · •••• 5704</option><option value="3">Reinel Ocampo · •••• 7083</option></select><span class="select-chevron" aria-hidden="true">⌄</span></div>
-          <label class="field-label" for="treasuryAmount">Monto a transferir</label>
-          <div class="input-wrap"><span class="input-icon" aria-hidden="true">$</span><input id="treasuryAmount" name="treasuryAmount" type="number" min="1" step="1" inputmode="numeric" placeholder="0" required></div>
-          <p id="treasuryTransferHint" class="field-help">Transferencia sin comisión, limitada por tu saldo y el máximo de ahorros de la cuenta destino.</p>
-          <p id="treasuryTransferError" class="form-message error-message" role="alert" hidden></p>
-          <button class="button button-primary button-wide" type="submit">Transferir dinero <span aria-hidden="true">→</span></button>
-        </form>
+      <section class="history-panel treasury-history-panel" aria-labelledby="treasuryHistoryHeading">
+        <div class="history-panel-heading"><div><p class="eyebrow">ACTIVIDAD AUTOMÁTICA</p><h3 id="treasuryHistoryHeading">Historial de depósitos, retiros y repartos</h3><p>Los depósitos financiados, retiros recibidos y repartos automáticos aparecen aquí, con los más recientes primero.</p></div><span class="reviewer-client-summary-scope">Solo consulta</span></div>
+        <div id="treasuryHistory" class="movement-list full-movement-list" aria-live="polite"></div>
+        <div id="treasuryHistoryEmpty" class="empty-state" hidden><span class="empty-icon">↻</span><strong>Aún no hay movimientos de Tesorería</strong><p>Los movimientos de las cuentas y las distribuciones aparecerán aquí automáticamente.</p></div>
       </section>
     </div>
   </main>

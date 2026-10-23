@@ -17,7 +17,7 @@ let nextId = 0;
 const account = { balance: 100000, card: { limit: 500000000, funds: 0, recoveredFunds: 0 } };
 const db = { loans: [loan], accounts: [null, account], creditApplications: [] };
 const context = {
-  db, activeAccountId: 1, ILLUSTRATIVE_MONTHLY_RATE: 0.0213,
+  db, activeAccountId: 1, ILLUSTRATIVE_MONTHLY_RATE: 0.02, currentMonthlyInterestRate: () => 0.0213,
   roundMoney: (value) => Math.round(Number(value) || 0),
   createId: () => `test-${++nextId}`,
   localDateKey: () => '2026-10-22',

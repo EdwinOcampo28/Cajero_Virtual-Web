@@ -49,6 +49,7 @@
         if (typeof renderFinancialAuditPanel === 'function') renderFinancialAuditPanel();
         if (typeof renderMonthlyFinancialReport === 'function') renderMonthlyFinancialReport();
       }
+      if (activePage === 'settings' && typeof renderSimulationSettingsPanel === 'function') renderSimulationSettingsPanel();
       if (activePage === 'events' && typeof renderAuditLog === 'function') renderAuditLog();
     } else if (typeof treasurySession !== 'undefined' && treasurySession && treasuryView && !treasuryView.hidden && typeof renderTreasuryView === 'function') {
       renderTreasuryView(true);
@@ -121,3 +122,4 @@
   });
   window.addEventListener('online', checkRealtimeStorage);
   restoreRealtimeReadyStatus();
+  if (typeof startSimulationAutomation === 'function') startSimulationAutomation();

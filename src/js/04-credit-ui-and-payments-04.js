@@ -1,4 +1,5 @@
   async function processCapitalAbono(loanId, rawAmount) {
+    if (typeof catchUpAutomaticEventsBeforeOperation === 'function' && !catchUpAutomaticEventsBeforeOperation()) return;
     const loan = (db.loans || []).find((item) => item.id === loanId && item.accountId === activeAccountId);
     const current = account();
     const amount = Number(rawAmount);

@@ -1,8 +1,13 @@
   function updateCreditSimulation() {
     if (!creditAmountInput || !creditTermSelect) return;
     const amount = Math.max(0, Math.round(Number(creditAmountInput.value) || 0));
-    const months = Number(creditTermSelect.value) || 60;
+    const months = Number(creditTermSelect.value) || 6;
     const estimate = calculateCreditEstimate(amount, months);
+    const rateLabel = formatMonthlyInterestRate();
+    const rateText = $('#creditSimulationRateText');
+    const rateNote = $('#creditSimulationRateNote');
+    if (rateText) rateText.textContent = rateLabel;
+    if (rateNote) rateNote.textContent = `La simulación usa una tasa de ${rateLabel} mensual y cuotas constantes. La tasa real, seguros, cargos, estudio y aprobación no están incluidos ni representados.`;
     $('#creditMonthlyPayment').textContent = money(estimate.monthlyPayment);
     $('#creditSelectedTerm').textContent = String(months);
     $('#creditSimAmount').textContent = money(amount);

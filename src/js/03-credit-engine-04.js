@@ -28,7 +28,8 @@
     const amount = roundMoney(principal);
     if (amount <= 0) return null;
     const term = VALID_CARD_ADVANCE_TERMS.includes(Number(termMonths)) ? Number(termMonths) : 12;
-    const estimate = calculateCreditEstimate(amount, term);
+    const rate = currentMonthlyInterestRate();
+    const estimate = calculateCreditEstimate(amount, term, rate);
     const disbursedAt = new Date().toISOString();
     return {
       id: createId(),
@@ -39,9 +40,11 @@
       originalDisbursedTotal: 0,
       reborrowedCapitalTotal: amount,
       outstandingPrincipal: amount,
-      monthlyRate: ILLUSTRATIVE_MONTHLY_RATE,
+      monthlyRate: rate,
       termMonths: term,
       monthlyPayment: roundMoney(estimate.monthlyPayment),
+      automaticPaymentIntervalSeconds: automaticPaymentIntervalForTerm(term),
+      nextAutomaticPaymentAt: new Date(Date.parse(disbursedAt) + automaticPaymentIntervalForTerm(term) * 1000).toISOString(),
       installmentsPaid: 0,
       nextDueDate: addMonthsToDate(disbursedAt, 1),
       disbursedAt,

@@ -17,7 +17,7 @@
     const amount = Number(options.amount);
     const event = {
       id: createId(),
-      date: new Date().toISOString(),
+      date: typeof options.date === 'string' && Number.isFinite(Date.parse(options.date)) ? options.date : new Date().toISOString(),
       action: String(action || 'Evento del sistema').slice(0, 120),
       category: String(options.category || 'sistema').slice(0, 40),
       accountId,
@@ -45,6 +45,7 @@
       transfer: [direction === 'in' ? 'Transferencia recibida' : 'Transferencia enviada', 'ahorros'],
       operation_fee: ['Comisión de operación cobrada', 'comisiones'],
       card_disbursement: ['Desembolso registrado', 'creditos'],
+      treasury_distribution: ['Abono automático desde Tesorería', 'tesoreria'],
       loan_payment: ['Pago de cuota registrado', 'creditos'],
       loan_abono: ['Abono o liquidación registrada', 'creditos'],
       card_advance: ['Avance a ahorros registrado', 'tarjeta'],
@@ -65,7 +66,7 @@
     }
     return recordAuditEvent(action, {
       category, accountId, amount: movement?.amount, source,
-      direction, description, referenceId: movement?.id, details
+      direction, description, referenceId: movement?.id, details, date: movement?.date
     });
   }
 

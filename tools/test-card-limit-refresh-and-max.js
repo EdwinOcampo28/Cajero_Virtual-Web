@@ -41,7 +41,8 @@ const ctx = {
   MAX_ACCOUNT_BALANCE: 300000000,
   maxSavingsBalanceForAccount: () => 300000000,
   ADVANCE_FEE: 0,
-  ILLUSTRATIVE_MONTHLY_RATE: 0.0213,
+  ILLUSTRATIVE_MONTHLY_RATE: 0.02,
+  formatMonthlyInterestRate: () => '2,00 %',
   roundMoney: (amount) => Math.round(Number(amount) || 0),
   account() { return ctx.db.accounts[1]; },
   $ (selector) {

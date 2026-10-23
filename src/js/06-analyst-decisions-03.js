@@ -1,7 +1,9 @@
   async function registerCreditDecision(applicationId, decision) {
+    if (typeof catchUpAutomaticEventsBeforeOperation === 'function' && !catchUpAutomaticEventsBeforeOperation()) return;
     if (!reviewerSession || !['Aprobado', 'Rechazado', 'Desembolsar'].includes(decision)) return;
     const application = (db.creditApplications || []).find((item) => item.id === applicationId);
     if (!application) return;
+    if (application.automaticSimulation === true) { showToast('Esta solicitud se aprobará automáticamente tras el tiempo configurado en el panel de simulación.', 'error'); return; }
     const oldApprovedWithoutLoan = application.status === 'Aprobado' && !findLoanForApplication(application.id);
     const isLegacyDisbursement = decision === 'Desembolsar' && oldApprovedWithoutLoan && !application.disbursedAt && !(Number(application.cardFundsRemaining) > 0);
     if (decision === 'Desembolsar' && !isLegacyDisbursement) return;

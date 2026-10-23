@@ -10,6 +10,7 @@
       <nav class="reviewer-module-nav" aria-label="Secciones del panel del analista">
         <button type="button" class="reviewer-module-tab is-active" data-reviewer-tab="overview" aria-current="page">Resumen</button>
         <button type="button" class="reviewer-module-tab" data-reviewer-tab="requests">Solicitudes</button>
+        <button type="button" class="reviewer-module-tab" data-reviewer-tab="settings">Configuración</button>
         <button type="button" class="reviewer-module-tab" data-reviewer-tab="tools">Herramientas</button>
         <button type="button" class="reviewer-module-tab" data-reviewer-tab="events">Registro</button>
         <label class="reviewer-client-filter-label" for="reviewerClientFilter">
@@ -22,18 +23,19 @@
       <section id="reviewerPageOverview" class="reviewer-page" data-reviewer-page="overview">
       <div class="reviewer-welcome"><div><p class="eyebrow">RESUMEN FINANCIERO</p><h1>Panel del analista</h1><p class="subheading">Consulta el capital disponible y los ingresos del sistema. Usa las secciones superiores para revisar expedientes, auditorías e informes por cliente.</p></div><span class="reviewer-demo-tag">MODO DEMOSTRACIÓN</span></div>
       <section class="reviewer-capital-grid" aria-label="Saldo y capital del analista">
-        <article class="reviewer-capital-card reviewer-capital-total"><span>Saldo total del analista</span><strong id="reviewerFundTotal">$ 500.000.000</strong><small>Capital inicial, intereses y comisiones cobrados</small></article>
+        <article class="reviewer-capital-card reviewer-capital-total"><span>Saldo total del analista</span><strong id="reviewerFundTotal">$ 1.000.000.000</strong><small>Capital inicial, intereses y comisiones cobrados</small></article>
         <article class="reviewer-capital-card"><span>Capital comprometido</span><strong id="reviewerFundCommitted">$ 0</strong><small>Créditos activos y desembolsos aún en tarjeta</small></article>
-        <article class="reviewer-capital-card reviewer-capital-available"><span>Disponible para desembolsar</span><strong id="reviewerFundAvailable">$ 500.000.000</strong><small>Saldo total menos el capital comprometido</small></article>
+        <article class="reviewer-capital-card reviewer-capital-available"><span>Disponible para desembolsar</span><strong id="reviewerFundAvailable">$ 1.000.000.000</strong><small>Saldo total menos el capital comprometido</small></article>
         <article class="reviewer-capital-card reviewer-capital-interest"><span>Intereses ganados</span><strong id="reviewerFundInterest">$ 0</strong><small>Intereses efectivamente cobrados en cuotas</small></article>
-        <article class="reviewer-capital-card reviewer-capital-fee-deposit"><span>Comisiones por depósitos</span><strong id="reviewerFundDepositFees">$ 0</strong><small>Total cobrado a todos los clientes</small></article>
+        <article class="reviewer-capital-card reviewer-capital-fee-deposit"><span>Comisiones por depósitos y reparto</span><strong id="reviewerFundDepositAndTreasuryFees">$ 0</strong><small>Depósitos y reparto de Tesorería · $5.000 por operación/cuenta</small></article>
         <article class="reviewer-capital-card reviewer-capital-fee-withdraw"><span>Comisiones por retiros</span><strong id="reviewerFundWithdrawalFees">$ 0</strong><small>Total cobrado a todos los clientes</small></article>
         <article class="reviewer-capital-card reviewer-capital-fee-transfer"><span>Comisiones por transferencias</span><strong id="reviewerFundTransferFees">$ 0</strong><small>Total cobrado a todos los clientes</small></article>
+
         <article class="reviewer-capital-card reviewer-capital-fees"><span>Comisiones por avances</span><strong id="reviewerFundFees">$ 0</strong><small>Total cobrado a todos los clientes</small></article>
       </section>
 
 
-      <div class="reviewer-disclaimer"><strong>Reglas del fondo:</strong> el analista inicia con $ 500.000.000 de capital y suma intereses y comisiones efectivamente cobrados. El capital pendiente reduce el disponible; el capital pagado se recupera. Cada tarjeta inicia con cupo autorizado de $ 100.000.000 y solo aumenta cuando el analista aprueba una solicitud, hasta $ 500.000.000 en esta demostración. El saldo máximo de ahorros permanece en $ 200.000.000. Esta demostración no verifica documentos ni consulta centrales de riesgo; los datos existen en este navegador.</div>
+      <div class="reviewer-disclaimer"><strong>Reglas del fondo:</strong> el analista inicia con $ 1.000.000.000 de capital y suma intereses y comisiones efectivamente cobrados. El capital pendiente reduce el disponible; el capital pagado se recupera. Cada tarjeta inicia con cupo autorizado de $ 100.000.000 y puede aumentar en tramos de $ 50.000.000 sin un máximo acumulado. Las cuentas de ahorros no tienen tope de saldo. Los aumentos se aprueban según la configuración. Esta demostración no verifica documentos ni consulta centrales de riesgo; los datos existen en este navegador.</div>
       <section class="reviewer-client-summary-panel" aria-labelledby="reviewerClientSummaryHeading">
         <div class="reviewer-client-summary-heading"><div><p class="eyebrow">ACTIVIDAD ACUMULADA</p><h2 id="reviewerClientSummaryHeading">Resumen de todos los clientes</h2><p id="reviewerClientSummaryDescription">El filtro superior actualiza estos importes. El total pagado suma cuotas, abonos y comisiones registradas a lo largo del tiempo.</p></div><span id="reviewerClientSummaryScope" class="reviewer-client-summary-scope">Todos los clientes</span></div>
         <div id="reviewerClientSummaryCards" class="reviewer-client-summary-grid" aria-live="polite"></div>

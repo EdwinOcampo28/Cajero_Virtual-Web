@@ -3,6 +3,8 @@
     const currentLabel = $('#cardLimitCurrentValue');
     if (currentLabel) currentLabel.textContent = money(limit);
     const requestedInput = $('#cardLimitRequestedValue');
+    const rateLabel = $('#limitIncreaseRateText');
+    if (rateLabel) rateLabel.textContent = formatMonthlyInterestRate();
     const requestField = $('#cardLimitRequestField');
     const requestIntro = $('#cardLimitRequestIntro');
     const error = $('#cardLimitRequestError');
@@ -22,7 +24,7 @@
         const increase = Number(request.increaseAmount) > 0 ? Number(request.increaseAmount) : Math.max(0, Number(request.requestedLimit) - Number(request.previousLimit));
         title.textContent = `Aumento solicitado: ${money(increase)} · Nuevo cupo: ${money(request.requestedLimit)}`;
         const meta = document.createElement('small');
-        meta.textContent = `${shortDateTime(request.date)} · Cupo anterior: ${money(request.previousLimit)} · crédito a 12 meses al 2,13 % mensual cuando avances`;
+        meta.textContent = `${shortDateTime(request.date)} · Cupo anterior: ${money(request.previousLimit)} · crédito a 12 meses al ${formatMonthlyInterestRate()} mensual cuando avances`;
         main.append(title, meta);
         const status = document.createElement('span');
         status.className = `credit-status ${statusClass(request.status || 'En revisión')}`;
@@ -41,8 +43,8 @@
     if (requestField) requestField.hidden = noMoreOptions;
     if (requestIntro) requestIntro.textContent = noMoreOptions
       ? (maximumReached
-        ? `Tu tarjeta ya alcanzó el cupo máximo de ${money(MAX_CARD_LIMIT)}.`
-        : `No hay espacio para otro aumento de ${money(50000000)} sin superar el máximo de ${money(MAX_CARD_LIMIT)}.`)
+        ? `La tarjeta llegó al límite de precisión numérica del simulador y no admite otro aumento.`
+        : `No se puede registrar otro incremento dentro del rango numérico seguro del simulador.`)
       : 'El aumento disponible es de $ 50.000.000. Si se aprueba, esos fondos se cargan a tu tarjeta y solo generan crédito cuando haces avances.';
     if (requestedInput) {
       const pendingAmount = pending
@@ -53,7 +55,7 @@
         const canChoose = limit + amount <= MAX_CARD_LIMIT;
         option.disabled = !canChoose;
         option.textContent = noMoreOptions
-          ? (maximumReached ? `Cupo máximo alcanzado · ${money(MAX_CARD_LIMIT)}` : 'Aumento no disponible')
+          ? (maximumReached ? 'Límite de precisión numérica alcanzado' : 'Aumento no disponible')
           : `Aumentar ${money(amount)} · nuevo cupo ${money(limit + amount)} · crédito a 12 meses al avanzar`;
       });
       const desired = pendingAmount && increaseAmounts.includes(pendingAmount) ? pendingAmount : (enabledAmounts.includes(Number(requestedInput.value)) ? Number(requestedInput.value) : (enabledAmounts[0] || 50000000));
@@ -70,8 +72,8 @@
         ? `Tienes una solicitud pendiente de aumento de ${money(Number(pending.increaseAmount) || (pending.requestedLimit - pending.previousLimit))}, a ${money(pending.requestedLimit) } de cupo. Si se aprueba, los fondos se cargarán a tu tarjeta y el crédito se activará a 12 cuotas solo al avanzar.`
         : noMoreOptions
           ? (maximumReached
-            ? `¡Has alcanzado el cupo máximo de ${money(MAX_CARD_LIMIT)}! Ya no puedes solicitar otro aumento.`
-            : `No puedes solicitar otro aumento de ${money(50000000)} porque superarías el máximo de ${money(MAX_CARD_LIMIT)}.`)
+            ? `El simulador no puede registrar más aumentos por su límite de precisión numérica.`
+            : `No se puede registrar otro incremento dentro del rango numérico seguro del simulador.`)
           : 'El aumento disponible es de $50.000.000. Si se aprueba, se cargará a tu tarjeta y el crédito se activará a 12 cuotas solo al realizar avances.';
     }
     if (error && !pending && !noMoreOptions) error.hidden = true;

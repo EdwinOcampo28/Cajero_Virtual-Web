@@ -35,9 +35,9 @@
       primary.applicationId = primary.applicationId || allApplications[0] || null;
       primary.payments = allPayments;
       primary.installmentsPaid = priorInstallmentsPaid;
-      primary.monthlyRate = ILLUSTRATIVE_MONTHLY_RATE;
+      primary.monthlyRate = Number.isFinite(primary.monthlyRate) ? primary.monthlyRate : currentMonthlyInterestRate(database);
       primary.termMonths = priorInstallmentsPaid + 60;
-      primary.monthlyPayment = calculateCreditEstimate(outstanding, 60).monthlyPayment;
+      primary.monthlyPayment = calculateCreditEstimate(outstanding, 60, primary.monthlyRate).monthlyPayment;
       primary.nextDueDate = addMonthsToDate(localDateKey(), 1);
       primary.source = originalDisbursed > 0 ? 'Crédito unificado' : 'Avance de capital recuperado';
       primary.status = 'Activo';
@@ -46,10 +46,10 @@
     }
   }
 
-  function recordCardMovement(accountId, type, amount, description, direction = null) {
+  function recordCardMovement(accountId, type, amount, description, direction = null, date = new Date().toISOString()) {
     const card = db.accounts[accountId].card;
     if (!Array.isArray(card.history)) card.history = [];
-    const item = { id: createId(), type, amount: roundMoney(amount), description, direction, date: new Date().toISOString() };
+    const item = { id: createId(), type, amount: roundMoney(amount), description, direction, date };
     card.history.unshift(item);
     if (typeof recordAuditMovement === 'function') recordAuditMovement(accountId, item, 'Tarjeta');
     return item;
@@ -91,11 +91,14 @@
         showToast('Otra pestaña modificó los datos. Esta operación no se guardó para evitar sobrescribir cambios; revisa los saldos actualizados.', 'error');
         return false;
       }
-      accrueWithdrawalTreasury();
+      const automationCatchup = typeof processSimulationAutomationEvents === 'function' ? processSimulationAutomationEvents(Date.now()) : null;
+      if (automationCatchup?.caughtUp !== false) accrueWithdrawalTreasury();
       const serialized = JSON.stringify(db);
       localStorage.setItem(STORAGE_KEY, serialized);
       lastPersistedRaw = serialized;
       dbRevision += 1;
+      if (typeof simulationAutomationInitialSaveDone !== 'undefined') simulationAutomationInitialSaveDone = true;
+      if (typeof simulationAutomationLastSavedAt !== 'undefined') simulationAutomationLastSavedAt = Date.now();
       // Notifica a otras pestañas después de persistir el estado. El módulo realtime
       // se carga al final; el guard mantiene compatible el guardado de arranque.
       if (typeof broadcastDatabaseSaved === 'function') broadcastDatabaseSaved();

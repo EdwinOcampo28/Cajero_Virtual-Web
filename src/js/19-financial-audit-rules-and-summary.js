@@ -11,6 +11,9 @@
     const increaseRequests = Array.isArray(db?.limitIncreaseRequests) ? db.limitIncreaseRequests : [];
 
     auditAddCheck(checks, 'Estructura principal', accounts.length === MAX_ACCOUNT_ID + 1 && accounts[0] === null, 'Deben existir exactamente las tres cuentas de ahorro de prueba.');
+    const settings = db?.simulationSettings;
+    const settingsValid = Boolean(settings && Number.isFinite(settings.monthlyInterestRate) && settings.monthlyInterestRate >= 0 && settings.monthlyInterestRate <= 1 && Number.isSafeInteger(settings.treasuryTimerRate) && settings.treasuryTimerRate >= 1 && Number.isSafeInteger(settings.treasuryTimerIncomeCap) && settings.treasuryTimerIncomeCap >= 0);
+    auditAddCheck(checks, 'Configuración de simulación', settingsValid, settingsValid ? `Interés mensual ${formatMonthlyInterestRate(settings.monthlyInterestRate)}; cronómetro ${money(settings.treasuryTimerRate)} por segundo, sin tope de acumulación.` : 'La tasa o el ritmo de la simulación no son válidos.');
     const treasury = db?.withdrawalTreasury;
     const treasuryValid = Boolean(treasury && Number.isSafeInteger(treasury.balance) && treasury.balance >= 0 && Number.isSafeInteger(treasury.elapsedSeconds) && treasury.elapsedSeconds >= 0 && Number.isSafeInteger(treasury.timerIncomeTotal) && treasury.timerIncomeTotal >= 0 && Array.isArray(treasury.history) && !('card' in treasury));
     auditAddCheck(checks, 'Tesorería independiente', treasuryValid, treasuryValid ? `Saldo ${money(treasury.balance)}; cronómetro ${treasury.elapsedSeconds} segundos; ingresos acumulados ${money(treasury.timerIncomeTotal)}; sin tarjeta.` : 'El saldo, cronómetro o historial de tesorería no son válidos.');
@@ -22,7 +25,7 @@
         continue;
       }
       const balanceValid = Number.isSafeInteger(accountRecord.balance) && accountRecord.balance >= 0 && accountRecord.balance <= maxSavingsBalanceForAccount(id);
-      auditAddCheck(checks, `Saldo de ${accountRecord.name}`, balanceValid, `Saldo: ${money(accountRecord.balance)}; máximo: ${money(maxSavingsBalanceForAccount(id))}.`);
+      auditAddCheck(checks, `Saldo de ${accountRecord.name}`, balanceValid, `Saldo: ${money(accountRecord.balance)}; dentro del rango numérico exacto del simulador.`);
       // Reconstruye el saldo de ahorros desde el libro de movimientos. Los movimientos sin
       // dirección (p. ej., desembolsos a la tarjeta) no afectan directamente los ahorros.
       const ledgerBalance = roundMoney((Array.isArray(accountRecord.history) ? accountRecord.history : []).reduce((sum, movement) => {

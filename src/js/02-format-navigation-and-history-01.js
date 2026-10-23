@@ -28,14 +28,14 @@
     return new Intl.DateTimeFormat('es-CO', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: true }).format(date);
   }
 
-  function recordMovement(accountId, type, amount, description, direction = null) {
+  function recordMovement(accountId, type, amount, description, direction = null, date = new Date().toISOString()) {
     const item = {
       id: createId(),
       type,
       amount: roundMoney(amount),
       description,
       direction,
-      date: new Date().toISOString()
+      date
     };
     db.accounts[accountId].history.unshift(item);
     if (typeof recordAuditMovement === 'function') recordAuditMovement(accountId, item, 'Ahorros');

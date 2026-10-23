@@ -1,4 +1,5 @@
   async function registerLimitIncreaseDecision(requestId, decision) {
+    if (typeof catchUpAutomaticEventsBeforeOperation === 'function' && !catchUpAutomaticEventsBeforeOperation()) return;
     if (!reviewerSession || !['Aprobado', 'Rechazado'].includes(decision)) return;
     const request = (db.limitIncreaseRequests || []).find((item) => item.id === requestId);
     if (!request || (request.status || 'En revisión') !== 'En revisión') {
@@ -16,7 +17,7 @@
     const increaseAmount = roundMoney(request.requestedLimit - currentLimit);
     if (decision === 'Aprobado') {
       if (increaseAmount !== 50000000 || request.requestedLimit > MAX_CARD_LIMIT) {
-        await showAppDialog({ type: 'alert', title: 'No se puede aprobar el cupo', message: `El aumento debe ser exactamente ${money(50000000)} y el nuevo cupo no puede superar ${money(MAX_CARD_LIMIT)}.`, eyebrow: 'VALIDACIÓN DE CUPO', icon: '!', confirmText: 'Entendido', danger: true });
+        await showAppDialog({ type: 'alert', title: 'No se puede aprobar el cupo', message: `El aumento debe ser de ${money(50000000)} y el cupo debe mantenerse dentro de la precisión numérica segura del simulador.`, eyebrow: 'VALIDACIÓN DE CUPO', icon: '!', confirmText: 'Entendido', danger: true });
         return;
       }
       const analystAvailable = availableAnalystCapital();
@@ -63,7 +64,8 @@
     if (decision === 'Aprobado') {
       target.card = target.card || { number: target.cardNumber, limit: MAX_CARD_FUNDS, funds: 0, recoveredFunds: 0, debt: 0, nextInterestDate: null, history: [], pendingDisbursements: [] };
       target.card.limit = roundMoney(request.requestedLimit);
-      const estimate = calculateCreditEstimate(increaseAmount, 12);
+      const rate = currentMonthlyInterestRate();
+      const estimate = calculateCreditEstimate(increaseAmount, 12, rate);
       const automaticApplication = {
         id: createId(),
         accountId: request.accountId,
@@ -72,7 +74,7 @@
         amount: increaseAmount,
         monthlyIncome: 0,
         termMonths: 12,
-        monthlyRate: ILLUSTRATIVE_MONTHLY_RATE,
+        monthlyRate: rate,
         employment: 'Aumento de cupo',
         purpose: `Desembolso automático por aumento de cupo (${money(currentLimit)} a ${money(request.requestedLimit)})`,
         monthlyPayment: estimate.monthlyPayment,

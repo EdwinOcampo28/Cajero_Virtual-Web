@@ -20,7 +20,7 @@
     const requestedTerm = application.origin === 'Aumento de cupo'
       ? 12
       : (VALID_CARD_ADVANCE_TERMS.includes(selectedAdvanceTerm) ? selectedAdvanceTerm : Math.max(priorRemainingMonths, 12));
-    recalculateUnifiedLoanSchedule(loan, requestedTerm);
+    recalculateUnifiedLoanSchedule(loan, requestedTerm, application.lastAdvancedAt || new Date().toISOString());
     return loan;
   }
 
@@ -76,7 +76,7 @@
     return VALID_CARD_ADVANCE_TERMS.includes(selected) ? selected : 12;
   }
 
-  function activatePendingCardDisbursements(accountId, amount, selectedTermMonths) {
+  function activatePendingCardDisbursements(accountId, amount, selectedTermMonths, advancedAt = new Date().toISOString()) {
     const card = db.accounts?.[accountId]?.card;
     const requestedAmount = roundMoney(amount);
     if (!card || requestedAmount <= 0) return { ok: false, activatedAmount: 0, activations: [] };
@@ -112,7 +112,7 @@
       sourceApplication.activatedAmount = roundMoney((Number(sourceApplication.activatedAmount) || 0) + activatedAmount);
       sourceApplication.cardFundsRemaining = roundMoney(Math.max(0, (Number(sourceApplication.cardFundsRemaining) || 0) - activatedAmount));
       sourceApplication.loanId = loan.id;
-      sourceApplication.lastAdvancedAt = new Date().toISOString();
+      sourceApplication.lastAdvancedAt = advancedAt;
       sourceApplication.status = sourceApplication.cardFundsRemaining > 0 ? 'Aprobado' : 'Desembolsado';
       if (sourceApplication.origin === 'Aumento de cupo' && sourceApplication.limitIncreaseRequestId) {
         const request = (db.limitIncreaseRequests || []).find((item) => item.id === sourceApplication.limitIncreaseRequestId);
@@ -131,7 +131,7 @@
           source: 'Cliente',
           referenceId: sourceApplication.id,
           description: `Fondos trasladados de la tarjeta a ahorros; crédito ${String(loan.id).slice(-7)}`,
-          details: { loanId: loan.id, termMonths, cardFundsRemaining: sourceApplication.cardFundsRemaining }
+          details: { loanId: loan.id, termMonths, cardFundsRemaining: sourceApplication.cardFundsRemaining }, date: advancedAt
         });
       }
       activations.push({ applicationId: sourceApplication.id, loanId: loan.id, amount: activatedAmount, termMonths, origin: sourceApplication.origin || 'Crédito' });

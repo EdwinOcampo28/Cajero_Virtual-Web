@@ -1,4 +1,34 @@
+  function automaticPaymentIntervalForLoan(loan) {
+    const savedInterval = Number(loan?.automaticPaymentIntervalSeconds);
+    if (Number.isSafeInteger(savedInterval) && savedInterval >= 1 && savedInterval <= 31536000) return savedInterval;
+    return automaticPaymentIntervalForTerm(loan?.termMonths);
+  }
+
+  function applyInstallmentPayment(loan, current, installment, paymentDate = new Date().toISOString()) {
+    if (!loan || !current || loan.status !== 'Activo' || current.balance < installment.paymentAmount) return false;
+    current.balance = roundMoney(current.balance - installment.paymentAmount);
+    loan.outstandingPrincipal = Math.max(0, roundMoney(loan.outstandingPrincipal - installment.principal));
+    restoreCardAdvanceBalance(current, installment.principal);
+    loan.installmentsPaid = Math.max(0, Number(loan.installmentsPaid) || 0) + 1;
+    loan.payments = Array.isArray(loan.payments) ? loan.payments : [];
+    loan.payments.push({ id: createId(), type: 'Cuota', installmentNumber: installment.installmentNumber, amount: installment.paymentAmount, interest: installment.interest, principal: installment.principal, date: paymentDate, dueDate: installment.dueDate, remainingPrincipal: loan.outstandingPrincipal });
+    recordMovement(loan.accountId, 'loan_payment', installment.paymentAmount, `Pago cuota ${installment.installmentNumber} de crédito ${String(loan.id).slice(-7)}`, 'out', paymentDate);
+    if (loan.outstandingPrincipal <= 0) {
+      loan.outstandingPrincipal = 0;
+      loan.status = 'Pagado';
+      loan.closedAt = paymentDate;
+      loan.nextAutomaticPaymentAt = null;
+      updateLinkedApplicationsStatus(loan, 'Pagado');
+    } else {
+      loan.nextDueDate = addMonthsToDate(loan.nextDueDate, 1);
+      loan.automaticPaymentIntervalSeconds = automaticPaymentIntervalForLoan(loan);
+      loan.nextAutomaticPaymentAt = new Date(Date.parse(paymentDate) + loan.automaticPaymentIntervalSeconds * 1000).toISOString();
+    }
+    return true;
+  }
+
   async function processInstallmentPayment(loanId) {
+    if (typeof catchUpAutomaticEventsBeforeOperation === 'function' && !catchUpAutomaticEventsBeforeOperation()) return;
     const loan = (db.loans || []).find((item) => item.id === loanId && item.accountId === activeAccountId);
     const current = account();
     if (!loan || !current || loan.status !== 'Activo') return;
@@ -18,21 +48,8 @@
     });
     if (!confirmed) return;
     if (!isDatabaseRevisionCurrent(transactionRevision)) { abortStaleFinancialOperation(); return; }
-    current.balance = roundMoney(current.balance - installment.paymentAmount);
-    loan.outstandingPrincipal = Math.max(0, roundMoney(loan.outstandingPrincipal - installment.principal));
-    restoreCardAdvanceBalance(current, installment.principal);
-    loan.installmentsPaid += 1;
-    loan.payments = Array.isArray(loan.payments) ? loan.payments : [];
-    loan.payments.push({ id: createId(), type: 'Cuota', installmentNumber: installment.installmentNumber, amount: installment.paymentAmount, interest: installment.interest, principal: installment.principal, date: new Date().toISOString(), dueDate: installment.dueDate, remainingPrincipal: loan.outstandingPrincipal });
-    recordMovement(activeAccountId, 'loan_payment', installment.paymentAmount, `Pago cuota ${installment.installmentNumber} de crédito ${String(loan.id).slice(-7)}`, 'out');
-    if (loan.outstandingPrincipal <= 0) {
-      loan.outstandingPrincipal = 0;
-      loan.status = 'Pagado';
-      loan.closedAt = new Date().toISOString();
-      updateLinkedApplicationsStatus(loan, 'Pagado');
-    } else {
-      loan.nextDueDate = addMonthsToDate(loan.nextDueDate, 1);
-    }
+    const paymentDate = new Date().toISOString();
+    if (!applyInstallmentPayment(loan, current, installment, paymentDate)) return;
     if (!saveDatabase()) { renderApp(); return; }
     renderApp();
     renderLoans();

@@ -1,15 +1,15 @@
-  function calculateCreditEstimate(principal, months) {
+  function calculateCreditEstimate(principal, months, rate = currentMonthlyInterestRate()) {
     const amount = Math.round(Number(principal) || 0);
     const term = Math.max(1, Math.round(Number(months) || 1));
     if (amount <= 0) return { monthlyPayment: 0, totalPayable: 0, totalInterest: 0 };
-    const rate = ILLUSTRATIVE_MONTHLY_RATE;
-    const monthlyPayment = Math.round(amount * rate / (1 - Math.pow(1 + rate, -term)));
+    const monthlyRate = Number.isFinite(rate) ? rate : currentMonthlyInterestRate();
+    const monthlyPayment = monthlyRate === 0 ? Math.ceil(amount / term) : Math.round(amount * monthlyRate / (1 - Math.pow(1 + monthlyRate, -term)));
     let balance = amount;
     let totalPayable = 0;
     let totalInterest = 0;
     let count = 0;
     while (balance > 0 && count < term + 5) {
-      const interest = Math.round(balance * rate);
+      const interest = Math.round(balance * monthlyRate);
       const isFinalPayment = count + 1 >= term;
       const payment = isFinalPayment ? balance + interest : Math.min(monthlyPayment, balance + interest);
       const principalPaid = isFinalPayment ? balance : Math.min(balance, Math.max(0, payment - interest));
@@ -33,8 +33,11 @@
   }
 
   function createLoanFromApplication(application) {
-    const estimate = calculateCreditEstimate(application.amount, application.termMonths);
-    const disbursedAt = new Date().toISOString();
+    const rate = Number.isFinite(application.monthlyRate) ? application.monthlyRate : currentMonthlyInterestRate();
+    const term = VALID_CREDIT_TERMS.includes(Number(application.termMonths)) ? Number(application.termMonths) : 12;
+    const estimate = calculateCreditEstimate(application.amount, term, rate);
+    const disbursedAt = application.lastAdvancedAt || application.disbursedAt || new Date().toISOString();
+    const intervalSeconds = automaticPaymentIntervalForTerm(term);
     return {
       id: createId(),
       applicationId: application.id,
@@ -43,10 +46,12 @@
       originalDisbursedTotal: roundMoney(application.amount),
       reborrowedCapitalTotal: 0,
       outstandingPrincipal: roundMoney(application.amount),
-      monthlyRate: Number.isFinite(application.monthlyRate) ? application.monthlyRate : ILLUSTRATIVE_MONTHLY_RATE,
-      termMonths: Number(application.termMonths) || 60,
+      monthlyRate: rate,
+      termMonths: term,
       monthlyPayment: roundMoney(estimate.monthlyPayment),
       installmentsPaid: 0,
+      automaticPaymentIntervalSeconds: intervalSeconds,
+      nextAutomaticPaymentAt: new Date(Date.parse(disbursedAt) + intervalSeconds * 1000).toISOString(),
       applicationIds: application.id ? [application.id] : [],
       nextDueDate: addMonthsToDate(disbursedAt, 1),
       disbursedAt,

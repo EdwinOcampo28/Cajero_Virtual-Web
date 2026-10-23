@@ -20,7 +20,7 @@
                   <div class="credit-field">
                     <label for="creditTermSelect">Plazo de pago</label>
                     <select id="creditTermSelect" name="termMonths" required>
-                      <option value="6">6 meses</option><option value="12">12 meses</option><option value="18">18 meses</option><option value="24">24 meses</option><option value="36">36 meses</option><option value="48">48 meses</option><option value="60" selected>60 meses</option>
+                      <option value="6" selected>6 meses</option><option value="12">12 meses</option>
                     </select>
                   </div>
                   <div class="credit-field">
@@ -44,15 +44,15 @@
                 <p id="creditError" class="form-message error-message" role="alert" hidden></p>
                 <p id="creditRequestStatus" class="form-message credit-request-status" role="status" hidden></p>
                 <button id="creditSubmitButton" class="button button-primary button-wide" type="submit">Enviar solicitud de crédito <span aria-hidden="true">→</span></button>
-                <p class="credit-disclaimer">Tu solicitud quedará pendiente hasta que el analista de créditos registre una decisión. Esta demostración no consulta centrales de riesgo ni representa una aprobación bancaria real.</p>
+                <p class="credit-disclaimer">La simulación también genera solicitudes automáticas cada hora mientras exista capacidad. Se aprueban al minuto y se avanzan a ahorros; las cuotas se cobran automáticamente del saldo disponible. Esta demostración no consulta centrales de riesgo ni representa una aprobación bancaria real.</p>
               </form>
             </section>
 
             <aside class="credit-panel credit-simulation-panel">
               <div class="credit-panel-heading"><div class="credit-panel-symbol gold-symbol">≈</div><div><h3>Simulador de cuotas</h3><p>Estimación ilustrativa, no una oferta bancaria.</p></div></div>
-              <div class="credit-sim-highlight"><span>Cuota mensual estimada</span><strong id="creditMonthlyPayment">$ 0</strong><small>Durante <span id="creditSelectedTerm">60</span> meses</small></div>
-              <div class="credit-sim-lines"><div><span>Monto solicitado</span><strong id="creditSimAmount">$ 5.000.000</strong></div><div><span>Tasa ilustrativa mensual</span><strong>2,13 %</strong></div><div><span>Total estimado por pagar</span><strong id="creditTotalPayable">$ 0</strong></div><div><span>Intereses estimados</span><strong id="creditTotalInterest">$ 0</strong></div></div>
-              <div class="credit-sim-note"><span class="hint-icon">i</span><span>La simulación usa una tasa ilustrativa fija del 2,13 % mensual y cuotas constantes. La tasa real, seguros, cargos, estudio y aprobación no están incluidos ni representados.</span></div>
+              <div class="credit-sim-highlight"><span>Cuota mensual estimada</span><strong id="creditMonthlyPayment">$ 0</strong><small>Durante <span id="creditSelectedTerm">6</span> meses</small></div>
+              <div class="credit-sim-lines"><div><span>Monto solicitado</span><strong id="creditSimAmount">$ 5.000.000</strong></div><div><span>Tasa ilustrativa mensual</span><strong id="creditSimulationRateText">2,00 %</strong></div><div><span>Total estimado por pagar</span><strong id="creditTotalPayable">$ 0</strong></div><div><span>Intereses estimados</span><strong id="creditTotalInterest">$ 0</strong></div></div>
+              <div class="credit-sim-note"><span class="hint-icon">i</span><span id="creditSimulationRateNote">La simulación usa la tasa de interés vigente configurada para esta demostración y cuotas constantes. La tasa real, seguros, cargos, estudio y aprobación no están incluidos ni representados.</span></div>
             </aside>
           </div>
 

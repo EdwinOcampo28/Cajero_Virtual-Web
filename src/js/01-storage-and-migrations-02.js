@@ -11,6 +11,7 @@
         return freshDatabase();
       }
       if (!normalizeWithdrawalTreasury(parsed)) { databaseLoadIssue = true; return freshDatabase(); }
+      if (!normalizeSimulationSettings(parsed)) { databaseLoadIssue = true; return freshDatabase(); }
       const expectedArrays = ['creditApplications', 'loans', 'limitIncreaseRequests', 'auditLog'];
       if (expectedArrays.some((key) => parsed[key] !== undefined && !Array.isArray(parsed[key]))) {
         databaseLoadIssue = true;
@@ -41,7 +42,7 @@
         ? parsed.creditApplications
             .filter((item) => item && Number.isInteger(item.accountId) && item.accountId >= 1 && item.accountId <= MAX_ACCOUNT_ID && typeof item.amount === 'number' && Number.isFinite(item.amount) && typeof item.date === 'string')
             .slice(0, 500)
-            .map((item) => ({ ...item, status: item.status || 'En revisión', monthlyRate: Number.isFinite(item.monthlyRate) ? item.monthlyRate : ILLUSTRATIVE_MONTHLY_RATE }))
+            .map((item) => ({ ...item, status: item.status || 'En revisión', monthlyRate: Number.isFinite(item.monthlyRate) ? item.monthlyRate : currentMonthlyInterestRate(parsed) }))
         : [];
       parsed.loans = Array.isArray(parsed.loans)
         ? parsed.loans
@@ -141,7 +142,8 @@
       }
       migrateLegacyCardDebts(parsed);
       consolidateActiveLoans(parsed);
-      accrueWithdrawalTreasury(parsed);
+      if (!normalizeSimulationAutomation(parsed)) { databaseLoadIssue = true; return freshDatabase(); }
+
       return parsed;
     } catch (error) {
       lastPersistedRaw = stored;

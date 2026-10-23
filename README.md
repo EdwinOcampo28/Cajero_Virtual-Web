@@ -1,4 +1,4 @@
-# Cajero Virtual v40 · Depósitos financiados por Tesorería
+# Cajero Virtual v50 · Fondo actualizado y comisiones agrupadas
 
 ## Abrir la aplicación
 
@@ -10,14 +10,16 @@ La versión estable anterior se conserva por separado en `Cajero_Virtual_Web_v28
 
 ## Reglas financieras vigentes
 
-- Depósitos: máximo **$20.000.000** por operación; el importe bruto sale del saldo de Tesorería, el cliente recibe el neto y la comisión fija de **$20.000** se registra aparte. No se procesa si Tesorería no tiene fondos suficientes.
-- Retiros: máximo **$20.000.000** por operación; el importe retirado se acredita automáticamente a la Tesorería independiente **•••• 0004** y la comisión fija de **$20.000** se descuenta por separado.
-- Transferencias: máximo **$20.000.000** por operación; el destinatario recibe el importe completo y al emisor se le cobra una comisión de **$20.000**.
-- Saldo máximo de las tres cuentas de clientes: **$200.000.000** cada una. La Tesorería no es una cuenta de ahorro ni tiene tarjeta o créditos.
-- Avances desde la tarjeta a ahorros: solo a **6 o 12 cuotas**, con comisión de **$20.000**; los fondos trasladados no cuentan como otro desembolso original.
+- Depósitos: máximo **$20.000.000** por operación; el importe bruto sale de Tesorería, el cliente recibe el neto y se cobran **$5.000** por depósito. No hay tope acumulado de ahorros y la operación requiere saldo suficiente en Tesorería.
+- Reparto de Tesorería: se distribuye el saldo en partes iguales y se cobran los mismos **$5.000** por cuenta que en un depósito.
+- Retiros: máximo **$20.000.000** por operación; el importe retirado se acredita automáticamente a la Tesorería independiente **•••• 0004** y la comisión fija de **$10.000** se descuenta por separado.
+- Transferencias: máximo **$20.000.000** por operación; el destinatario recibe el importe completo y al emisor se le cobra una comisión de **$10.000**.
+- Las cuentas de clientes no tienen tope acumulado de ahorros. Los retiros y transferencias conservan sus máximos por operación de **$20.000.000**. La Tesorería no es una cuenta de ahorro, no tiene tarjeta ni créditos, y no permite transferencias manuales; su historial muestra los depósitos financiados y los retiros recibidos.
+- Avances desde la tarjeta a ahorros: solo a **6 o 12 cuotas**, con comisión de **$10.000**; los fondos trasladados no cuentan como otro desembolso original.
 - Créditos personales: máximo **$100.000.000** por solicitud, sujetos al capital disponible del analista y al cupo autorizado del cliente.
-- Fondo inicial ilustrativo del analista: **$500.000.000**, más intereses y comisiones efectivamente cobrados, menos los créditos activos y los fondos que aún siguen en las tarjetas.
-- Aumento de cupo: solo se solicita un incremento de **$50.000.000**. Al aprobarlo, la tarjeta recibe los fondos y el crédito se activa a **12 cuotas con tasa ilustrativa del 2,13 % mensual** únicamente cuando el cliente realiza avances. El cupo máximo de demostración es **$500.000.000**.
+- Fondo inicial ilustrativo del analista: **$1.000.000.000**, más intereses y comisiones efectivamente cobrados, menos los créditos activos y los fondos que aún siguen en las tarjetas.
+- Aumento de cupo: se solicita en incrementos de **$50.000.000**, sin máximo acumulado. Al aprobarlo, la tarjeta recibe los fondos y el crédito se activa a **12 cuotas con tasa ilustrativa del 2,00 % mensual** únicamente cuando el cliente realiza avances.
+- El analista puede configurar por separado, en segundos o minutos, cuánto esperar antes de aprobar automáticamente créditos y aumentos de cupo.
 - Deuda: cada titular mantiene como máximo una deuda activa unificada. Los pagos separan capital e intereses; el capital pagado recupera disponibilidad de avance, mientras que los intereses solo se cuentan como ganancia una vez pagados.
 
 ## Novedades v29
@@ -221,11 +223,11 @@ La versión intermedia v37 añadió la receptora como una cuarta cuenta de clien
 - La Tesorería de retiros tiene acceso propio con PIN de demostración **3456**, separado del analista y de las tres cuentas cliente.
 - Los retiros de Edwin, Pedro y Reinel abonan automáticamente el importe a Tesorería. La comisión de **$20.000** sigue descontándose y registrándose por separado.
 - Su cronómetro agrega **$1 por segundo** al saldo y recupera el tiempo transcurrido al volver a abrir la aplicación.
-- Tesorería no tiene tarjeta, créditos, depósitos ni retiros. Su única operación financiera es transferir fondos, sin comisión, a una de las tres cuentas cliente.
+- En v38, Tesorería no tenía tarjeta ni créditos y permitía transferir fondos a una cuenta cliente; esa opción se retiró en v41. El historial actual registra depósitos financiados y retiros recibidos automáticamente.
 - Los datos locales y copias de seguridad de v37 se migran conservando el saldo y el historial de la antigua cuenta receptora. Los productos de crédito asociados a ese perfil intermedio se retiran de la lista activa.
 - Los avances de tarjeta permanecen limitados a **6 y 12 cuotas** en la interfaz y en la validación de la operación.
 
-La prueba `node tools/test-withdrawal-recipient-account.js` comprueba la migración de la receptora anterior, el cobro por segundo, los retiros automáticos, la conservación separada de comisiones y las transferencias desde Tesorería.
+La prueba `node tools/test-withdrawal-recipient-account.js` comprueba la migración de la receptora anterior, el cobro por segundo, los retiros automáticos y la conservación separada de comisiones.
 
 
 ## Novedades v39: carga de Tesorería y cuotas exactas
@@ -243,3 +245,64 @@ La prueba `node tools/test-withdrawal-recipient-account.js` comprueba la migraci
 - El comprobante de Tesorería y su auditoría registran cada depósito financiado.
 
 Para verificarlo, ejecuta `node tools/test-withdrawal-recipient-account.js`; el resto de las regresiones se mantiene en las pruebas incluidas en `tools/`.
+
+
+## Novedades v42: configuración de la simulación
+
+- La configuración inicial establece una tasa mensual del **2 %**, créditos nuevos a **6 o 12 cuotas** y un cronómetro de Tesorería de **$1.000 por segundo**, sin tope acumulado. El analista puede ajustar la tasa desde Configuración.
+- Se retiró la transferencia manual desde Tesorería. Los fondos siguen llegando por retiros de clientes y salen para financiar los depósitos.
+- La pantalla independiente muestra el historial de depósitos financiados y retiros recibidos, con fecha e importe, y se actualiza en tiempo real.
+- Se eliminaron el formulario, los validadores, los eventos y los estilos de transferencia que quedaron sin uso en la sesión de Tesorería.
+
+## Novedades v43: automatización financiera
+
+- Mientras exista capacidad disponible, cada cuenta recibe una solicitud aleatoria de crédito cada hora, dentro del cupo autorizado y el máximo vigente de **$100.000.000** por solicitud. El analista automático la aprueba un minuto después; el desembolso se carga a la tarjeta y el avance automático lo traslada a ahorros, donde se crea la deuda a **6 o 12 cuotas**.
+- Las cuotas se descuentan automáticamente de ahorros cada **5 minutos** para créditos a 6 cuotas y cada **3 minutos** para créditos a 12 cuotas. Si falta saldo, el sistema vuelve a intentarlo al siguiente intervalo.
+- Cada hora, Tesorería distribuye en partes iguales todo el saldo que puedan recibir las tres cuentas. Se respeta el tope de ahorro de **$200.000.000** por cuenta; el saldo que no quepa por igual permanece en Tesorería.
+- Las solicitudes automáticas no cambian los aumentos de cupo: siguen manuales, en incrementos de **$50.000.000** y con el máximo de tarjeta de **$500.000.000**.
+- Los eventos usan marcas de tiempo reales y se recuperan al volver a abrir la app. Al ser una aplicación local sin servidor, los cambios se calculan al reabrir; no hay un proceso ejecutándose mientras el navegador está totalmente cerrado.
+
+## Novedades v44: automatización configurable
+
+El panel de configuración permite ajustar cada cuántos minutos se generan solicitudes automáticas, se pagan créditos a 6 y 12 cuotas y se reparte Tesorería. También permite definir rangos de montos para créditos y avances automáticos, elegir entre avanzar el crédito completo o un monto aleatorio, y escoger plazo aleatorio, 6 o 12 cuotas. Los montos se eligen en incrementos de $100.000 y siguen sujetos a los límites de capital, tarjeta y ahorros. Si el crédito supera el avance automático, el saldo restante queda en la tarjeta.
+
+Al guardar, se reprograman los próximos eventos y la frecuencia de pago de los créditos activos. La tasa, el tope del cronómetro y los topes de aumento de cupo siguen conservando sus reglas actuales.
+
+
+## Novedades v45: control de automatización
+
+La configuración ahora tiene una sección propia del analista. Permite pausar y reanudar las solicitudes, aprobaciones, cuotas, repartos y el cronómetro de Tesorería mientras se editan parámetros. Al reanudar, los siguientes eventos se cuentan desde ese momento, sin acumular operaciones durante la pausa.
+
+Cada intervalo puede expresarse en segundos o minutos. Al cambiar de unidad, el valor se convierte conservando la duración; los mínimos son 1 segundo y los máximos, 1 año. La pantalla conserva los campos en edición aunque reciba actualizaciones de otras pestañas. La pausa también se conserva si se cierra el navegador.
+
+
+## Novedades v46: edición segura de la automatización
+
+La configuración tiene una sección independiente en el panel del analista. El botón permite pausar y reanudar los procesos automáticos mientras se editan los parámetros; las solicitudes, aprobaciones, cuotas, repartos y el cronómetro se detienen durante la pausa. Al reanudar, los intervalos comienzan de nuevo desde ese momento. Los campos en edición se conservan aunque la app reciba actualizaciones en vivo. Cada intervalo acepta segundos o minutos, desde 1 segundo hasta 1 año.
+
+
+## Novedades v47: aumentos de cupo programables y Tesorería sin tope
+
+El panel permite configurar cada cuánto se generan solicitudes automáticas de aumento de cupo. Cada cuenta elegible solicita un incremento de **$50.000.000** cuando no tenga otra solicitud pendiente y aún esté por debajo del máximo de **$500.000.000**; la aprobación continúa en manos del analista. También se quitó el tope acumulado del cronómetro y se actualizan al abrir las Tesorerías que ya tenían el límite anterior. La configuración se reorganizó en secciones de solicitudes, pagos y plazos, montos, e interés y Tesorería.
+
+
+## Novedades v48: aumentos y movimientos automáticos
+
+- Las solicitudes automáticas de aumento de cupo se aprueban un minuto después cuando está activada la opción del analista. Se conservan los incrementos de **$50.000.000**, el máximo de **$500.000.000** y el plazo de **12 meses**.
+- Se pueden configurar los intervalos en segundos o minutos para las transferencias aleatorias entre cuentas y los retiros aleatorios a Tesorería.
+- Cada reparto de Tesorería descuenta **$5.000 por cuenta**; el historial registra el abono bruto y la comisión por separado para que el saldo neto concilie.
+- Las comisiones de depósitos, retiros, transferencias y avances son de **$10.000**. Las comisiones de Tesorería aparecen también en los resúmenes y reportes del analista.
+- Se ajustó el ancho de los selectores de plazo y modo de avance en la configuración.
+
+
+## Novedades v49: saldo y cupo sin topes; aprobación configurable
+
+- Se retiró el límite acumulado de saldo en ahorros y el máximo acumulado del cupo de tarjeta. Los incrementos siguen siendo de **$50.000.000**.
+- Depósitos y repartos de Tesorería comparten la comisión de **$5.000**. Los retiros, transferencias y avances conservan sus comisiones vigentes.
+- El panel permite definir por separado cuánto esperar antes de aprobar automáticamente un crédito y un aumento de cupo, en segundos o minutos. Si se desactiva la aprobación automática de cupo, la solicitud queda para revisión manual.
+- Los importes siguen sujetos a la precisión exacta de enteros que admite el navegador; los máximos por operación de retiro, transferencia y depósito permanecen en **$20.000.000**.
+
+## Novedades v50: fondo inicial del analista y comisiones agrupadas
+
+- El fondo inicial del analista ahora es de **.000.000.000**; el disponible se calcula con ese capital, los intereses y las comisiones cobradas, menos el capital comprometido.
+- El resumen financiero agrupa en una tarjeta las comisiones por depósitos y repartos de Tesorería. Los informes mantienen el desglose de cada origen.

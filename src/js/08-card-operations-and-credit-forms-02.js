@@ -1,5 +1,6 @@
   async function submitCardPayment(event) {
     event.preventDefault();
+    if (typeof catchUpAutomaticEventsBeforeOperation === 'function' && !catchUpAutomaticEventsBeforeOperation()) return;
     const current = account();
     if (!current) return;
     const rawAmount = Number($('#cardPaymentAmount').value);
@@ -29,6 +30,7 @@
 
   function submitCardLimitIncreaseRequest(event) {
     event.preventDefault();
+    if (typeof catchUpAutomaticEventsBeforeOperation === 'function' && !catchUpAutomaticEventsBeforeOperation()) return;
     const current = account();
     if (!current) return;
     const error = $('#cardLimitRequestError');
@@ -38,7 +40,7 @@
     const allowedIncreaseAmounts = [50000000];
     const requestedLimit = roundMoney(currentLimit + increaseAmount);
     if (!allowedIncreaseAmounts.includes(increaseAmount) || requestedLimit > MAX_CARD_LIMIT) {
-      error.textContent = `El aumento debe ser de ${money(50000000)} y el nuevo cupo no puede superar ${money(MAX_CARD_LIMIT)}.`;
+      error.textContent = `El aumento debe ser de ${money(50000000)} y el cupo debe mantenerse dentro de la precisión numérica segura del simulador.`;
       error.hidden = false;
       $('#cardLimitRequestedValue').focus();
       return;
@@ -56,7 +58,10 @@
     }
     const request = {
       id: createId(), accountId: current.id, applicantName: current.name, accountNumber: current.accountNumber,
-      previousLimit: currentLimit, increaseAmount, requestedLimit, termMonths: 12, status: 'En revisión', date: new Date().toISOString()
+      previousLimit: currentLimit, increaseAmount, requestedLimit, termMonths: 12, status: 'En revisión', date: new Date().toISOString(),
+      autoApprovalAt: simulationSettingsFor(db).automaticLimitIncreaseApprovalEnabled === true
+        ? new Date(Date.now() + simulationSettingsFor(db).automaticLimitIncreaseApprovalDelaySeconds * 1000).toISOString()
+        : null
     };
     if (!Array.isArray(db.limitIncreaseRequests)) db.limitIncreaseRequests = [];
     db.limitIncreaseRequests.unshift(request);

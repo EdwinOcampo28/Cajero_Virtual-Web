@@ -41,7 +41,7 @@ const db = {
     { id: 3, name: 'Reinel Ocampo', accountNumber: '8361 4925 7083', balance: 1200000, card: { limit: 100000000, funds: 0, recoveredFunds: 0, debt: 0 } }
   ],
   creditApplications: [
-    { id: 'app-1', accountId: 1, applicantName: 'Edwin Ocampo', accountNumber: '7184 3059 6247', amount: 25000000, monthlyIncome: 2500000, termMonths: 12, monthlyRate: 0.0213, monthlyPayment: 2400000, totalPayable: 28800000, purpose: 'Prueba', employment: 'Empleado', status: 'Desembolsado', date: '2026-10-21T10:00:00.000Z' },
+    { id: 'app-1', accountId: 1, applicantName: 'Edwin Ocampo', accountNumber: '7184 3059 6247', amount: 25000000, monthlyIncome: 2500000, termMonths: 12, monthlyRate: 0.02, monthlyPayment: 2400000, totalPayable: 28800000, purpose: 'Prueba', employment: 'Empleado', status: 'Desembolsado', date: '2026-10-21T10:00:00.000Z' },
     { id: 'limit-internal-1', accountId: 1, applicantName: 'Edwin Ocampo', accountNumber: '7184 3059 6247', amount: 50000000, activatedAmount: 0, cardFundsRemaining: 50000000, origin: 'Aumento de cupo', purpose: 'Desembolso automático por aumento de cupo', status: 'Aprobado', date: '2026-10-21T11:00:00.000Z' }
   ],
   limitIncreaseRequests: [{ id: 'limit-1', accountId: 1, applicantName: 'Edwin Ocampo', accountNumber: '7184 3059 6247', previousLimit: 100000000, requestedLimit: 150000000, increaseAmount: 50000000, status: 'Aprobado', date: '2026-10-21T10:00:00.000Z', disbursedAmount: 50000000 }],
@@ -63,7 +63,9 @@ const ctx = {
   money: (amount) => '$ ' + Math.round(Number(amount) || 0).toLocaleString('en-US'),
   shortDateTime: () => '21 oct. 2026',
   statusClass: (status) => String(status).toLowerCase().replace(/\s+/g, '-'),
-  ILLUSTRATIVE_MONTHLY_RATE: 0.0213,
+  ILLUSTRATIVE_MONTHLY_RATE: 0.02,
+  currentMonthlyInterestRate: () => 0.02,
+  formatMonthlyInterestRate: () => '2,00 %',
   REVIEWER_NAME: 'Analista de créditos',
   findLoanForApplication: (applicationId) => db.loans.find((loan) => loan.applicationId === applicationId || loan.applicationIds?.includes(applicationId)) || null,
   outstandingLoanPrincipalForAccount: (accountId) => Math.round(db.loans.filter((loan) => loan.accountId === accountId).reduce((sum, loan) => sum + Math.max(0, Number(loan.outstandingPrincipal) || 0), 0)),

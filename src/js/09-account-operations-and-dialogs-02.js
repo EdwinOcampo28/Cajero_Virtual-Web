@@ -1,6 +1,7 @@
   function submitOperation(event) {
     event.preventDefault();
     if (!currentModalAction || !account()) return;
+    if (typeof catchUpAutomaticEventsBeforeOperation === 'function' && !catchUpAutomaticEventsBeforeOperation()) return;
     operationError.hidden = true;
     const rawAmount = Number(amountInput.value);
     if (!Number.isFinite(rawAmount) || rawAmount <= 0 || !Number.isInteger(rawAmount)) {
@@ -20,22 +21,22 @@
     resetDailyWithdrawalIfNeeded(current);
 
     if (currentModalAction === 'deposit') {
-      if (amount <= OPERATION_FEE) return operationProblem(`El depósito debe superar la comisión fija de ${money(OPERATION_FEE)}.`);
-      const netAmount = roundMoney(amount - OPERATION_FEE);
+      if (amount <= DEPOSIT_FEE) return operationProblem(`El depósito debe superar la comisión fija de ${money(DEPOSIT_FEE)}.`);
+      const netAmount = roundMoney(amount - DEPOSIT_FEE);
       if (current.balance + netAmount > maxSavingsBalanceForAccount(activeAccountId)) {
-        return operationProblem(`Después de descontar la comisión de ${money(OPERATION_FEE)}, este depósito superaría el saldo máximo de ${money(maxSavingsBalanceForAccount(activeAccountId))}. Puedes ingresar como máximo ${money(maxSavingsBalanceForAccount(activeAccountId) - current.balance + OPERATION_FEE)}.`);
+        return operationProblem(`El depósito excede la precisión numérica segura que admite el simulador.`);
       }
       const treasury = db.withdrawalTreasury;
       accrueWithdrawalTreasury(db);
       if (!treasury || !Number.isSafeInteger(treasury.balance) || treasury.balance < 0) return operationProblem('No se pudo validar el saldo disponible en Tesorería. El depósito no se realizó.');
       if (amount > treasury.balance) return operationProblem(`Tesorería dispone de ${money(treasury.balance)} y no alcanza para financiar el depósito de ${money(amount)}.`);
       treasury.balance -= amount;
-      recordTreasuryMovement('deposit_funded', amount, `Depósito de ${current.name}; ${money(netAmount)} abonados y ${money(OPERATION_FEE)} de comisión`, 'out');
+      recordTreasuryMovement('deposit_funded', amount, `Depósito de ${current.name}; ${money(netAmount)} abonados y ${money(DEPOSIT_FEE)} de comisión`, 'out');
       current.balance = roundMoney(current.balance + netAmount);
-      db.operationFeesCollected = roundMoney((Number(db.operationFeesCollected) || 0) + OPERATION_FEE);
+      db.operationFeesCollected = roundMoney((Number(db.operationFeesCollected) || 0) + DEPOSIT_FEE);
       recordMovement(activeAccountId, 'deposit', amount, `Depósito ingresado · Neto recibido ${money(netAmount)}`, 'in');
-      recordMovement(activeAccountId, 'operation_fee', OPERATION_FEE, 'Comisión por depósito', 'out');
-      finalizeOperation(`Depósito de ${money(amount)} realizado. Comisión: ${money(OPERATION_FEE)}. Neto abonado: ${money(netAmount)}.`);
+      recordMovement(activeAccountId, 'operation_fee', DEPOSIT_FEE, 'Comisión por depósito', 'out');
+      finalizeOperation(`Depósito de ${money(amount)} realizado. Comisión: ${money(DEPOSIT_FEE)}. Neto abonado: ${money(netAmount)}.`);
       return;
     }
 
@@ -63,7 +64,7 @@
       if (totalDebit > current.balance) return operationProblem(`Saldo insuficiente. Necesitas ${money(totalDebit)} para transferir ${money(amount)} y pagar la comisión de ${money(OPERATION_FEE)}.`);
       const destination = db.accounts[destinationId];
       if (destination.balance + amount > maxSavingsBalanceForAccount(destinationId)) {
-        return operationProblem(`La cuenta de destino no puede superar ${money(maxSavingsBalanceForAccount(destinationId))}. Solo puede recibir ${money(maxSavingsBalanceForAccount(destinationId) - destination.balance)} más.`);
+        return operationProblem(`La transferencia excede la precisión numérica segura que admite el simulador.`);
       }
       current.balance = roundMoney(current.balance - totalDebit);
       destination.balance = roundMoney(destination.balance + amount);

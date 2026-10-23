@@ -25,14 +25,16 @@
     });
   }
 
-  function recalculateUnifiedLoanSchedule(loan, remainingMonths = 60) {
+  function recalculateUnifiedLoanSchedule(loan, remainingMonths = 60, scheduleAt = new Date().toISOString()) {
     const months = Math.max(1, Math.round(Number(remainingMonths) || 60));
-    loan.monthlyRate = ILLUSTRATIVE_MONTHLY_RATE;
-    loan.monthlyPayment = roundMoney(calculateCreditEstimate(loan.outstandingPrincipal, months).monthlyPayment);
+    loan.monthlyRate = Number.isFinite(loan.monthlyRate) ? loan.monthlyRate : currentMonthlyInterestRate();
+    loan.monthlyPayment = roundMoney(calculateCreditEstimate(loan.outstandingPrincipal, months, loan.monthlyRate).monthlyPayment);
     loan.termMonths = Math.max(0, Number(loan.installmentsPaid) || 0) + months;
+    loan.automaticPaymentIntervalSeconds = automaticPaymentIntervalForTerm(loan.termMonths);
+    loan.nextAutomaticPaymentAt = new Date(Date.parse(scheduleAt) + loan.automaticPaymentIntervalSeconds * 1000).toISOString();
     if (!loan.nextDueDate) loan.nextDueDate = addMonthsToDate(localDateKey(), 1);
     const linkedApplicationIds = new Set([...(Array.isArray(loan.applicationIds) ? loan.applicationIds : []), ...(loan.applicationId ? [loan.applicationId] : [])]);
-    const estimate = calculateCreditEstimate(loan.outstandingPrincipal, months);
+    const estimate = calculateCreditEstimate(loan.outstandingPrincipal, months, loan.monthlyRate);
     (db.creditApplications || []).forEach((application) => {
       if (!linkedApplicationIds.has(application.id) || ['En revisión', 'Rechazado'].includes(application.status)) return;
       application.monthlyPayment = loan.monthlyPayment;

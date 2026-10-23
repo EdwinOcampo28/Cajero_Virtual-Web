@@ -26,6 +26,7 @@
 
   function submitCreditApplication(event) {
     event.preventDefault();
+    if (typeof catchUpAutomaticEventsBeforeOperation === 'function' && !catchUpAutomaticEventsBeforeOperation()) return;
     const current = account();
     if (!current) return;
     creditError.hidden = true;
@@ -69,7 +70,8 @@
       creditTermSelect.focus();
       return;
     }
-    const estimate = calculateCreditEstimate(amount, termMonths);
+    const monthlyRate = currentMonthlyInterestRate();
+    const estimate = calculateCreditEstimate(amount, termMonths, monthlyRate);
     const application = {
       id: createId(),
       accountId: activeAccountId,
@@ -78,7 +80,7 @@
       amount,
       monthlyIncome,
       termMonths,
-      monthlyRate: ILLUSTRATIVE_MONTHLY_RATE,
+      monthlyRate,
       employment: creditEmploymentSelect.value,
       purpose: creditPurposeSelect.value,
       monthlyPayment: estimate.monthlyPayment,
@@ -89,14 +91,14 @@
     };
     if (!Array.isArray(db.creditApplications)) db.creditApplications = [];
     db.creditApplications.unshift(application);
-    recordAuditEvent('Solicitud de crédito enviada', { category: 'creditos', accountId: current.id, amount, source: 'Cliente', referenceId: application.id, description: application.purpose, details: { termMonths, monthlyRate: ILLUSTRATIVE_MONTHLY_RATE } });
+    recordAuditEvent('Solicitud de crédito enviada', { category: 'creditos', accountId: current.id, amount, source: 'Cliente', referenceId: application.id, description: application.purpose, details: { termMonths, monthlyRate } });
     if (!saveDatabase()) { renderApp(); return; }
     renderCreditApplications();
     if (reviewerSession) renderReviewerDashboard();
     creditError.hidden = true;
     creditForm.reset();
     creditAmountInput.value = '5000000';
-    creditTermSelect.value = '60';
+    creditTermSelect.value = '6';
     updateCreditSimulation();
     renderCreditApplications();
     renderCreditApplicationFormState(current);

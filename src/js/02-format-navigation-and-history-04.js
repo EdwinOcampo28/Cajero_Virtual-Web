@@ -5,6 +5,7 @@
     let icon = '＋';
     if (type === 'withdraw') icon = '↗';
     if (type === 'withdrawal_received') icon = '↙';
+    if (type === 'deposit_funded') icon = '↗';
     if (type === 'transfer') icon = '⇄';
     if (type === 'credit_disbursement' || type === 'card_disbursement') icon = '↙';
     if (type === 'loan_payment' || type === 'card_payment') icon = '↘';

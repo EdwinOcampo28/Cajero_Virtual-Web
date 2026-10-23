@@ -35,7 +35,7 @@
       format: BACKUP_FORMAT,
       schemaVersion: BACKUP_SCHEMA_VERSION,
       app: 'Cajero Virtual',
-      appVersion: 'v40.0',
+      appVersion: 'v45.0',
       exportedAt: new Date().toISOString(),
       integrity,
       database
@@ -51,6 +51,8 @@
     if (!Array.isArray(data.accounts) || ![MAX_ACCOUNT_ID + 1, MAX_ACCOUNT_ID + 2].includes(data.accounts.length) || data.accounts[0] !== null || !data.accounts[1]) return 'La copia no contiene las tres cuentas de ahorro esperadas.';
     if (!Array.isArray(data.creditApplications) || !Array.isArray(data.loans) || !Array.isArray(data.limitIncreaseRequests)) return 'Faltan listas de créditos, préstamos o solicitudes.';
     if (!normalizeWithdrawalTreasury(data)) return 'El saldo o el historial de la Tesorería no son válidos.';
+    if (!normalizeSimulationSettings(data)) return 'La configuración de la simulación no es válida.';
+    if (!normalizeSimulationAutomation(data)) return 'La programación automática de la simulación no es válida.';
     for (const key of ['creditApplications', 'loans', 'limitIncreaseRequests']) data[key] = data[key].filter((item) => !(Number.isInteger(item?.accountId) && item.accountId === MAX_ACCOUNT_ID + 1));
     if (!backupMoneyIsValid(data.withdrawalTreasury.balance) || !Number.isSafeInteger(data.withdrawalTreasury.elapsedSeconds) || data.withdrawalTreasury.elapsedSeconds < 0 || !backupMoneyIsValid(data.withdrawalTreasury.timerIncomeTotal) || !Array.isArray(data.withdrawalTreasury.history)) return 'El saldo o el historial de la Tesorería no son válidos.';
     if (!backupMoneyIsValid(Number(data.advanceFeesCollected ?? 0)) || !backupMoneyIsValid(Number(data.operationFeesCollected ?? 0))) return 'Los acumulados de comisiones no son válidos.';
@@ -60,7 +62,7 @@
     for (let id = 1; id <= MAX_ACCOUNT_ID; id += 1) {
       const saved = data.accounts[id];
       if (!saved || saved.id !== id || !backupMoneyIsValid(saved.balance, maxSavingsBalanceForAccount(id)) || !Array.isArray(saved.history)) {
-        return `La cuenta ${id} tiene un saldo inválido o supera el máximo de ahorros de ${money(maxSavingsBalanceForAccount(id))}.`;
+        return `La cuenta ${id} tiene un saldo fuera del rango numérico seguro del simulador.`;
       }
       if (saved.history.length > 10000 || saved.history.some((item) => !item || typeof item !== 'object' || (item.amount !== undefined && !backupMoneyIsValid(item.amount)))) return `El historial de la cuenta ${id} contiene movimientos no válidos.`;
       const card = saved.card;

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Regression checks for the independent treasury, legacy migration, timer, withdrawals, and transfers.
+// Regression checks for the independent treasury, migrations, timer, deposits, and withdrawals.
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
@@ -26,11 +26,12 @@ function makeStorageContext(stored) {
     MAX_CARD_FUNDS: 100000000,
     MAX_CARD_LIMIT: 500000000,
     MAX_AUDIT_EVENTS: 5000,
-    ILLUSTRATIVE_MONTHLY_RATE: 0.0213,
+    ILLUSTRATIVE_MONTHLY_RATE: 0.02,
     TREASURY_NAME: 'Tesorería de retiros',
     TREASURY_ACCOUNT_NUMBER: '6024 1937 0004',
     TREASURY_PIN: '3456',
-    TREASURY_TIMER_RATE: 5,
+    TREASURY_TIMER_RATE: 1000,
+    TREASURY_TIMER_INCOME_CAP: 300000000,
     STORAGE_KEY: 'test',
     localStorage: { getItem: () => stored },
     lastPersistedRaw: null,
@@ -86,8 +87,25 @@ const migratedV38Treasury = v38TreasuryContext.loadDatabase().withdrawalTreasury
 assert(migratedV38Treasury.balance === 123456 && migratedV38Treasury.timerIncomeTotal === 15, 'La migración v38 debe conservar el saldo y reconocer los ingresos históricos al ritmo anterior de $1 por segundo.');
 const lastV38Timestamp = Date.parse(migratedV38Treasury.lastAccruedAt);
 assert(v38TreasuryContext.accrueWithdrawalTreasury({ withdrawalTreasury: migratedV38Treasury }, lastV38Timestamp + 1000), 'La tesorería migrada debe aplicar la nueva tarifa al tiempo posterior a la actualización.');
-assert(migratedV38Treasury.balance === 123461 && migratedV38Treasury.timerIncomeTotal === 20 && migratedV38Treasury.history.length === 2, 'La nueva tasa debe sumar $5 y conservar intacto el asiento histórico de $1 por segundo.');
+assert(migratedV38Treasury.balance === 124456 && migratedV38Treasury.timerIncomeTotal === 1015 && migratedV38Treasury.history.length === 2, 'La nueva tasa debe sumar $100 y conservar intacto el asiento histórico de $1 por segundo.');
 assert(migratedV38Treasury.history[1].id === 'old-timer' && migratedV38Treasury.history[1].amount === 15, 'La nueva acumulación no debe reemplazar el asiento histórico anterior.');
+
+const v40TreasuryDatabase = {
+  ...clientsOnlyDatabase,
+  withdrawalTreasury: { name: 'Tesorería de retiros', accountNumber: '6024 1937 0004', pin: '3456', balance: 5000, history: [{ id: 'v40-timer', type: 'timer_income', amount: 5000, elapsedSeconds: 1000, ratePesosPerSecond: 5, direction: 'in', description: 'Temporizador a $5 por segundo' }], elapsedSeconds: 1000, timerIncomeTotal: 5000, lastAccruedAt: new Date(Date.now() + 60000).toISOString() }
+};
+const v40TreasuryContext = makeStorageContext(JSON.stringify(v40TreasuryDatabase));
+const migratedV40Treasury = v40TreasuryContext.loadDatabase().withdrawalTreasury;
+const lastV40Timestamp = Date.parse(migratedV40Treasury.lastAccruedAt);
+assert(migratedV40Treasury.balance === 5000 && migratedV40Treasury.timerIncomeTotal === 5000, 'La migración v40 debe conservar el saldo e ingreso acumulado al ritmo de $5.');
+assert(v40TreasuryContext.accrueWithdrawalTreasury({ withdrawalTreasury: migratedV40Treasury }, lastV40Timestamp + 2000), 'La tesorería v40 debe adoptar la tarifa nueva al pasar dos segundos.');
+assert(migratedV40Treasury.balance === 7000 && migratedV40Treasury.timerIncomeTotal === 7000 && migratedV40Treasury.history[0].amount === 2000 && migratedV40Treasury.history[0].ratePesosPerSecond === 1000, 'La tarifa nueva debe sumar $200 y mantener el asiento v40 de $5 por segundo.');
+assert(migratedV40Treasury.history[1].id === 'v40-timer' && migratedV40Treasury.history[1].amount === 5000, 'El cambio de tarifa no debe alterar los movimientos históricos de Tesorería.');
+const oldTimerTimestamp = new Date(Date.now() - 120000).toISOString();
+const preSettingsDb = { ...clientsOnlyDatabase, withdrawalTreasury: { balance: 8000, timerIncomeTotal: 5000, elapsedSeconds: 50, history: [], lastAccruedAt: oldTimerTimestamp } };
+const preSettingsContext = makeStorageContext(JSON.stringify(preSettingsDb));
+const migratedPreSettings = preSettingsContext.loadDatabase().withdrawalTreasury;
+assert(migratedPreSettings.balance === 8000 && migratedPreSettings.timerIncomeTotal === 5000 && Date.parse(migratedPreSettings.lastAccruedAt) >= Date.now() - 1000, 'La tarifa nueva debe empezar al migrar sin recalcular tiempo inactivo a $1.000 por segundo.');
 
 const backupContext = {
   ...legacyContext,
@@ -105,9 +123,9 @@ assert(oldBackup.accounts.length === 4 && oldBackup.withdrawalTreasury.balance =
 const timerDb = { withdrawalTreasury: { balance: 100, history: [], elapsedSeconds: 0, timerIncomeTotal: 0, lastAccruedAt: '2026-10-22T12:00:00.000Z' }, auditLog: [] };
 const start = Date.parse(timerDb.withdrawalTreasury.lastAccruedAt);
 assert(legacyContext.accrueWithdrawalTreasury(timerDb, start + 5000), 'El cronómetro debe acumular tiempo transcurrido.');
-assert(timerDb.withdrawalTreasury.balance === 125 && timerDb.withdrawalTreasury.elapsedSeconds === 5 && timerDb.withdrawalTreasury.timerIncomeTotal === 25, 'El saldo y el ingreso del cronómetro deben subir $5 por segundo.');
+assert(timerDb.withdrawalTreasury.balance === 5100 && timerDb.withdrawalTreasury.elapsedSeconds === 5 && timerDb.withdrawalTreasury.timerIncomeTotal === 5000, 'El saldo y el ingreso del cronómetro deben subir $1.000 por segundo.');
 legacyContext.accrueWithdrawalTreasury(timerDb, start + 6000);
-assert(timerDb.withdrawalTreasury.balance === 130 && timerDb.withdrawalTreasury.history.length === 1 && timerDb.withdrawalTreasury.history[0].amount === 30 && timerDb.withdrawalTreasury.history[0].ratePesosPerSecond === 5, 'El ingreso del temporizador debe acumularse a la nueva tasa en un solo movimiento.');
+assert(timerDb.withdrawalTreasury.balance === 6100 && timerDb.withdrawalTreasury.history.length === 1 && timerDb.withdrawalTreasury.history[0].amount === 6000 && timerDb.withdrawalTreasury.history[0].ratePesosPerSecond === 1000, 'El ingreso del temporizador debe acumularse a la nueva tasa en un solo movimiento.');
 assert(timerDb.auditLog.length === 1 && timerDb.auditLog[0].category === 'tesoreria', 'La acumulación del cronómetro debe registrarse en auditoría.');
 
 const accounts = [null, makeClient(1, 200000), makeClient(2, 200000), makeClient(3, 200000)];
@@ -181,35 +199,41 @@ loginState.loginTreasury({ preventDefault() {} });
 assert(loginState.treasurySession && loginState.treasuryView.hidden === false && loginState.treasuryLoginView.hidden, 'Al entrar, la pantalla independiente de Tesorería debe quedar visible.');
 assert(loginState.persisted.role === 'treasury' && loginState.rendered && loginState.timerStarted, 'El acceso debe restaurar el rol, renderizar el saldo e iniciar el cronómetro.');
 
-const transferStart = treasurySource.indexOf('  function submitTreasuryTransfer(event) {');
-const transferEnd = treasurySource.indexOf('  treasuryAccessButton.addEventListener', transferStart);
-assert(transferStart >= 0 && transferEnd > transferStart, 'Debe existir el flujo de transferencia de Tesorería.');
-const elements = {
-  '#treasuryAmount': { value: '75000', setAttribute() {}, focus() {} },
-  '#treasuryDestination': { value: '2' },
-  '#treasuryTransferError': { hidden: true, textContent: '' }
+assert(!treasurySource.includes('submitTreasuryTransfer') && !treasurySource.includes('treasuryTransferForm'), 'La aplicación no debe incluir transferencia desde Tesorería.');
+const treasuryHtml = fs.readFileSync(path.join(__dirname, '..', 'src/html', treasuryHtmlFile), 'utf8');
+assert(!treasuryHtml.includes('treasuryTransferForm') && !treasuryHtml.includes('treasuryDestination'), 'El panel de Tesorería no debe ofrecer controles de transferencia.');
+const historyStart = treasurySource.indexOf('  function renderTreasuryHistory(history) {');
+const historyEnd = treasurySource.indexOf('  function startTreasuryTimer()', historyStart);
+assert(historyStart >= 0 && historyEnd > historyStart, 'Tesorería debe contar con un renderizador de historial.');
+const historyList = { items: [], replaceChildren(fragment) { this.items = [...fragment.children]; } };
+const historyEmptyState = { hidden: true };
+const historyContext = {
+  document: { createDocumentFragment() { return { children: [], append(item) { this.children.push(item); } }; } },
+  $(selector) { return selector === '#treasuryHistory' ? historyList : historyEmptyState; },
+  createMovementRow(item) { return { id: item.id, type: item.type }; }
 };
-const transferMessages = [];
-const transferContext = {
-  treasurySession: true, TREASURY_NAME: 'Tesorería de retiros', db, MAX_ACCOUNT_BALANCE: 200000000, MAX_ACCOUNT_ID: 3,
-  captureDatabaseRevision: () => ({}), isDatabaseRevisionCurrent: () => true, accrueWithdrawalTreasury() {},
-  roundMoney: (value) => Math.round(Number(value) || 0),
-  $(selector) { return elements[selector]; },
-  recordTreasuryMovement(type, amount, description, direction) { db.withdrawalTreasury.history.unshift({ id: createId(), type, amount, description, direction }); },
-  recordMovement(id, type, amount, description, direction) { db.accounts[id].history.unshift({ id: createId(), type, amount, description, direction }); },
-  saveDatabase: () => true, renderTreasuryView() {}, showToast(message) { transferMessages.push(message); },
-  money: (value) => '$ ' + Math.round(Number(value) || 0).toLocaleString('en-US'),
-  abortStaleFinancialOperation() { throw new Error('La transferencia no debía estar desactualizada.'); }
-};
-vm.createContext(transferContext);
-vm.runInContext(treasurySource.slice(transferStart, transferEnd), transferContext);
-transferContext.submitTreasuryTransfer({ preventDefault() {} });
-assert(db.withdrawalTreasury.balance === 75000 && accounts[2].balance === 205000, 'La transferencia debe reducir Tesorería y abonar la cuenta destino.');
-assert(db.withdrawalTreasury.history[0].type === 'treasury_transfer' && accounts[2].history[0].description.includes('Tesorería'), 'La transferencia debe quedar anotada en los dos historiales.');
-assert(transferMessages[0].includes('Pedro Ocampo') && db.operationFeesCollected === 80000, 'La transferencia interna no debe cobrar comisión.');
+vm.createContext(historyContext);
+vm.runInContext(treasurySource.slice(historyStart, historyEnd), historyContext);
+historyContext.renderTreasuryHistory([
+  { id: 'withdrawal-1', type: 'withdrawal_received' },
+  { id: 'timer-1', type: 'timer_income' },
+  { id: 'deposit-1', type: 'deposit_funded' },
+  { id: 'old-transfer', type: 'treasury_transfer' }
+]);
+assert(historyList.items.map((item) => item.type).join(',') === 'withdrawal_received,deposit_funded' && historyEmptyState.hidden, 'El historial debe mostrar solo depósitos y retiros, en orden reciente, sin ingresos de cronómetro ni transferencias.');
+historyContext.renderTreasuryHistory([]);
+assert(historyList.items.length === 0 && historyEmptyState.hidden === false, 'El historial vacío debe mostrar su mensaje de estado vacío.');
 
 console.log('PASS: las tres cuentas cliente y Tesorería quedan en estructuras separadas.');
 console.log('PASS: saldos e historial de la cuenta receptora v37 se migran; sus créditos no quedan activos.');
-console.log('PASS: Tesorería v38 migra su histórico sin recalcular el saldo y el cronómetro suma $5 por segundo.');
+const cappedTreasury = { balance: 299999500, history: [], elapsedSeconds: 0, timerIncomeTotal: 299999500, lastAccruedAt: '2026-10-22T12:00:00.000Z' };
+const capDatabase = { withdrawalTreasury: cappedTreasury, simulationSettings: { monthlyInterestRate: 0.02, treasuryTimerRate: 1000, treasuryTimerIncomeCap: 300000000 }, auditLog: [] };
+const capStart = Date.parse(cappedTreasury.lastAccruedAt);
+assert(legacyContext.accrueWithdrawalTreasury(capDatabase, capStart + 1000), 'El cronómetro debe completar el tope aunque el remanente sea menor que un segundo de acumulación.');
+assert(cappedTreasury.balance === 300000000 && cappedTreasury.timerIncomeTotal === 300000000, 'El cronómetro debe detenerse exactamente en el tope acumulado de $300 millones.');
+const cappedAt = Date.parse(cappedTreasury.lastAccruedAt);
+assert(!legacyContext.accrueWithdrawalTreasury(capDatabase, cappedAt + 60000) && cappedTreasury.balance === 300000000, 'Al alcanzar el tope, el cronómetro no debe generar más saldo aunque pase tiempo.');
+
+console.log('PASS: las migraciones conservan el histórico y el cronómetro configurable de $1.000 respeta el tope de $300 millones.');
 console.log('PASS: los retiros llegan a Tesorería y los depósitos se financian desde su saldo, con rechazo si no alcanza.');
-console.log('PASS: Tesorería abre como vista raíz y transfiere a clientes sin comisión ni productos de crédito.');
+console.log('PASS: Tesorería abre como vista raíz, no permite transferencias y muestra depósitos y retiros automáticos.');

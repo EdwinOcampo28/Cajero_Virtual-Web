@@ -56,42 +56,34 @@
     return [hours, minutes, remainder].map((part) => String(part).padStart(2, '0')).join(':');
   }
 
-  function renderTreasuryView(persistCatchup = false) {
+  function renderTreasuryView(refreshHistory = false) {
     if (!treasurySession || !db?.withdrawalTreasury) return;
     const treasury = db.withdrawalTreasury;
-    const caughtUp = accrueWithdrawalTreasury(db);
     $('#treasuryBalance').textContent = money(treasury.balance);
     $('#treasuryElapsed').textContent = formatTreasuryElapsed(treasury.elapsedSeconds);
     $('#treasuryTimerTotal').textContent = money(treasury.timerIncomeTotal ?? treasury.elapsedSeconds);
-    $('#treasuryTransferHint').textContent = `Saldo actual de tesorería: ${money(treasury.balance)}. Transferencia sin comisión, limitada por tu saldo y el máximo de ahorros de la cuenta destino.`;
-    const destination = $('#treasuryDestination');
-    if (destination) {
-      const selected = destination.value;
-      destination.replaceChildren();
-      for (let id = 1; id <= MAX_ACCOUNT_ID; id += 1) {
-        const option = document.createElement('option');
-        option.value = String(id);
-        option.textContent = `${db.accounts[id].name} · •••• ${db.accounts[id].accountNumber.slice(-4)}`;
-        destination.append(option);
-      }
-      if ([...destination.options].some((option) => option.value === selected)) destination.value = selected;
-    }
-    if (persistCatchup && (caughtUp || JSON.stringify(db) !== lastPersistedRaw)) {
-      if (readCurrentStorageRaw() === lastPersistedRaw) saveDatabase();
-    }
+    const settings = simulationSettingsFor(db);
+    $('#treasuryTimerRateText').textContent = `${money(settings.treasuryTimerRate)} por segundo`;
+
+    $('#treasuryTimerUnlimitedHint').textContent = 'Acumulación sin tope';
+
+    if (refreshHistory) renderTreasuryHistory(treasury.history);
+  }
+
+  function renderTreasuryHistory(history) {
+    const container = $('#treasuryHistory');
+    const emptyState = $('#treasuryHistoryEmpty');
+    const visibleMovements = (Array.isArray(history) ? history : []).filter((item) => item && ['deposit_funded', 'withdrawal_received', 'equal_distribution'].includes(item.type));
+    const rows = document.createDocumentFragment();
+    visibleMovements.forEach((item) => rows.append(createMovementRow(item)));
+    container.replaceChildren(rows);
+    emptyState.hidden = visibleMovements.length > 0;
   }
 
   function startTreasuryTimer() {
     if (treasuryTimerId !== null) return;
-    treasuryLastSavedAt = Date.now();
     treasuryTimerId = window.setInterval(() => {
       if (!treasurySession || treasuryView.hidden) return;
-      accrueWithdrawalTreasury(db);
-      const now = Date.now();
-      if (now - treasuryLastSavedAt >= 15000) {
-        if (saveDatabase()) treasuryLastSavedAt = now;
-        else { renderTreasuryView(true); return; }
-      }
       renderTreasuryView();
     }, 1000);
   }
@@ -101,44 +93,6 @@
     treasuryTimerId = null;
   }
 
-  function treasuryTransferProblem(message) {
-    const error = $('#treasuryTransferError');
-    error.textContent = message;
-    error.hidden = false;
-    $('#treasuryAmount').setAttribute('aria-invalid', 'true');
-    $('#treasuryAmount').focus();
-  }
-
-  function submitTreasuryTransfer(event) {
-    event.preventDefault();
-    if (!treasurySession || !db?.withdrawalTreasury) return;
-    const transactionRevision = captureDatabaseRevision();
-    if (!isDatabaseRevisionCurrent(transactionRevision)) {
-      abortStaleFinancialOperation();
-      return;
-    }
-    const amount = Number($('#treasuryAmount').value);
-    const destinationId = Number($('#treasuryDestination').value);
-    const error = $('#treasuryTransferError');
-    error.hidden = true;
-    $('#treasuryAmount').setAttribute('aria-invalid', 'false');
-    if (!Number.isSafeInteger(amount) || amount <= 0) return treasuryTransferProblem('Ingresa un monto entero mayor que cero.');
-    if (!Number.isInteger(destinationId) || destinationId < 1 || destinationId > MAX_ACCOUNT_ID || !db.accounts[destinationId]) return treasuryTransferProblem('Selecciona una de las tres cuentas de ahorro.');
-    accrueWithdrawalTreasury(db);
-    const treasury = db.withdrawalTreasury;
-    if (amount > treasury.balance) return treasuryTransferProblem(`Saldo insuficiente. Tesorería dispone de ${money(treasury.balance)}.`);
-    const destination = db.accounts[destinationId];
-    if (destination.balance + amount > MAX_ACCOUNT_BALANCE) return treasuryTransferProblem(`La cuenta de ${destination.name} solo puede recibir ${money(MAX_ACCOUNT_BALANCE - destination.balance)} más por su límite de ahorro.`);
-    treasury.balance -= amount;
-    destination.balance = roundMoney(destination.balance + amount);
-    recordTreasuryMovement('treasury_transfer', amount, `Transferencia enviada a ${destination.name}`, 'out');
-    recordMovement(destinationId, 'transfer', amount, `Transferencia recibida de ${TREASURY_NAME}`, 'in');
-    if (!saveDatabase()) return;
-    $('#treasuryAmount').value = '';
-    renderTreasuryView();
-    showToast(`${money(amount)} transferidos a ${destination.name}.`);
-  }
-
   treasuryAccessButton.addEventListener('click', enterTreasuryLogin);
   $('#backFromTreasuryLogin').addEventListener('click', returnFromTreasuryLogin);
   treasuryLoginForm.addEventListener('submit', loginTreasury);
@@ -146,11 +100,6 @@
     treasuryPinInput.value = treasuryPinInput.value.replace(/\D/g, '').slice(0, 4);
     treasuryLoginError.hidden = true;
     treasuryPinInput.setAttribute('aria-invalid', 'false');
-  });
-  $('#treasuryTransferForm').addEventListener('submit', submitTreasuryTransfer);
-  $('#treasuryAmount').addEventListener('input', () => {
-    $('#treasuryTransferError').hidden = true;
-    $('#treasuryAmount').setAttribute('aria-invalid', 'false');
   });
   $('#treasuryLogoutButton').addEventListener('click', logoutTreasury);
 
@@ -164,7 +113,6 @@
     loginView.hidden = false;
     treasuryPinInput.value = '';
     treasuryLoginError.hidden = true;
-    $('#treasuryAmount').value = '';
     accountSelect.focus();
   }
 
