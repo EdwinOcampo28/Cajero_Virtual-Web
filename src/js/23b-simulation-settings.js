@@ -67,6 +67,8 @@
     const settings = simulationSettingsFor(db);
     $('#simulationMonthlyRateInput').value = String(settings.monthlyInterestRate * 100);
     $('#simulationTreasuryRateInput').value = String(settings.treasuryTimerRate);
+    $('#simulationLimitIncreaseAmountInput').value = String(settings.limitIncreaseAmount);
+    $('#simulationAnalystCapitalInput').value = String(settings.analystCapital);
 
     SIMULATION_INTERVAL_CONTROLS.forEach((control) => renderSimulationIntervalControl(control, settings[control.key]));
     $('#simulationCreditMinimumInput').value = String(settings.automaticCreditMinimumAmount);
@@ -79,7 +81,8 @@
     $('#simulationLimitIncreaseApprovalSelect').value = String(settings.automaticLimitIncreaseApprovalEnabled);
   }
 
-  function markSimulationSettingsDirty() {
+  function markSimulationSettingsDirty(event) {
+    if (event?.target?.id === 'simulationAnalystCapitalInput') return;
     const form = $('#simulationSettingsForm');
     if (form) form.dataset.dirty = 'true';
   }
@@ -100,6 +103,7 @@
       monthlyInterestRate: Number($('#simulationMonthlyRateInput').value) / 100,
       treasuryTimerIncomeCap: Number.MAX_SAFE_INTEGER,
       treasuryTimerRate: Number($('#simulationTreasuryRateInput').value),
+      limitIncreaseAmount: Number($('#simulationLimitIncreaseAmountInput').value),
       automaticLimitIncreaseApprovalEnabled: $('#simulationLimitIncreaseApprovalSelect').value === 'true',
 
       automaticCreditMinimumAmount: Number($('#simulationCreditMinimumInput').value),
@@ -123,7 +127,10 @@
       fail('Selecciona si los aumentos de cupo se aprueban automáticamente o quedan para revisión.', '#simulationLimitIncreaseApprovalSelect');
       return;
     }
-    if (!Number.isSafeInteger(values.treasuryTimerRate) || values.treasuryTimerRate < 1) {
+    if (!Number.isSafeInteger(values.limitIncreaseAmount) || values.limitIncreaseAmount < MIN_CREDIT_AMOUNT || values.limitIncreaseAmount % MIN_CREDIT_AMOUNT !== 0) {
+      fail('El saldo de cada aumento debe ser un importe entero de al menos $100.000, en incrementos de $100.000.', '#simulationLimitIncreaseAmountInput');
+      return;
+    }    if (!Number.isSafeInteger(values.treasuryTimerRate) || values.treasuryTimerRate < 1) {
       fail('El cronómetro debe sumar al menos $1 entero por segundo.', '#simulationTreasuryRateInput');
       return;
     }
@@ -218,6 +225,34 @@
     showToast('Configuración de simulación actualizada.');
   }
 
+  function saveAnalystCapital() {
+    if (!reviewerSession || !db) return;
+    const input = $('#simulationAnalystCapitalInput');
+    const status = $('#simulationAnalystCapitalStatus');
+    const amount = Number(input?.value);
+    if (!Number.isSafeInteger(amount) || amount < 0) {
+      status.textContent = 'Ingresa un saldo entero no negativo dentro del rango seguro del navegador.';
+      status.classList.add('error-message');
+      input?.focus();
+      return;
+    }
+    if (typeof catchUpAutomaticEventsBeforeOperation === 'function' && !catchUpAutomaticEventsBeforeOperation()) return;
+    const transactionRevision = captureDatabaseRevision();
+    if (!isDatabaseRevisionCurrent(transactionRevision)) { abortStaleFinancialOperation(); return; }
+    db.simulationSettings = { ...simulationSettingsFor(db), analystCapital: amount };
+    recordAuditEvent('Capital base del analista actualizado', {
+      category: 'sistema', source: 'Analista', amount,
+      description: `Se configuró el capital base del analista en ${money(amount)}.`
+    });
+    if (!saveDatabase()) return;
+    status.classList.remove('error-message');
+    status.textContent = `Saldo base guardado: ${money(amount)}. El total también incluye intereses y comisiones cobradas.`;
+    renderSimulationSettingsPanel();
+    if (typeof renderReviewerDashboard === 'function') renderReviewerDashboard();
+    if (typeof renderFinancialAuditPanel === 'function') renderFinancialAuditPanel();
+    if (typeof renderMonthlyFinancialReport === 'function') renderMonthlyFinancialReport();
+    showToast('Saldo del analista actualizado.');
+  }
   SIMULATION_INTERVAL_CONTROLS.forEach((control) => {
     $(control.input)?.addEventListener('input', markSimulationSettingsDirty);
     $(control.unit)?.addEventListener('change', () => {
@@ -229,3 +264,4 @@
   $('#simulationSettingsForm')?.addEventListener('change', markSimulationSettingsDirty);
   $('#simulationAdvanceModeSelect')?.addEventListener('change', updateSimulationAdvanceAmountFields);
   $('#simulationSettingsForm')?.addEventListener('submit', saveSimulationSettings);
+  $('#saveAnalystCapitalButton')?.addEventListener('click', saveAnalystCapital);

@@ -12,7 +12,7 @@
 
     auditAddCheck(checks, 'Estructura principal', accounts.length === MAX_ACCOUNT_ID + 1 && accounts[0] === null, 'Deben existir exactamente las tres cuentas de ahorro de prueba.');
     const settings = db?.simulationSettings;
-    const settingsValid = Boolean(settings && Number.isFinite(settings.monthlyInterestRate) && settings.monthlyInterestRate >= 0 && settings.monthlyInterestRate <= 1 && Number.isSafeInteger(settings.treasuryTimerRate) && settings.treasuryTimerRate >= 1 && Number.isSafeInteger(settings.treasuryTimerIncomeCap) && settings.treasuryTimerIncomeCap >= 0);
+    const settingsValid = Boolean(settings && Number.isFinite(settings.monthlyInterestRate) && settings.monthlyInterestRate >= 0 && settings.monthlyInterestRate <= 1 && Number.isSafeInteger(settings.treasuryTimerRate) && settings.treasuryTimerRate >= 1 && Number.isSafeInteger(settings.treasuryTimerIncomeCap) && settings.treasuryTimerIncomeCap >= 0 && Number.isSafeInteger(settings.analystCapital) && settings.analystCapital >= 0 && Number.isSafeInteger(settings.limitIncreaseAmount) && settings.limitIncreaseAmount >= MIN_CREDIT_AMOUNT && settings.limitIncreaseAmount % MIN_CREDIT_AMOUNT === 0);
     auditAddCheck(checks, 'Configuración de simulación', settingsValid, settingsValid ? `Interés mensual ${formatMonthlyInterestRate(settings.monthlyInterestRate)}; cronómetro ${money(settings.treasuryTimerRate)} por segundo, sin tope de acumulación.` : 'La tasa o el ritmo de la simulación no son válidos.');
     const treasury = db?.withdrawalTreasury;
     const treasuryValid = Boolean(treasury && Number.isSafeInteger(treasury.balance) && treasury.balance >= 0 && Number.isSafeInteger(treasury.elapsedSeconds) && treasury.elapsedSeconds >= 0 && Number.isSafeInteger(treasury.timerIncomeTotal) && treasury.timerIncomeTotal >= 0 && Array.isArray(treasury.history) && !('card' in treasury));
@@ -110,13 +110,14 @@
     auditAddCheck(checks, 'Conciliación de comisiones por avance', Math.abs(advanceFeesInHistory - advanceFeesStored) === 0,
       `Contador: ${money(advanceFeesStored)}; movimientos: ${money(advanceFeesInHistory)}.`, 'warning');
 
-    const interestFromPayments = roundMoney(loans.reduce((sum, loan) => sum + (Array.isArray(loan.payments) ? loan.payments.reduce((paid, payment) => paid + Math.max(0, Number(payment.interest) || 0), 0) : 0), 0));
+    const archivedFinancial = db?.archivedFinancialSummary || {};
+    const interestFromPayments = roundMoney(Math.max(0, Number(archivedFinancial.interestEarned) || 0) + loans.reduce((sum, loan) => sum + (Array.isArray(loan.payments) ? loan.payments.reduce((paid, payment) => paid + Math.max(0, Number(payment.interest) || 0), 0) : 0), 0));
     const analystInterest = totalInterestEarned();
     auditAddCheck(checks, 'Conciliación de intereses ganados', Math.abs(interestFromPayments - analystInterest) === 0,
       `Pagos registrados: ${money(interestFromPayments)}; tarjeta de intereses ganados: ${money(analystInterest)}.`, 'error');
 
-    const linkedLoanApplicationAmounts = roundMoney(loans.reduce((sum, loan) => sum + Math.max(0, Number(loan.originalDisbursedTotal ?? (loan.source === 'Avance de capital recuperado' ? 0 : loan.principalOriginal)) || 0), 0));
-    const paidApplicationsAmount = roundMoney(applications.reduce((sum, application) => {
+    const linkedLoanApplicationAmounts = roundMoney(Math.max(0, Number(archivedFinancial.loanOriginalDisbursements) || 0) + loans.reduce((sum, loan) => sum + Math.max(0, Number(loan.originalDisbursedTotal ?? (loan.source === 'Avance de capital recuperado' ? 0 : loan.principalOriginal)) || 0), 0));
+    const paidApplicationsAmount = roundMoney(Math.max(0, Number(archivedFinancial.applicationActivatedDisbursements) || 0) + applications.reduce((sum, application) => {
       const activated = Number.isFinite(application.activatedAmount)
         ? Math.max(0, Number(application.activatedAmount))
         : (['Desembolsado', 'Pagado'].includes(application.status) ? Math.max(0, Number(application.amount) || 0) : 0);
@@ -179,8 +180,18 @@
 
   function captureFinancialStateSummary() {
     const accounts = Array.isArray(db?.accounts) ? db.accounts.slice(1) : [];
-    const loans = Array.isArray(db?.loans) ? db.loans : [];
-    const payments = loans.flatMap((loan) => Array.isArray(loan.payments) ? loan.payments : []);
+    const liveLoans = Array.isArray(db?.loans) ? db.loans : [];
+    const archivedFinancial = db?.archivedFinancialSummary || {};
+    const archivedLoans = (Array.isArray(archivedFinancial.monthlyPayments) ? archivedFinancial.monthlyPayments : []).map((row) => ({
+      id: `archived-${row.accountId}-${row.month}`, accountId: row.accountId, status: 'Archivado', outstandingPrincipal: 0,
+      payments: [{ amount: row.amount, principal: row.principal, interest: row.interest, count: row.count, date: `${row.month}-15T12:00:00` }]
+    }));
+    const archivedApplications = (Array.isArray(archivedFinancial.monthlyDisbursements) ? archivedFinancial.monthlyDisbursements : []).map((row) => ({
+      id: `archived-disbursement-${row.accountId}-${row.month}`, accountId: row.accountId, amount: row.amount,
+      disbursedAt: `${row.month}-15T12:00:00`, status: 'Desembolsado', archivedCount: row.count
+    }));
+    const loans = [...liveLoans, ...archivedLoans];
+    const payments = liveLoans.flatMap((loan) => Array.isArray(loan.payments) ? loan.payments : []);
     const histories = accounts.flatMap((item) => (item?.history || []).map((movement) => ({ ...movement, accountId: item.id, accountName: item.name })));
     const treasuryHistory = Array.isArray(db?.withdrawalTreasury?.history) ? db.withdrawalTreasury.history.map((movement) => ({ ...movement, accountId: null, accountName: TREASURY_NAME })) : [];
     histories.push(...treasuryHistory);
@@ -188,7 +199,7 @@
       savingsBalance: roundMoney(accounts.reduce((sum, item) => sum + (Number(item.balance) || 0), 0)),
       originalDisbursements: roundMoney(accounts.reduce((sum, account) => sum + totalDisbursedForAccount(account.id), 0)),
       outstandingPrincipal: outstandingLoanPrincipalAcrossSystem(),
-      principalRecovered: roundMoney(payments.reduce((sum, payment) => sum + Math.max(0, Number(payment.principal) || 0), 0)),
+      principalRecovered: roundMoney(Math.max(0, Number(db?.archivedFinancialSummary?.principalRecovered) || 0) + payments.reduce((sum, payment) => sum + Math.max(0, Number(payment.principal) || 0), 0)),
       interestEarned: totalInterestEarned(),
       advanceFees: totalAdvanceFeesEarned(),
       operationFees: totalOperationFeesEarned(),
@@ -197,6 +208,6 @@
       pendingApplications: (db.creditApplications || []).filter((application) => (application.status || 'En revisión') === 'En revisión').length,
       histories,
       loans,
-      applications: Array.isArray(db.creditApplications) ? db.creditApplications : []
+      applications: [...(Array.isArray(db.creditApplications) ? db.creditApplications : []), ...archivedApplications]
     };
   }

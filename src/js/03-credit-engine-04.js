@@ -1,5 +1,5 @@
   function totalAnalystBalance() {
-    return roundMoney(ANALYST_TOTAL_CAPITAL + totalInterestEarned() + totalAdvanceFeesEarned() + totalOperationFeesEarned());
+    return roundMoney(simulationSettingsFor(db).analystCapital + totalInterestEarned() + totalAdvanceFeesEarned() + totalOperationFeesEarned());
   }
 
   function availableAnalystCapital() {

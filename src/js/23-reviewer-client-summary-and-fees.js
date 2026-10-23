@@ -18,9 +18,15 @@
     const treasuryDistributionFees = operationFee(/reparto autom[aá]tico de tesorer[ií]a/i);
     const advanceFees = sumHistory((movement) => movement.type === 'card_advance_fee');
     const totalFees = roundMoney(depositFees + withdrawalFees + transferFees + treasuryDistributionFees + advanceFees);
-    const installmentPayments = sumPayments('amount');
-    const capitalPaid = sumPayments('principal');
-    const interestPaid = sumPayments('interest');
+    const archivedFinancial = db?.archivedFinancialSummary || {};
+    const sumArchivedByAccount = (key) => roundMoney([...accountIds].reduce((sum, id) => sum + Math.max(0, Number(archivedFinancial[key]?.[id]) || 0), 0));
+    const archivedPaymentsAmount = sumArchivedByAccount('paymentsAmountByAccount');
+    const archivedPrincipalPaid = sumArchivedByAccount('principalRecoveredByAccount');
+    const archivedInterestPaid = sumArchivedByAccount('interestEarnedByAccount');
+    const archivedPaymentCount = sumArchivedByAccount('paymentCountByAccount');
+    const installmentPayments = roundMoney(sumPayments('amount') + archivedPaymentsAmount);
+    const capitalPaid = roundMoney(sumPayments('principal') + archivedPrincipalPaid);
+    const interestPaid = roundMoney(sumPayments('interest') + archivedInterestPaid);
     const totalOriginalDisbursements = roundMoney(accounts.reduce((sum, item) => sum + totalDisbursedForAccount(Number(item.id)), 0));
     const currentDebt = roundMoney(loans.reduce((sum, loan) => sum + Math.max(0, Number(loan.outstandingPrincipal) || 0), 0));
     const availableCardFunds = roundMoney(accounts.reduce((sum, item) => sum + (typeof availableAdvancesForCard === 'function'
@@ -59,8 +65,8 @@
       advancesToSavings,
       pendingCreditApplications: (Array.isArray(db?.creditApplications) ? db.creditApplications : []).filter((item) => accountIds.has(Number(item.accountId)) && (item.status || 'En revisión') === 'En revisión').length,
       activeLoans: loans.filter((loan) => loan.status === 'Activo' && Number(loan.outstandingPrincipal) > 0).length,
-      movementCount: histories.length,
-      paymentCount: payments.length
+      movementCount: histories.reduce((sum, movement) => sum + Math.max(1, Number(movement.movementCount) || 1), 0),
+      paymentCount: payments.length + archivedPaymentCount
     };
   }
 
@@ -102,7 +108,7 @@
       ['Comisiones por depósitos', summary.depositFees, 'Costo acumulado de depósitos', 'is-fee-deposit'],
       ['Comisiones por retiros', summary.withdrawalFees, 'Costo acumulado de retiros', 'is-fee-withdraw'],
       ['Comisiones por transferencias', summary.transferFees, 'Costo acumulado de transferencias', 'is-fee-transfer'],
-      ['Comisiones por reparto de Tesorería', summary.treasuryDistributionFees, 'Cobro de $5.000 por cuenta en cada reparto', 'is-fee-transfer'],
+      ['Comisiones por reparto de Tesorería', summary.treasuryDistributionFees, 'Cobro de $20.000 por cuenta en cada reparto', 'is-fee-transfer'],
       ['Comisiones por avances', summary.advanceFees, 'Costo acumulado de avances', 'is-fee-advance'],
       ['Total de comisiones', summary.totalFees, 'Suma de todos los tipos de comisión', 'is-positive'],
       ['Saldo actual de ahorros', summary.currentSavings, 'Saldo disponible de las cuentas seleccionadas', 'is-balance'],

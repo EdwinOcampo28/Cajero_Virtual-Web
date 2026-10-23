@@ -172,7 +172,8 @@
 
   // Only interest actually received through completed payments counts as earnings.
   function totalInterestEarned() {
-    return roundMoney((db.loans || []).reduce((loanSum, loan) => {
+    const archivedInterest = Math.max(0, Number(db.archivedFinancialSummary?.interestEarned) || 0);
+    return roundMoney(archivedInterest + (db.loans || []).reduce((loanSum, loan) => {
       const paidInterest = (Array.isArray(loan.payments) ? loan.payments : []).reduce((sum, payment) => {
         return sum + Math.max(0, Number(payment.interest) || 0);
       }, 0);

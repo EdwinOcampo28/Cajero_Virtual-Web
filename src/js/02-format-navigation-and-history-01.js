@@ -37,7 +37,10 @@
       direction,
       date
     };
-    db.accounts[accountId].history.unshift(item);
+    const current = db.accounts[accountId];
+    current.history.unshift(item);
+    const compactedHistory = compactMovementHistory(current.history, MAX_ACCOUNT_HISTORY_ITEMS);
+    if (compactedHistory.compacted) current.history = compactedHistory.history;
     if (typeof recordAuditMovement === 'function') recordAuditMovement(accountId, item, 'Ahorros');
     return item;
   }

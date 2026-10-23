@@ -85,7 +85,7 @@
   function generateAutomaticLimitIncreaseRequests(requestedAt) {
     if (!Array.isArray(db.limitIncreaseRequests)) db.limitIncreaseRequests = [];
     const requestDate = new Date(requestedAt).toISOString();
-    const increaseAmount = 50000000;
+    const increaseAmount = simulationSettingsFor(db).limitIncreaseAmount;
     let generated = 0;
     for (let accountId = 1; accountId <= MAX_ACCOUNT_ID; accountId += 1) {
       const current = db.accounts[accountId];
@@ -135,13 +135,13 @@
       request.reviewedAt = date;
       request.autoApprovalAt = date;
       recordAuditEvent('Aumento de cupo rechazado automáticamente', {
-        category: 'cupo', accountId: request.accountId, amount: 50000000, source: 'Analista automático', referenceId: request.id,
+        category: 'cupo', accountId: request.accountId, amount: increaseAmount, source: 'Analista automático', referenceId: request.id,
         description: message, details: { requestedLimit: request.requestedLimit }, date
       });
       return true;
     };
-    if (!target?.card || increaseAmount !== 50000000 || request.requestedLimit > MAX_CARD_LIMIT) {
-      return reject('La solicitud superaría el rango numérico seguro o dejó de corresponder a un incremento de $50.000.000.');
+    if (!target?.card || !Number.isSafeInteger(increaseAmount) || increaseAmount <= 0 || request.requestedLimit !== currentLimit + increaseAmount || request.requestedLimit > MAX_CARD_LIMIT) {
+      return reject('La solicitud superaría el rango numérico seguro o el aumento ya no coincide con el cupo actual.');
     }
     const analystAvailable = availableAnalystCapital();
     const exposure = outstandingCreditExposureForAccount(request.accountId);
@@ -457,6 +457,7 @@
         }
         changed = true;
         count += 1;
+        if (count % 250 === 0 && typeof compactDatabaseForStorage === 'function') compactDatabaseForStorage(db);
       }
       const upcoming = nextSimulationAutomationEvent();
       const caughtUp = !upcoming || upcoming.at > now;

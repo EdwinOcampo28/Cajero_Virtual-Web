@@ -1,6 +1,8 @@
   function freshSimulationSettings() {
     return {
       monthlyInterestRate: ILLUSTRATIVE_MONTHLY_RATE,
+      analystCapital: ANALYST_TOTAL_CAPITAL,
+      limitIncreaseAmount: DEFAULT_LIMIT_INCREASE_AMOUNT,
       treasuryTimerRate: TREASURY_TIMER_RATE,
       treasuryTimerIncomeCap: TREASURY_TIMER_INCOME_CAP,
       creditRequestIntervalSeconds: SIMULATION_HOUR_MS / 1000,
@@ -96,6 +98,8 @@
       delete settings[minutesKey];
     });
     settings.treasuryTimerIncomeCap = Number.MAX_SAFE_INTEGER;
+    settings.analystCapital = Number.isSafeInteger(settings.analystCapital) ? settings.analystCapital : ANALYST_TOTAL_CAPITAL;
+    settings.limitIncreaseAmount = Number.isSafeInteger(settings.limitIncreaseAmount) ? settings.limitIncreaseAmount : DEFAULT_LIMIT_INCREASE_AMOUNT;
     const intervals = [settings.automaticCreditApprovalDelaySeconds, settings.automaticLimitIncreaseApprovalDelaySeconds, settings.creditRequestIntervalSeconds, settings.limitIncreaseRequestIntervalSeconds, settings.treasuryDistributionIntervalSeconds, settings.automaticTransferIntervalSeconds, settings.automaticWithdrawalIntervalSeconds, settings.paymentInterval6Seconds, settings.paymentInterval12Seconds];
     const creditAmounts = [settings.automaticCreditMinimumAmount, settings.automaticCreditMaximumAmount];
     const advanceAmounts = [settings.automaticAdvanceMinimumAmount, settings.automaticAdvanceMaximumAmount];
@@ -104,6 +108,8 @@
     if (!Number.isFinite(settings.monthlyInterestRate) || settings.monthlyInterestRate < 0 || settings.monthlyInterestRate > 1
       || !Number.isSafeInteger(settings.treasuryTimerRate) || settings.treasuryTimerRate < 1
       || !Number.isSafeInteger(settings.treasuryTimerIncomeCap) || settings.treasuryTimerIncomeCap < 0
+      || !Number.isSafeInteger(settings.analystCapital) || settings.analystCapital < 0
+      || !Number.isSafeInteger(settings.limitIncreaseAmount) || settings.limitIncreaseAmount < MIN_CREDIT_AMOUNT || settings.limitIncreaseAmount % MIN_CREDIT_AMOUNT !== 0
       || typeof settings.automaticLimitIncreaseApprovalEnabled !== 'boolean'
       || intervals.some((seconds) => !Number.isSafeInteger(seconds) || seconds < 1 || seconds > 31536000)
       || !validMoneyRange(creditAmounts) || settings.automaticCreditMinimumAmount > settings.automaticCreditMaximumAmount
@@ -201,7 +207,8 @@
     if (!treasury || !Number.isSafeInteger(amount) || amount < 0) return null;
     const item = { id: createId(), type, amount, description: String(description || ''), direction, date, ...metadata };
     treasury.history.unshift(item);
-    treasury.history = treasury.history.slice(0, 10000);
+    const compactedHistory = compactMovementHistory(treasury.history, MAX_TREASURY_HISTORY_ITEMS);
+    if (compactedHistory.compacted) treasury.history = compactedHistory.history;
     appendTreasuryAuditEvent(db, item);
     return item;
   }
@@ -246,7 +253,8 @@
     treasury.lastAccruedAt = new Date(reachedLimit ? now : last + seconds * 1000).toISOString();
     if (canExtendLatestTimer) treasury.history[0] = item;
     else treasury.history.unshift(item);
-    treasury.history = treasury.history.slice(0, 10000);
+    const compactedHistory = compactMovementHistory(treasury.history, MAX_TREASURY_HISTORY_ITEMS);
+    if (compactedHistory.compacted) treasury.history = compactedHistory.history;
     appendTreasuryAuditEvent(database, item);
     return true;
   }

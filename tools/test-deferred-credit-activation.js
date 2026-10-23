@@ -25,6 +25,7 @@ const db = {
 const context = {
   db,
   reviewerSession: true,
+  simulationSettingsFor: (database) => ({ analystCapital: 500000000, ...(database.simulationSettings || {}) }),
   MAX_CARD_FUNDS: 100000000,
   MAX_CARD_LIMIT: 500000000,
   ANALYST_TOTAL_CAPITAL: 500000000,

@@ -53,7 +53,7 @@
       return;
     }
     if (amount > availableAnalystCapital()) {
-      creditError.textContent = `El fondo disponible del analista es ${money(availableAnalystCapital())}; el fondo total es ${money(ANALYST_TOTAL_CAPITAL)}.`;
+      creditError.textContent = `El fondo disponible del analista es ${money(availableAnalystCapital())}; el fondo total es ${money(simulationSettingsFor(db).analystCapital)}.`;
       creditError.hidden = false;
       creditAmountInput.focus();
       return;

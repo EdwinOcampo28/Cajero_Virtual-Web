@@ -2,13 +2,13 @@
             <div class="section-heading finance-module-heading"><div><p class="eyebrow">CUPO DE TARJETA</p><h3>Solicitar aumento de cupo</h3></div><span class="section-subtitle">Revisión por el analista</span></div>
             <div class="credit-layout card-limit-request-layout">
               <section class="credit-panel">
-                <div class="credit-panel-heading"><div class="credit-panel-symbol">↗</div><div><h3>Ampliar mi cupo</h3><p id="cardLimitRequestIntro">El aumento disponible es de $ 50.000.000. Si se aprueba, esos fondos se cargan a tu tarjeta y solo generan crédito cuando haces avances.</p></div></div>
+                <div class="credit-panel-heading"><div class="credit-panel-symbol">↗</div><div><h3>Ampliar mi cupo</h3><p id="cardLimitRequestIntro">El importe del aumento se define en la configuración del sistema. Si se aprueba, esos fondos se cargan a tu tarjeta y solo generan crédito cuando haces avances.</p></div></div>
                 <div class="credit-sim-lines card-limit-current-line"><div><span>Cupo autorizado actual</span><strong id="cardLimitCurrentValue">$ 100.000.000</strong></div></div>
                 <form id="cardLimitRequestForm" class="credit-form" autocomplete="off">
-                  <div id="cardLimitRequestField" class="credit-field"><label for="cardLimitRequestedValue">Aumento de cupo solicitado</label><select id="cardLimitRequestedValue" name="increaseAmount" required><option value="50000000">Aumentar $ 50.000.000 · 12 meses</option></select><small>Si se aprueba, los $ 50.000.000 se cargan a la tarjeta. El crédito solo se activa al hacer avances y se paga en 12 cuotas al <span id="limitIncreaseRateText">2,00 %</span> mensual. El cupo no tiene un máximo acumulado en esta simulación.</small></div>
+                  <div id="cardLimitRequestField" class="credit-field"><label for="cardLimitRequestedValue">Aumento de cupo solicitado</label><select id="cardLimitRequestedValue" name="increaseAmount" required><option value="50000000">Aumento configurado · 12 meses</option></select><small>Si se aprueba, el importe configurado se carga a la tarjeta. El crédito solo se activa al hacer avances y se paga en 12 cuotas al <span id="limitIncreaseRateText">2,00 %</span> mensual. El cupo no tiene un máximo acumulado en esta simulación.</small></div>
                   <p id="cardLimitRequestError" class="form-message error-message" role="alert" hidden></p>
                   <button id="cardLimitRequestSubmit" class="button button-primary button-wide" type="submit">Enviar solicitud de aumento <span aria-hidden="true">→</span></button>
-                  <p id="cardLimitRequestStatus" class="credit-disclaimer">Si se aprueba, se cargarán $ 50.000.000 a la tarjeta. El crédito tendrá 12 cuotas cuando realices avances.</p>
+                  <p id="cardLimitRequestStatus" class="credit-disclaimer">Si se aprueba, el importe configurado se cargará a la tarjeta. El crédito tendrá 12 cuotas cuando realices avances.</p>
                 </form>
               </section>
               <aside class="credit-panel credit-simulation-panel">

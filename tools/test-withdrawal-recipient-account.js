@@ -21,17 +21,36 @@ function makeClient(id, balance) {
 function makeStorageContext(stored) {
   const context = {
     ACCOUNT_SEED: seed,
+    db: null,
     MAX_ACCOUNT_ID: 3,
     MAX_ACCOUNT_BALANCE: 200000000,
     MAX_CARD_FUNDS: 100000000,
-    MAX_CARD_LIMIT: 500000000,
-    MAX_AUDIT_EVENTS: 5000,
+    MAX_CARD_LIMIT: Number.MAX_SAFE_INTEGER,
+    ANALYST_TOTAL_CAPITAL: 2000000000,
+    DEFAULT_LIMIT_INCREASE_AMOUNT: 50000000,
+    DEPOSIT_FEE: 20000,
+    OPERATION_FEE: 50000,
+    ADVANCE_FEE: 100000,
+    MAX_AUDIT_EVENTS: 2000,
+    MAX_ACCOUNT_HISTORY_ITEMS: 500,
+    MAX_CARD_HISTORY_ITEMS: 500,
+    MAX_TREASURY_HISTORY_ITEMS: 2000,
+    MAX_CREDIT_APPLICATIONS: 500,
+    MAX_LIMIT_INCREASE_REQUESTS: 500,
+    MAX_CLOSED_LOANS: 200,
+    MIN_CREDIT_AMOUNT: 100000,
+    MAX_CREDIT_AMOUNT: 100000000,
+    VALID_CREDIT_TERMS: [6, 12],
+    VALID_CARD_ADVANCE_TERMS: [6, 12],
+    SIMULATION_HOUR_MS: 3600000,
+    SIMULATION_APPROVAL_DELAY_MS: 60000,
+    AUTOMATIC_PAYMENT_INTERVAL_MS: { 6: 300000, 12: 180000 },
     ILLUSTRATIVE_MONTHLY_RATE: 0.02,
     TREASURY_NAME: 'Tesorería de retiros',
     TREASURY_ACCOUNT_NUMBER: '6024 1937 0004',
     TREASURY_PIN: '3456',
     TREASURY_TIMER_RATE: 1000,
-    TREASURY_TIMER_INCOME_CAP: 300000000,
+    TREASURY_TIMER_INCOME_CAP: Number.MAX_SAFE_INTEGER,
     STORAGE_KEY: 'test',
     localStorage: { getItem: () => stored },
     lastPersistedRaw: null,
@@ -111,7 +130,7 @@ const backupContext = {
   ...legacyContext,
   document: { querySelector: () => null },
   MIN_CREDIT_AMOUNT: 100000,
-  MAX_AUDIT_EVENTS: 5000,
+  MAX_AUDIT_EVENTS: 2000,
   money: (value) => '$ ' + Math.round(Number(value) || 0).toLocaleString('en-US')
 };
 vm.createContext(backupContext);
@@ -135,7 +154,7 @@ const operationContext = {
   db, activeAccountId: 1, currentModalAction: 'withdraw',
   operationError: { hidden: true, textContent: '' },
   amountInput: { value: '100000', setAttribute() {}, focus() {} },
-  OPERATION_FEE: 20000, MAX_WITHDRAWAL_AMOUNT: 20000000, MAX_DEPOSIT_AMOUNT: 20000000, MAX_TRANSFER_AMOUNT: 20000000,
+  OPERATION_FEE: 50000, DEPOSIT_FEE: 20000, MAX_WITHDRAWAL_AMOUNT: 20000000, MAX_DEPOSIT_AMOUNT: 20000000, MAX_TRANSFER_AMOUNT: 20000000,
   MAX_ACCOUNT_BALANCE: 200000000, MAX_ACCOUNT_ID: 3, TREASURY_NAME: 'Tesorería de retiros',
   maxSavingsBalanceForAccount: () => 200000000,
   account: () => db.accounts[operationContext.activeAccountId],
@@ -150,8 +169,8 @@ const operationContext = {
 vm.createContext(operationContext);
 vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'src/js/09-account-operations-and-dialogs-02.js'), 'utf8'), operationContext);
 operationContext.submitOperation({ preventDefault() {} });
-assert(accounts[1].balance === 80000 && db.withdrawalTreasury.balance === 100000, 'El retiro debe descontar cliente y acreditar automáticamente Tesorería.');
-assert(db.operationFeesCollected === 20000, 'La comisión debe permanecer separada del importe recibido.');
+assert(accounts[1].balance === 50000 && db.withdrawalTreasury.balance === 100000, 'El retiro debe descontar cliente y acreditar automáticamente Tesorería.');
+assert(db.operationFeesCollected === 50000, 'La comisión debe permanecer separada del importe recibido.');
 assert(db.withdrawalTreasury.history[0].type === 'withdrawal_received' && operationMessages[0].includes('Tesorería de retiros'), 'El abono y la confirmación deben identificar Tesorería.');
 for (const clientId of [2, 3]) {
   operationContext.activeAccountId = clientId;
@@ -159,14 +178,14 @@ for (const clientId of [2, 3]) {
   operationContext.currentModalAction = 'withdraw';
   operationContext.submitOperation({ preventDefault() {} });
 }
-assert(db.withdrawalTreasury.balance === 200000 && db.operationFeesCollected === 60000, 'Los tres clientes deben acreditar sus retiros y pagar las comisiones separadas.');
+assert(db.withdrawalTreasury.balance === 200000 && db.operationFeesCollected === 150000, 'Los tres clientes deben acreditar sus retiros y pagar las comisiones separadas.');
 operationContext.activeAccountId = 1;
 operationContext.currentModalAction = 'deposit';
 operationContext.amountInput.value = '50000';
 operationContext.submitOperation({ preventDefault() {} });
-assert(db.withdrawalTreasury.balance === 150000 && accounts[1].balance === 110000, 'El depósito debe descontar de Tesorería el importe bruto y acreditar en ahorros el neto tras comisión.');
+assert(db.withdrawalTreasury.balance === 150000 && accounts[1].balance === 80000, 'El depósito debe descontar de Tesorería el importe bruto y acreditar en ahorros el neto tras comisión.');
 assert(db.withdrawalTreasury.history[0].type === 'deposit_funded' && db.withdrawalTreasury.history[0].amount === 50000 && db.withdrawalTreasury.history[0].direction === 'out', 'Tesorería debe registrar el origen del depósito como egreso.');
-assert(db.operationFeesCollected === 80000, 'La comisión del depósito debe seguir sumándose al fondo del analista.');
+assert(db.operationFeesCollected === 170000, 'La comisión del depósito debe seguir sumándose al fondo del analista.');
 const balancesBeforeInsufficientDeposit = { treasury: db.withdrawalTreasury.balance, account: accounts[1].balance };
 operationContext.amountInput.value = '160000';
 operationContext.submitOperation({ preventDefault() {} });
@@ -227,13 +246,13 @@ assert(historyList.items.length === 0 && historyEmptyState.hidden === false, 'El
 console.log('PASS: las tres cuentas cliente y Tesorería quedan en estructuras separadas.');
 console.log('PASS: saldos e historial de la cuenta receptora v37 se migran; sus créditos no quedan activos.');
 const cappedTreasury = { balance: 299999500, history: [], elapsedSeconds: 0, timerIncomeTotal: 299999500, lastAccruedAt: '2026-10-22T12:00:00.000Z' };
-const capDatabase = { withdrawalTreasury: cappedTreasury, simulationSettings: { monthlyInterestRate: 0.02, treasuryTimerRate: 1000, treasuryTimerIncomeCap: 300000000 }, auditLog: [] };
+const capDatabase = { withdrawalTreasury: cappedTreasury, simulationSettings: { monthlyInterestRate: 0.02, treasuryTimerRate: 1000, treasuryTimerIncomeCap: Number.MAX_SAFE_INTEGER }, auditLog: [] };
 const capStart = Date.parse(cappedTreasury.lastAccruedAt);
-assert(legacyContext.accrueWithdrawalTreasury(capDatabase, capStart + 1000), 'El cronómetro debe completar el tope aunque el remanente sea menor que un segundo de acumulación.');
-assert(cappedTreasury.balance === 300000000 && cappedTreasury.timerIncomeTotal === 300000000, 'El cronómetro debe detenerse exactamente en el tope acumulado de $300 millones.');
+assert(legacyContext.accrueWithdrawalTreasury(capDatabase, capStart + 1000), 'El cronómetro debe seguir acumulando al pasar $300 millones.');
+assert(cappedTreasury.balance === 300000500 && cappedTreasury.timerIncomeTotal === 300000500, 'El cronómetro debe seguir acumulando sin tope comercial.')
 const cappedAt = Date.parse(cappedTreasury.lastAccruedAt);
-assert(!legacyContext.accrueWithdrawalTreasury(capDatabase, cappedAt + 60000) && cappedTreasury.balance === 300000000, 'Al alcanzar el tope, el cronómetro no debe generar más saldo aunque pase tiempo.');
+const secondAccrual = legacyContext.accrueWithdrawalTreasury(capDatabase, cappedAt + 60000); assert(secondAccrual && cappedTreasury.balance === 300060500, 'La Tesorería debe seguir aumentando después de $300 millones.');
 
-console.log('PASS: las migraciones conservan el histórico y el cronómetro configurable de $1.000 respeta el tope de $300 millones.');
+console.log('PASS: las migraciones conservan el histórico y el cronómetro sigue acumulando sobre $300 millones.');
 console.log('PASS: los retiros llegan a Tesorería y los depósitos se financian desde su saldo, con rechazo si no alcanza.');
 console.log('PASS: Tesorería abre como vista raíz, no permite transferencias y muestra depósitos y retiros automáticos.');

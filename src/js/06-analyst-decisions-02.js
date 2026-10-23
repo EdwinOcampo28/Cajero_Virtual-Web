@@ -14,10 +14,10 @@
       return;
     }
     const currentLimit = cardCreditLimitForAccount(request.accountId);
-    const increaseAmount = roundMoney(request.requestedLimit - currentLimit);
+    const increaseAmount = roundMoney(Number(request.increaseAmount) > 0 ? request.increaseAmount : request.requestedLimit - Number(request.previousLimit ?? currentLimit));
     if (decision === 'Aprobado') {
-      if (increaseAmount !== 50000000 || request.requestedLimit > MAX_CARD_LIMIT) {
-        await showAppDialog({ type: 'alert', title: 'No se puede aprobar el cupo', message: `El aumento debe ser de ${money(50000000)} y el cupo debe mantenerse dentro de la precisión numérica segura del simulador.`, eyebrow: 'VALIDACIÓN DE CUPO', icon: '!', confirmText: 'Entendido', danger: true });
+      if (!Number.isSafeInteger(increaseAmount) || increaseAmount <= 0 || request.requestedLimit !== currentLimit + increaseAmount || request.requestedLimit > MAX_CARD_LIMIT) {
+        await showAppDialog({ type: 'alert', title: 'No se puede aprobar el cupo', message: 'El aumento debe ser positivo y el nuevo cupo debe mantenerse dentro de la precisión numérica segura del simulador.', eyebrow: 'VALIDACIÓN DE CUPO', icon: '!', confirmText: 'Entendido', danger: true });
         return;
       }
       const analystAvailable = availableAnalystCapital();
@@ -41,7 +41,7 @@
       type: 'confirm',
       title: decision === 'Aprobado' ? 'Aprobar aumento de cupo' : 'Rechazar solicitud de cupo',
       message: decision === 'Aprobado'
-        ? `¿Apruebas aumentar el cupo de ${target.name} en ${money(50000000)}, de ${money(currentLimit)} a ${money(request.requestedLimit)}? La diferencia se cargará a su tarjeta. El crédito y sus cuotas a 12 meses solo se activarán cuando el cliente realice avances.`
+        ? `¿Apruebas aumentar el cupo de ${target.name} en ${money(increaseAmount)}, de ${money(currentLimit)} a ${money(request.requestedLimit)}? La diferencia se cargará a su tarjeta. El crédito y sus cuotas a 12 meses solo se activarán cuando el cliente realice avances.`
         : `¿Confirmas rechazar el aumento de cupo solicitado por ${target.name}? No se realizará ningún desembolso.`,
       eyebrow: 'REVISIÓN DE CUPO',
       icon: decision === 'Aprobado' ? '✓' : '!',

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Regression coverage for card refresh, deferred credit visibility, and the $500M limit state.
+// Regression coverage for card refresh, dynamic cupo increases, and the safe-integer ceiling.
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
@@ -31,18 +31,20 @@ const ctx = {
   document,
   db: {
     limitIncreaseRequests: [],
+    simulationSettings: { limitIncreaseAmount: 50000000 },
     creditApplications: [{ id: 'limit-app', accountId: 1, origin: 'Aumento de cupo', amount: 50000000, activatedAmount: 0, cardFundsRemaining: 50000000, termMonths: 12, monthlyPayment: 5000000, status: 'Aprobado', date: '2026-10-22T10:00:00.000Z', disbursedAt: '2026-10-22T10:00:00.000Z', purpose: 'Desembolso automático por aumento de cupo' }],
     loans: [],
     accounts: [null, { id: 1, name: 'Cliente de prueba', accountNumber: '1000 0000 0001', cardNumber: '4111111111111111', balance: 0, card: { number: '4111111111111111', limit: 500000000, funds: 50000000, recoveredFunds: 0, debt: 0, history: [], pendingDisbursements: [] } }]
   },
   activeAccountId: 1,
-  MAX_CARD_LIMIT: 500000000,
+  MAX_CARD_LIMIT: Number.MAX_SAFE_INTEGER,
   MAX_CARD_FUNDS: 100000000,
   MAX_ACCOUNT_BALANCE: 300000000,
   maxSavingsBalanceForAccount: () => 300000000,
   ADVANCE_FEE: 0,
   ILLUSTRATIVE_MONTHLY_RATE: 0.02,
   formatMonthlyInterestRate: () => '2,00 %',
+  simulationSettingsFor: (database) => ({ limitIncreaseAmount: 50000000, ...(database.simulationSettings || {}) }),
   roundMoney: (amount) => Math.round(Number(amount) || 0),
   account() { return ctx.db.accounts[1]; },
   $ (selector) {
@@ -82,14 +84,22 @@ assert(ctx.$('#cardTotalDisbursementsMetric').textContent === '$ 50,000,000', 'L
 assert(ctx.$('#cardAvailableAdvancesMetric').textContent === '$ 50,000,000', 'La tarjeta debe mostrar los fondos disponibles al refrescar sin deuda.');
 
 ctx.renderCardLimitRequestSection(ctx.account());
-assert(ctx.$('#cardLimitRequestField').hidden, 'Al llegar al tope debe ocultarse el selector de aumentos.');
-assert(ctx.$('#cardLimitRequestSubmit').hidden, 'Al llegar al tope debe ocultarse el botón de solicitud.');
-assert(ctx.$('#cardLimitRequestStatus').textContent.includes('cupo máximo de $ 500,000,000'), 'El tope debe mostrar un mensaje distinto y explícito.');
-assert(!option.textContent.includes('$ 550,000,000'), 'El selector no debe sugerir un cupo por encima del máximo.');
+assert(!ctx.$('#cardLimitRequestField').hidden && !ctx.$('#cardLimitRequestSubmit').hidden, 'El cupo de $500M no debe actuar como máximo comercial.');
+assert(option.textContent.includes('$ 550,000,000'), 'El selector debe permitir superar el antiguo tope comercial.');
+
+ctx.db.simulationSettings.limitIncreaseAmount = 25000000;
+ctx.renderCardLimitRequestSection(ctx.account());
+assert(option.textContent.includes('$ 525,000,000'), 'La solicitud debe usar el importe configurable actual.');
+ctx.db.simulationSettings.limitIncreaseAmount = 50000000;
+ctx.db.accounts[1].card.limit = Number.MAX_SAFE_INTEGER;
+ctx.renderCardLimitRequestSection(ctx.account());
+assert(ctx.$('#cardLimitRequestField').hidden && ctx.$('#cardLimitRequestSubmit').hidden, 'Solo al alcanzar el máximo entero seguro se debe bloquear otro aumento.');
+assert(ctx.$('#cardLimitRequestStatus').textContent.includes('precisión numérica'), 'El mensaje debe identificar el límite técnico del navegador.');
+assert(option.disabled, 'El selector debe deshabilitar el aumento que excede la precisión numérica.');
 
 ctx.db.accounts[1].card.limit = 450000000;
 ctx.renderCardLimitRequestSection(ctx.account());
-assert(!ctx.$('#cardLimitRequestField').hidden && !ctx.$('#cardLimitRequestSubmit').hidden, 'Un aumento de $50M debe volver a solicitarse sin actualizar la página cuando aún hay espacio.');
+assert(!ctx.$('#cardLimitRequestField').hidden && !ctx.$('#cardLimitRequestSubmit').hidden, 'Un aumento debe poder solicitarse de nuevo cuando hay espacio numérico.');
 assert(option.textContent.includes('$ 500,000,000'), 'El selector debe mostrar el nuevo cupo permitido.');
 
 ctx.renderCreditApplications();
@@ -104,5 +114,6 @@ const activatedCredit = ctx.$('#creditApplicationsList').children[0];
 assert(activatedCredit?.children[0]?.children[0]?.textContent === '$ 15,000,000', 'Después de un avance parcial debe mostrarse como crédito solo el importe avanzado.');
 
 console.log('PASS: el saldo de tarjeta se actualiza con deuda en cero.');
-console.log('PASS: el tope de $500M oculta el formulario y muestra un mensaje propio.');
+console.log('PASS: el cupo supera el antiguo tope comercial y el importe configurable actualiza la solicitud.');
+console.log('PASS: solo el límite de enteros exactos bloquea nuevos aumentos.');
 console.log('PASS: el aumento no aparece como crédito antes del primer avance; después muestra el importe avanzado.');

@@ -22,7 +22,7 @@
         await showAppDialog({
           type: 'alert',
           title: 'Fondo de crédito insuficiente',
-          message: `El analista administra ${money(ANALYST_TOTAL_CAPITAL)} en capital total y tiene ${money(poolAvailable)} disponibles. Esta solicitud es por ${money(application.amount)}.`,
+          message: `El analista administra ${money(simulationSettingsFor(db).analystCapital)} de capital base y tiene ${money(poolAvailable)} disponibles. Esta solicitud es por ${money(application.amount)}.`,
           eyebrow: 'FONDO DEL ANALISTA', icon: '!', confirmText: 'Entendido', danger: true
         });
         return;

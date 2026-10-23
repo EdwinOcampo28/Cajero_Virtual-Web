@@ -17,4 +17,8 @@
 .credential-row code { color: var(--gold); font-size: 10px; }
 .login-legal { margin: 24px 0 0; color: #6e849a; font-size: 10px; line-height: 1.5; }
 .login-legal span { margin-right: 5px; color: var(--gold); }
+.login-reset-tools { margin-top: 20px; padding: 13px 14px; border: 1px solid rgba(255,123,135,.17); border-radius: 12px; background: rgba(100,30,43,.12); }
+.login-reset-tools p { margin: 0 0 8px; color: #9aabbc; font-size: 10px; line-height: 1.5; }
+.login-reset-button { display: inline-flex; min-height: 34px; align-items: center; gap: 7px; padding: 0 10px; border: 1px solid rgba(255,123,135,.28); border-radius: 8px; color: #f0a0a8; background: rgba(163,47,61,.1); font-size: 10px; font-weight: 750; cursor: pointer; }
+.login-reset-button:hover { border-color: rgba(255,123,135,.5); color: #ffe3e5; background: rgba(163,47,61,.22); }
 

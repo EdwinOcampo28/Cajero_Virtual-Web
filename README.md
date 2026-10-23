@@ -1,4 +1,4 @@
-# Cajero Virtual v50 · Fondo actualizado y comisiones agrupadas
+# Cajero Virtual v29 · Recuperación y reinicio de datos
 
 ## Abrir la aplicación
 
@@ -6,19 +6,19 @@
 2. Abre `index.html` con doble clic.
 3. No necesitas instalar Python, Node.js, un servidor ni conexión a internet para utilizar la aplicación.
 
-La versión estable anterior se conserva por separado en `Cajero_Virtual_Web_v28_Limites_Operaciones_Cupo.zip`; esta carpeta es una nueva versión de trabajo.
+La entrega actual se identifica como **v29** e incluye el reinicio de datos accesible desde el inicio de sesión.
 
 ## Reglas financieras vigentes
 
-- Depósitos: máximo **$20.000.000** por operación; el importe bruto sale de Tesorería, el cliente recibe el neto y se cobran **$5.000** por depósito. No hay tope acumulado de ahorros y la operación requiere saldo suficiente en Tesorería.
-- Reparto de Tesorería: se distribuye el saldo en partes iguales y se cobran los mismos **$5.000** por cuenta que en un depósito.
-- Retiros: máximo **$20.000.000** por operación; el importe retirado se acredita automáticamente a la Tesorería independiente **•••• 0004** y la comisión fija de **$10.000** se descuenta por separado.
-- Transferencias: máximo **$20.000.000** por operación; el destinatario recibe el importe completo y al emisor se le cobra una comisión de **$10.000**.
+- Depósitos: máximo **$20.000.000** por operación; el importe bruto sale de Tesorería, el cliente recibe el neto y se cobran **$20.000** por depósito. No hay tope acumulado de ahorros y la operación requiere saldo suficiente en Tesorería.
+- Reparto de Tesorería: se distribuye el saldo en partes iguales y se cobran los mismos **$20.000** por cuenta que en un depósito.
+- Retiros: máximo **$20.000.000** por operación; el importe retirado se acredita automáticamente a la Tesorería independiente **•••• 0004** y la comisión fija de **$50.000** se descuenta por separado.
+- Transferencias: máximo **$20.000.000** por operación; el destinatario recibe el importe completo y al emisor se le cobra una comisión de **$50.000**.
 - Las cuentas de clientes no tienen tope acumulado de ahorros. Los retiros y transferencias conservan sus máximos por operación de **$20.000.000**. La Tesorería no es una cuenta de ahorro, no tiene tarjeta ni créditos, y no permite transferencias manuales; su historial muestra los depósitos financiados y los retiros recibidos.
-- Avances desde la tarjeta a ahorros: solo a **6 o 12 cuotas**, con comisión de **$10.000**; los fondos trasladados no cuentan como otro desembolso original.
+- Avances desde la tarjeta a ahorros: solo a **6 o 12 cuotas**, con comisión de **$100.000**; los fondos trasladados no cuentan como otro desembolso original.
 - Créditos personales: máximo **$100.000.000** por solicitud, sujetos al capital disponible del analista y al cupo autorizado del cliente.
-- Fondo inicial ilustrativo del analista: **$1.000.000.000**, más intereses y comisiones efectivamente cobrados, menos los créditos activos y los fondos que aún siguen en las tarjetas.
-- Aumento de cupo: se solicita en incrementos de **$50.000.000**, sin máximo acumulado. Al aprobarlo, la tarjeta recibe los fondos y el crédito se activa a **12 cuotas con tasa ilustrativa del 2,00 % mensual** únicamente cuando el cliente realiza avances.
+- Saldo base configurable del analista: **$2.000.000.000** por defecto, más intereses y comisiones efectivamente cobrados, menos los créditos activos y los fondos que aún siguen en las tarjetas.
+- Aumento de cupo: el importe de cada aumento se configura desde el panel; no hay máximo comercial acumulado (solo el rango de enteros exactos del navegador). Al aprobarlo, la tarjeta recibe los fondos y el crédito se activa a **12 cuotas con tasa ilustrativa del 2,00 % mensual** únicamente cuando el cliente realiza avances.
 - El analista puede configurar por separado, en segundos o minutos, cuánto esperar antes de aprobar automáticamente créditos y aumentos de cupo.
 - Deuda: cada titular mantiene como máximo una deuda activa unificada. Los pagos separan capital e intereses; el capital pagado recupera disponibilidad de avance, mientras que los intereses solo se cuentan como ganancia una vez pagados.
 
@@ -40,7 +40,7 @@ Algunos datos heredados de versiones antiguas pueden mostrar una advertencia si 
 
 ### Registro cronológico
 
-Se conserva un máximo de **5.000 eventos recientes**, con fecha, tipo, titular, importe, referencia y detalles de la operación. Registra movimientos de ahorros y tarjeta, solicitudes, decisiones del analista, copias de seguridad y reinicios. No se registran los PIN en el registro de auditoría.
+Se conservan hasta **2.000 eventos recientes**, con fecha, tipo, titular, importe, referencia y detalles de la operación. Registra movimientos de ahorros y tarjeta, solicitudes, decisiones del analista, copias de seguridad y reinicios. No se registran los PIN en el registro de auditoría.
 
 El registro se puede filtrar por categoría y buscar por titular, acción o referencia. El analista puede exportarlo a CSV.
 
@@ -304,5 +304,19 @@ El panel permite configurar cada cuánto se generan solicitudes automáticas de 
 
 ## Novedades v50: fondo inicial del analista y comisiones agrupadas
 
-- El fondo inicial del analista ahora es de **.000.000.000**; el disponible se calcula con ese capital, los intereses y las comisiones cobradas, menos el capital comprometido.
+- El saldo base predeterminado del analista ahora es de **$2.000.000.000**; el disponible se calcula con ese capital, los intereses y las comisiones cobradas, menos el capital comprometido.
 - El resumen financiero agrupa en una tarjeta las comisiones por depósitos y repartos de Tesorería. Los informes mantienen el desglose de cada origen.
+
+
+## Novedades v51: capital y aumentos configurables, guardado más estable
+
+- El panel permite definir el saldo base del analista y el importe de cada aumento de cupo. Las solicitudes y aprobaciones manuales y automáticas usan el mismo importe configurado, sin tope comercial acumulado de cupo.
+- Los depósitos y repartos cobran **$20.000** por operación o cuenta; las transferencias y retiros cobran **$50.000**; los avances cobran **$100.000**.
+- Al cerrar la página por mucho tiempo, la recuperación automática resume historiales antiguos y conserva saldos, préstamos activos, intereses y comisiones para reducir el riesgo de superar la cuota de almacenamiento local.
+
+
+## Entrega v29: recuperación desde el inicio de sesión
+
+- El acceso de clientes incluye un botón para borrar los datos guardados y reiniciar la simulación, incluso si la base local no se pudo validar.
+- El borrado elimina primero los datos dañados y luego intenta guardar una base limpia. Si el navegador no tiene espacio, los datos previos siguen borrados y se puede volver a abrir la aplicación para crear una nueva demostración.
+- La etiqueta de esta entrega es **v29**.

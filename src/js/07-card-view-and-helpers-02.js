@@ -36,7 +36,11 @@
       });
     }
     if (empty) empty.hidden = requests.length > 0;
-    const increaseAmounts = [50000000];
+    const configuredIncrease = simulationSettingsFor(db).limitIncreaseAmount;
+    const pendingIncrease = pending
+      ? (Number(pending.increaseAmount) > 0 ? Number(pending.increaseAmount) : Math.max(0, Number(pending.requestedLimit) - Number(pending.previousLimit)))
+      : 0;
+    const increaseAmounts = [pendingIncrease || configuredIncrease];
     const enabledAmounts = increaseAmounts.filter((amount) => limit + amount <= MAX_CARD_LIMIT);
     const noMoreOptions = enabledAmounts.length === 0;
     const maximumReached = limit >= MAX_CARD_LIMIT;
@@ -45,20 +49,19 @@
       ? (maximumReached
         ? `La tarjeta llegó al límite de precisión numérica del simulador y no admite otro aumento.`
         : `No se puede registrar otro incremento dentro del rango numérico seguro del simulador.`)
-      : 'El aumento disponible es de $ 50.000.000. Si se aprueba, esos fondos se cargan a tu tarjeta y solo generan crédito cuando haces avances.';
+      : `El aumento disponible es de ${money(configuredIncrease)}. Si se aprueba, esos fondos se cargan a tu tarjeta y solo generan crédito cuando haces avances.`;
     if (requestedInput) {
-      const pendingAmount = pending
-        ? (Number(pending.increaseAmount) > 0 ? Number(pending.increaseAmount) : Math.max(0, Number(pending.requestedLimit) - Number(pending.previousLimit)))
-        : Number(requestedInput.value);
+      const pendingAmount = pending ? pendingIncrease : Number(requestedInput.value);
       Array.from(requestedInput.options).forEach((option) => {
-        const amount = Number(option.value);
+        const amount = increaseAmounts[0];
+        option.value = String(amount);
         const canChoose = limit + amount <= MAX_CARD_LIMIT;
         option.disabled = !canChoose;
         option.textContent = noMoreOptions
           ? (maximumReached ? 'Límite de precisión numérica alcanzado' : 'Aumento no disponible')
           : `Aumentar ${money(amount)} · nuevo cupo ${money(limit + amount)} · crédito a 12 meses al avanzar`;
       });
-      const desired = pendingAmount && increaseAmounts.includes(pendingAmount) ? pendingAmount : (enabledAmounts.includes(Number(requestedInput.value)) ? Number(requestedInput.value) : (enabledAmounts[0] || 50000000));
+      const desired = pendingAmount && increaseAmounts.includes(pendingAmount) ? pendingAmount : (enabledAmounts.includes(Number(requestedInput.value)) ? Number(requestedInput.value) : (enabledAmounts[0] || configuredIncrease));
       requestedInput.value = String(desired);
       requestedInput.disabled = Boolean(pending) || noMoreOptions;
     }
@@ -74,7 +77,7 @@
           ? (maximumReached
             ? `El simulador no puede registrar más aumentos por su límite de precisión numérica.`
             : `No se puede registrar otro incremento dentro del rango numérico seguro del simulador.`)
-          : 'El aumento disponible es de $50.000.000. Si se aprueba, se cargará a tu tarjeta y el crédito se activará a 12 cuotas solo al realizar avances.';
+          : `El aumento disponible es de ${money(configuredIncrease)}. Si se aprueba, se cargará a tu tarjeta y el crédito se activará a 12 cuotas solo al realizar avances.`;
     }
     if (error && !pending && !noMoreOptions) error.hidden = true;
   }
@@ -88,6 +91,7 @@
         : (loan.source === 'Avance de capital recuperado' ? 0 : Number(loan.principalOriginal) || 0);
       return sum + Math.max(0, original);
     }, 0);
+    const archivedOriginals = Math.max(0, Number(db.archivedFinancialSummary?.originalDisbursementsByAccount?.[accountId]) || 0);
     const pendingOriginals = (db.creditApplications || []).filter((application) => application.accountId === accountId && application.disbursedAt)
       .reduce((sum, application) => {
         const linkedLoan = findLoanForApplication(application.id);
@@ -96,5 +100,5 @@
           : 0;
         return sum + Math.max(0, Number(application.amount) - alreadyActivated);
       }, 0);
-    return roundMoney(loanOriginals + pendingOriginals);
+    return roundMoney(archivedOriginals + loanOriginals + pendingOriginals);
   }

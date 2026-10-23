@@ -60,9 +60,9 @@
       activeLoans: relevantCurrentLoans.length,
       overdueLoans: relevantCurrentLoans.filter((loan) => typeof loan.nextDueDate === 'string' && loan.nextDueDate < localDateKey()).length,
       pendingApplications: summary.applications.filter((application) => includesAccount(application) && (application.status || 'En revisión') === 'En revisión').length,
-      movementsCount: movements.length,
-      paymentsCount: monthPayments.length,
-      disbursementsCount: monthDisbursements.length,
+      movementsCount: movements.reduce((sum, item) => sum + Math.max(1, Number(item.movementCount) || 1), 0),
+      paymentsCount: monthPayments.reduce((sum, item) => sum + Math.max(1, Number(item.count) || 1), 0),
+      disbursementsCount: monthDisbursements.reduce((sum, item) => sum + Math.max(1, Number(item.archivedCount) || 1), 0),
       generatedAt: new Date().toISOString()
     };
   }
@@ -199,7 +199,7 @@
       ['Comisiones por depósitos', report.depositFees, 'Cobros asociados a depósitos'],
       ['Comisiones por retiros', report.withdrawalFees, 'Cobros asociados a retiros'],
       ['Comisiones por transferencias', report.transferFees, 'Cobros asociados a transferencias'],
-      ['Comisiones por reparto de Tesorería', report.treasuryDistributionFees, 'Cobro de $5.000 por cuenta en cada reparto'],
+      ['Comisiones por reparto de Tesorería', report.treasuryDistributionFees, 'Cobro de $20.000 por cuenta en cada reparto'],
       ['Comisiones por avances', report.advanceFees, 'Cobros asociados a avances'],
       ['Total de comisiones', report.totalFees, 'Suma de todas las comisiones'],
       ['Capital pendiente', report.outstandingPrincipal, `${report.activeLoans} crédito(s) activo(s)`],
@@ -246,7 +246,7 @@
       ['Comisiones por depósitos', report.depositFees, 'Comisión cobrada por depósitos'],
       ['Comisiones por retiros', report.withdrawalFees, 'Comisión cobrada por retiros'],
       ['Comisiones por transferencias', report.transferFees, 'Comisión cobrada por transferencias'],
-      ['Comisiones por reparto de Tesorería', report.treasuryDistributionFees, 'Comisión de $5.000 por cuenta en cada reparto'],
+      ['Comisiones por reparto de Tesorería', report.treasuryDistributionFees, 'Comisión de $20.000 por cuenta en cada reparto'],
       ['Depósitos netos', report.netDeposits, 'Importe abonado después de comisión'],
       ['Retiros', report.withdrawals, 'Importe retirado por clientes'],
       ['Retiros recibidos', report.withdrawalsReceived, 'Importe acreditado automáticamente a tesorería'],

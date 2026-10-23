@@ -41,7 +41,6 @@
       parsed.creditApplications = Array.isArray(parsed.creditApplications)
         ? parsed.creditApplications
             .filter((item) => item && Number.isInteger(item.accountId) && item.accountId >= 1 && item.accountId <= MAX_ACCOUNT_ID && typeof item.amount === 'number' && Number.isFinite(item.amount) && typeof item.date === 'string')
-            .slice(0, 500)
             .map((item) => ({ ...item, status: item.status || 'En revisión', monthlyRate: Number.isFinite(item.monthlyRate) ? item.monthlyRate : currentMonthlyInterestRate(parsed) }))
         : [];
       parsed.loans = Array.isArray(parsed.loans)
@@ -144,6 +143,7 @@
       consolidateActiveLoans(parsed);
       if (!normalizeSimulationAutomation(parsed)) { databaseLoadIssue = true; return freshDatabase(); }
 
+      if (typeof compactDatabaseForStorage === 'function') compactDatabaseForStorage(parsed);
       return parsed;
     } catch (error) {
       lastPersistedRaw = stored;

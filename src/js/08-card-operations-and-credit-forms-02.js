@@ -37,10 +37,10 @@
     error.hidden = true;
     const currentLimit = cardCreditLimitForAccount(current.id);
     const increaseAmount = Number($('#cardLimitRequestedValue').value);
-    const allowedIncreaseAmounts = [50000000];
+    const allowedIncreaseAmounts = [simulationSettingsFor(db).limitIncreaseAmount];
     const requestedLimit = roundMoney(currentLimit + increaseAmount);
     if (!allowedIncreaseAmounts.includes(increaseAmount) || requestedLimit > MAX_CARD_LIMIT) {
-      error.textContent = `El aumento debe ser de ${money(50000000)} y el cupo debe mantenerse dentro de la precisión numérica segura del simulador.`;
+      error.textContent = `El aumento configurado es de ${money(allowedIncreaseAmounts[0])} y el cupo debe mantenerse dentro de la precisión numérica segura del simulador.`;
       error.hidden = false;
       $('#cardLimitRequestedValue').focus();
       return;
@@ -52,7 +52,7 @@
       return;
     }
     if (!allowedIncreaseAmounts.some((value) => currentLimit + value <= MAX_CARD_LIMIT)) {
-      error.textContent = `Tu tarjeta ya no tiene espacio para un aumento de ${money(50000000)}.`;
+      error.textContent = `Tu tarjeta no puede recibir ese aumento sin superar el rango numérico seguro del simulador.`;
       error.hidden = false;
       return;
     }
